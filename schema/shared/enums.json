@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/shared/enums.json",
+  "title": "CAP Canonical Enums",
+  "$comment": "Canonical enum catalog extracted from the CAP v0.2.2 long-form draft. Appendix C values are normative; several envelope and disclosure enums are included here because sibling schemas reuse them.",
+  "$defs": {
+    "cap_version": {
+      "type": "string",
+      "enum": [
+        "0.2",
+        "0.2.2"
+      ],
+      "$comment": "The long-form draft examples use 0.2 in envelopes, while the current public adapter emits 0.2.2. This catalog accepts both until the prose and machine contracts are fully tightened."
+    },
+    "cap_spec_version": {
+      "type": "string",
+      "const": "0.2.2"
+    },
+    "conformance_level": {
+      "type": "integer",
+      "enum": [
+        1,
+        2
+      ],
+      "$comment": "Level 3 remains protocol-reserved in v0.2.2 and must not be declared."
+    },
+    "reasoning_mode": {
+      "type": "string",
+      "enum": [
+        "identified_causal_effect",
+        "scm_simulation",
+        "graph_propagation",
+        "reduced_form_estimate",
+        "conditional_forecast",
+        "heuristic"
+      ]
+    },
+    "identification_status": {
+      "type": "string",
+      "enum": [
+        "identified",
+        "partially_identified",
+        "not_formally_identified",
+        "not_applicable"
+      ]
+    },
+    "assumption": {
+      "type": "string",
+      "enum": [
+        "causal_sufficiency",
+        "faithfulness",
+        "acyclicity",
+        "stationarity",
+        "linearity",
+        "no_instantaneous_effects",
+        "granger_predictive_causality_only",
+        "no_latent_confounders_addressed",
+        "homogeneity",
+        "positivity",
+        "consistency",
+        "no_interference",
+        "mechanism_invariance_under_intervention"
+      ],
+      "$comment": "Appendix C marks this canonical set as non-exhaustive. Servers may add custom assumption strings when needed."
+    },
+    "causal_engine_family": {
+      "type": "string",
+      "enum": [
+        "constraint-based",
+        "score-based",
+        "fcm",
+        "granger",
+        "hybrid",
+        "neural",
+        "scm",
+        "other"
+      ]
+    },
+    "causal_engine_discovery_method": {
+      "type": "string",
+      "enum": [
+        "conditional_independence",
+        "score_optimization",
+        "continuous_optimization",
+        "granger_regression",
+        "structural_equation_fitting",
+        "other"
+      ]
+    },
+    "graph_edge_type": {
+      "type": "string",
+      "enum": [
+        "directed",
+        "directed_lagged",
+        "partially_oriented",
+        "bidirected",
+        "undirected"
+      ]
+    },
+    "graph_representation": {
+      "type": "string",
+      "enum": [
+        "dag",
+        "cpdag",
+        "pag",
+        "time_lagged_dag",
+        "weighted_adjacency",
+        "other"
+      ]
+    },
+    "uncertainty_method": {
+      "type": "string",
+      "enum": [
+        "bootstrap",
+        "analytical",
+        "posterior",
+        "monte_carlo",
+        "none"
+      ]
+    },
+    "interval_method": {
+      "type": "string",
+      "enum": [
+        "bootstrap",
+        "analytical",
+        "posterior",
+        "none"
+      ]
+    },
+    "structural_mechanism_family": {
+      "type": "string",
+      "enum": [
+        "linear",
+        "gbdt",
+        "neural",
+        "gam",
+        "polynomial",
+        "other"
+      ]
+    },
+    "residual_semantics": {
+      "type": "string",
+      "enum": [
+        "additive",
+        "implicit",
+        "mixed"
+      ]
+    },
+    "mechanism_family_used": {
+      "type": "string",
+      "enum": [
+        "linear",
+        "gbdt",
+        "neural",
+        "gam",
+        "none"
+      ]
+    },
+    "query_type": {
+      "type": "string",
+      "enum": [
+        "observational",
+        "interventional"
+      ]
+    },
+    "graph_direction": {
+      "type": "string",
+      "enum": [
+        "parents",
+        "children",
+        "both"
+      ]
+    },
+    "neighbor_relationship": {
+      "type": "string",
+      "enum": [
+        "parent",
+        "child"
+      ]
+    },
+    "effect_direction": {
+      "type": "string",
+      "enum": [
+        "up",
+        "down",
+        "neutral"
+      ]
+    },
+    "authentication_type": {
+      "type": "string",
+      "enum": [
+        "none",
+        "api_key",
+        "oauth2"
+      ]
+    },
+    "response_detail": {
+      "type": "string",
+      "enum": [
+        "summary",
+        "full",
+        "raw"
+      ],
+      "$comment": "The current public adapter only exposes summary and full in model definitions; the draft also defines raw."
+    },
+    "response_status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "error",
+        "partial"
+      ],
+      "$comment": "The long-form draft includes partial responses. The current public adapter emits success and error only."
+    },
+    "weight_detail": {
+      "type": "string",
+      "enum": [
+        "raw",
+        "quantized",
+        "ranked",
+        "hidden"
+      ]
+    },
+    "path_detail": {
+      "type": "string",
+      "enum": [
+        "full",
+        "truncated",
+        "hidden"
+      ]
+    },
+    "neighbor_sort_by": {
+      "type": "string",
+      "enum": [
+        "weight",
+        "tau",
+        "name"
+      ]
+    },
+    "intervention_unit": {
+      "type": "string",
+      "enum": [
+        "log_return",
+        "percentage",
+        "absolute",
+        "std_dev"
+      ],
+      "$comment": "These units are explicit in the long-form draft request examples. The current public adapter request model does not yet expose this field."
+    }
+  }
+}

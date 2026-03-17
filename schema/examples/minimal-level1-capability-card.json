@@ -1,0 +1,72 @@
+{
+  "$schema": "https://causalagentprotocol.org/schema/capability-card/v0.2.2.json",
+  "name": "Example CAP Observe Server",
+  "description": "Minimal Level 1 capability card aligned to the extracted CAP v0.2.2 draft shape.",
+  "version": "0.1.0",
+  "cap_spec_version": "0.2.2",
+  "provider": {
+    "name": "Example Org",
+    "url": "https://example.com"
+  },
+  "endpoint": "https://example.com/cap/v1",
+  "conformance_level": 1,
+  "supported_verbs": {
+    "core": [
+      "meta.capabilities",
+      "graph.neighbors",
+      "effect.query"
+    ],
+    "convenience": [
+      "observe.predict"
+    ]
+  },
+  "causal_engine": {
+    "family": "granger",
+    "algorithm": "VAR-Granger",
+    "discovery_method": "granger_regression",
+    "supports_time_lag": true,
+    "supports_latent_variables": false,
+    "supports_nonlinear": false,
+    "supports_instantaneous": false
+  },
+  "detailed_capabilities": {
+    "graph_discovery": true,
+    "graph_traversal": true,
+    "temporal_multi_lag": true,
+    "effect_estimation": false,
+    "intervention_simulation": false,
+    "counterfactual_scm": false,
+    "latent_confounding_modeled": false,
+    "partial_identification": false,
+    "uncertainty_quantified": false
+  },
+  "assumptions": [
+    "granger_predictive_causality_only",
+    "stationarity",
+    "no_latent_confounders_addressed"
+  ],
+  "reasoning_modes_supported": [
+    "conditional_forecast"
+  ],
+  "graph": {
+    "domains": [
+      "macro"
+    ],
+    "node_count": 12,
+    "edge_count": 36,
+    "node_types": [
+      "indicator"
+    ],
+    "edge_types_supported": [
+      "directed_lagged"
+    ],
+    "graph_representation": "time_lagged_dag",
+    "update_frequency": "PT24H",
+    "temporal_resolution": "PT1H",
+    "coverage_description": "Minimal example coverage for macro indicators."
+  },
+  "authentication": {
+    "type": "none",
+    "details": {}
+  }
+}

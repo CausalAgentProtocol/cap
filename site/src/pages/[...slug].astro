@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getSidebarGroups, getSiteMap, renderRoute, routeToSlug } from "../lib/site";
+
+export async function getStaticPaths() {
+  const siteMap = await getSiteMap();
+
+  return siteMap.routes
+    .filter((entry) => !["/", "/docs"].includes(entry.route))
+    .map((entry) => ({
+      params: { slug: routeToSlug(entry.route) },
+      props: { route: entry.route }
+    }));
+}
+
+const { route } = Astro.props;
+const rendered = await renderRoute(route);
+const sidebar = await getSidebarGroups(route);
+---
+
+<BaseLayout
+  title={rendered.entry.title}
+  currentRoute={route}
+  currentSection={rendered.entry.section}
+  sourcePath={rendered.sourcePath}
+  sidebar={sidebar}
+  toc={rendered.toc}
+  description="Repository markdown rendered through the CAP site route map."
+>
+  <Fragment set:html={rendered.html} />
+</BaseLayout>

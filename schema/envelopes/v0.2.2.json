@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/envelopes/v0.2.2.json",
+  "title": "CAP Envelope v0.2.2",
+  "$comment": "Generic CAP request and response envelopes extracted from the long-form v0.2.2 draft and the current public adapter. The accepted cap_version values intentionally record the current 0.2 versus 0.2.2 mismatch instead of silently picking one.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/request_envelope"
+    },
+    {
+      "$ref": "#/$defs/success_response_envelope"
+    },
+    {
+      "$ref": "#/$defs/error_response_envelope"
+    },
+    {
+      "$ref": "#/$defs/partial_response_envelope"
+    }
+  ],
+  "$defs": {
+    "request_options": {
+      "type": "object",
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "response_detail": {
+          "$ref": "../shared/enums.json#/$defs/response_detail"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "error_object": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggestion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "unevaluatedProperties": false
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "has_more": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "total",
+        "offset",
+        "limit",
+        "has_more"
+      ],
+      "unevaluatedProperties": false
+    },
+    "request_envelope": {
+      "type": "object",
+      "properties": {
+        "cap_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_version"
+        },
+        "request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "params": {
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/request_options"
+        }
+      },
+      "required": [
+        "cap_version",
+        "verb",
+        "params"
+      ],
+      "unevaluatedProperties": false
+    },
+    "success_response_envelope": {
+      "type": "object",
+      "properties": {
+        "cap_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_version"
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "success"
+        },
+        "result": {
+          "type": "object"
+        },
+        "provenance": {
+          "$ref": "../shared/provenance.json"
+        },
+        "pagination": {
+          "$ref": "#/$defs/pagination"
+        }
+      },
+      "required": [
+        "cap_version",
+        "request_id",
+        "verb",
+        "status",
+        "result"
+      ],
+      "unevaluatedProperties": false
+    },
+    "error_response_envelope": {
+      "type": "object",
+      "properties": {
+        "cap_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_version"
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "error"
+        },
+        "error": {
+          "$ref": "#/$defs/error_object"
+        }
+      },
+      "required": [
+        "cap_version",
+        "request_id",
+        "verb",
+        "status",
+        "error"
+      ],
+      "unevaluatedProperties": false
+    },
+    "partial_response_envelope": {
+      "type": "object",
+      "$comment": "The long-form draft reserves partial responses at the envelope level but does not yet define verb-specific partial result contracts. This branch preserves the envelope shape without inventing deeper semantics.",
+      "properties": {
+        "cap_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_version"
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "partial"
+        },
+        "result": {
+          "type": "object"
+        },
+        "provenance": {
+          "$ref": "../shared/provenance.json"
+        },
+        "error": {
+          "$ref": "#/$defs/error_object"
+        },
+        "pagination": {
+          "$ref": "#/$defs/pagination"
+        }
+      },
+      "required": [
+        "cap_version",
+        "request_id",
+        "verb",
+        "status",
+        "result"
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

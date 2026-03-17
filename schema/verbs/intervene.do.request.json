@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/intervene.do.request.json",
+  "title": "intervene.do request",
+  "$comment": "Supports the long-form draft request shape and the narrower current public adapter request model.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/draft_request"
+    },
+    {
+      "$ref": "#/$defs/current_adapter_request"
+    }
+  ],
+  "$defs": {
+    "draft_intervention": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "../shared/enums.json#/$defs/intervention_unit"
+        }
+      },
+      "required": [
+        "node_id",
+        "value",
+        "unit"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_params": {
+      "type": "object",
+      "properties": {
+        "interventions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/draft_intervention"
+          },
+          "minItems": 1
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "horizon": {
+          "type": "string",
+          "minLength": 1
+        },
+        "include_paths": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "interventions",
+        "targets"
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_params": {
+      "type": "object",
+      "properties": {
+        "treatment_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "treatment_value": {
+          "type": "number"
+        },
+        "outcome_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "horizon_steps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 168
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "treatment_node",
+        "treatment_value"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_request": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "intervene.do"
+            },
+            "params": {
+              "$ref": "#/$defs/draft_params"
+            }
+          },
+          "required": [
+            "verb",
+            "params"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_request": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "intervene.do"
+            },
+            "params": {
+              "$ref": "#/$defs/current_adapter_params"
+            }
+          },
+          "required": [
+            "verb",
+            "params"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

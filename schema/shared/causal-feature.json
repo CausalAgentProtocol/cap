@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/shared/causal-feature.json",
+  "title": "CAP CausalFeature",
+  "$comment": "Shared CausalFeature object from CAP v0.2.2 section 6.8.",
+  "type": "object",
+  "properties": {
+    "node_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "node_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "node_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "edge_type": {
+      "$ref": "enums.json#/$defs/graph_edge_type"
+    },
+    "impact": {
+      "type": "number"
+    },
+    "impact_fraction": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "weight": {
+      "type": "number"
+    },
+    "tau": {
+      "type": "integer"
+    },
+    "tau_duration": {
+      "type": "string",
+      "minLength": 1
+    },
+    "current_value": {
+      "type": "number"
+    },
+    "current_change_percent": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "node_id",
+    "node_name",
+    "node_type",
+    "edge_type",
+    "impact",
+    "impact_fraction",
+    "weight",
+    "tau",
+    "tau_duration"
+  ],
+  "unevaluatedProperties": false
+}

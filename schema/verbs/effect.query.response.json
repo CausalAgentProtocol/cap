@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/effect.query.response.json",
+  "title": "effect.query response",
+  "$comment": "Supports the long-form CAP v0.2.2 draft response shape, the current public adapter response shape, and the shared error envelope.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/draft_success_response"
+    },
+    {
+      "$ref": "#/$defs/current_adapter_success_response"
+    },
+    {
+      "$ref": "#/$defs/error_response"
+    }
+  ],
+  "$defs": {
+    "draft_estimate": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "$ref": "../shared/enums.json#/$defs/effect_direction"
+        },
+        "probability_positive": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confidence_interval": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "interval_method": {
+          "$ref": "../shared/enums.json#/$defs/interval_method"
+        },
+        "horizon": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "direction",
+        "probability_positive",
+        "horizon"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_result": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "query_type": {
+          "$ref": "../shared/enums.json#/$defs/query_type"
+        },
+        "estimate": {
+          "$ref": "#/$defs/draft_estimate"
+        },
+        "causal_features": {
+          "type": "array",
+          "items": {
+            "$ref": "../shared/causal-feature.json"
+          }
+        },
+        "reasoning_mode": {
+          "$ref": "../shared/enums.json#/$defs/reasoning_mode"
+        },
+        "identification_status": {
+          "$ref": "../shared/enums.json#/$defs/identification_status"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "target",
+        "query_type",
+        "estimate"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "query_type": {
+                "const": "interventional"
+              }
+            },
+            "required": [
+              "query_type"
+            ]
+          },
+          "then": {
+            "required": [
+              "reasoning_mode",
+              "identification_status",
+              "assumptions"
+            ]
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_estimate": {
+      "type": "object",
+      "properties": {
+        "target_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "first_arrive_step": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "last_arrive_step": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "event_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "target_node",
+        "value",
+        "unit"
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_result": {
+      "type": "object",
+      "$comment": "Current public adapter result model from cap_protocol.core.contracts.EffectQueryResult and its server adapters.",
+      "properties": {
+        "query_type": {
+          "$ref": "../shared/enums.json#/$defs/query_type"
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "treatment_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "treatment_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "outcome_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "estimate": {
+          "$ref": "#/$defs/current_adapter_estimate"
+        },
+        "drivers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "reasoning_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identification_status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "query_type",
+        "model",
+        "estimate",
+        "reasoning_mode",
+        "identification_status",
+        "assumptions"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "query_type": {
+                "const": "observational"
+              }
+            },
+            "required": [
+              "query_type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target_node"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "query_type": {
+                "const": "interventional"
+              }
+            },
+            "required": [
+              "query_type"
+            ]
+          },
+          "then": {
+            "required": [
+              "treatment_node",
+              "treatment_value",
+              "outcome_node"
+            ]
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "effect.query"
+            },
+            "result": {
+              "$ref": "#/$defs/draft_result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "effect.query"
+            },
+            "result": {
+              "$ref": "#/$defs/current_adapter_result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "error_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/error_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "effect.query"
+            }
+          },
+          "required": [
+            "verb"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

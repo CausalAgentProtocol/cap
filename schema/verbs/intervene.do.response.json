@@ -1,0 +1,361 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/intervene.do.response.json",
+  "title": "intervene.do response",
+  "$comment": "Supports the long-form draft response shape and the current public adapter response shape. The main divergence is that the draft moved reasoning_mode to per-effect entries, while the current adapter still exposes it at result level.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/draft_success_response"
+    },
+    {
+      "$ref": "#/$defs/current_adapter_success_response"
+    },
+    {
+      "$ref": "#/$defs/error_response"
+    }
+  ],
+  "$defs": {
+    "draft_intervention": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "../shared/enums.json#/$defs/intervention_unit"
+        }
+      },
+      "required": [
+        "node_id",
+        "value",
+        "unit"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_path_edge": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "edge_type": {
+          "$ref": "../shared/enums.json#/$defs/graph_edge_type"
+        },
+        "tau": {
+          "type": "integer"
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "edge_type",
+        "tau",
+        "weight"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_effect": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_change": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence_interval": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "interval_method": {
+          "$ref": "../shared/enums.json#/$defs/interval_method"
+        },
+        "probability_positive": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "propagation_delay": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reasoning_mode": {
+          "$ref": "../shared/enums.json#/$defs/reasoning_mode"
+        },
+        "mechanism_coverage_complete": {
+          "type": "boolean"
+        },
+        "causal_path": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/draft_path_edge"
+          }
+        }
+      },
+      "required": [
+        "target",
+        "expected_change",
+        "unit",
+        "probability_positive",
+        "propagation_delay",
+        "reasoning_mode"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "reasoning_mode": {
+                "const": "scm_simulation"
+              }
+            },
+            "required": [
+              "reasoning_mode"
+            ]
+          },
+          "then": {
+            "required": [
+              "mechanism_coverage_complete"
+            ]
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_result": {
+      "type": "object",
+      "properties": {
+        "interventions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/draft_intervention"
+          },
+          "minItems": 1
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/draft_effect"
+          }
+        },
+        "identification_status": {
+          "$ref": "../shared/enums.json#/$defs/identification_status"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "interventions",
+        "effects",
+        "identification_status",
+        "assumptions"
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_node_effect_summary": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "final_cumulative_effect": {
+          "type": "number"
+        },
+        "first_arrive_step": {
+          "type": "integer"
+        },
+        "last_arrive_step": {
+          "type": "integer"
+        },
+        "event_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "node_id",
+        "final_cumulative_effect",
+        "first_arrive_step",
+        "last_arrive_step",
+        "event_count"
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_result": {
+      "type": "object",
+      "properties": {
+        "treatment_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "treatment_value": {
+          "type": "number"
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delta_unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "horizon_steps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "outcome_node": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outcome_summary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/current_adapter_node_effect_summary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "node_summaries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/current_adapter_node_effect_summary"
+          }
+        },
+        "total_events": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reasoning_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identification_status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "treatment_node",
+        "treatment_value",
+        "model",
+        "delta_unit",
+        "horizon_steps",
+        "total_events",
+        "reasoning_mode",
+        "identification_status",
+        "assumptions"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "intervene.do"
+            },
+            "result": {
+              "$ref": "#/$defs/draft_result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "intervene.do"
+            },
+            "result": {
+              "$ref": "#/$defs/current_adapter_result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "error_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/error_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "intervene.do"
+            }
+          },
+          "required": [
+            "verb"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

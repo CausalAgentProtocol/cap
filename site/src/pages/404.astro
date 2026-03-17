@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Not Found" currentRoute={Astro.url.pathname} currentSection="page">
+  <p>The requested page was not found in the CAP site route map.</p>
+  <p>
+    Try <a href="/">the home page</a> or <a href="/docs">the docs landing page</a>.
+  </p>
+</BaseLayout>

@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/graph.neighbors.response.json",
+  "title": "graph.neighbors response",
+  "$comment": "Supports the richer long-form draft response and the current public adapter response. The adapter currently returns semantic honesty fields here even though the draft shape does not require them for this verb.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/draft_success_response"
+    },
+    {
+      "$ref": "#/$defs/current_adapter_success_response"
+    },
+    {
+      "$ref": "#/$defs/error_response"
+    }
+  ],
+  "$defs": {
+    "draft_neighbor": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "node_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "node_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "domain": {
+          "type": "string",
+          "minLength": 1
+        },
+        "edge_type": {
+          "$ref": "../shared/enums.json#/$defs/graph_edge_type"
+        },
+        "weight": {
+          "type": "number"
+        },
+        "tau": {
+          "type": "integer"
+        },
+        "tau_duration": {
+          "type": "string",
+          "minLength": 1
+        },
+        "current_value": {
+          "type": "number"
+        },
+        "current_change_percent": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "node_id",
+        "node_name",
+        "node_type",
+        "domain",
+        "edge_type",
+        "weight",
+        "tau",
+        "tau_duration"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_result": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "$ref": "../shared/enums.json#/$defs/graph_direction"
+        },
+        "neighbors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/draft_neighbor"
+          }
+        },
+        "intercept": {
+          "type": "number"
+        },
+        "undetermined_neighbor_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "node_id",
+        "direction",
+        "neighbors"
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_neighbor": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relationship": {
+          "$ref": "../shared/enums.json#/$defs/neighbor_relationship"
+        }
+      },
+      "required": [
+        "node_id",
+        "relationship"
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_result": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "$ref": "../shared/enums.json#/$defs/graph_direction"
+        },
+        "neighbors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/current_adapter_neighbor"
+          }
+        },
+        "reasoning_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identification_status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "node_id",
+        "direction",
+        "neighbors",
+        "reasoning_mode",
+        "identification_status",
+        "assumptions"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "graph.neighbors"
+            },
+            "result": {
+              "$ref": "#/$defs/draft_result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "graph.neighbors"
+            },
+            "result": {
+              "$ref": "#/$defs/current_adapter_result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "error_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/error_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "graph.neighbors"
+            }
+          },
+          "required": [
+            "verb"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

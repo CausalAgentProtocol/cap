@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/shared/provenance.json",
+  "title": "CAP Provenance",
+  "$comment": "Shared provenance object extracted from the CAP v0.2.2 long-form draft and the narrower current public adapter contracts.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/draft_provenance"
+    },
+    {
+      "$ref": "#/$defs/current_adapter_provenance"
+    }
+  ],
+  "$defs": {
+    "draft_provenance": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "minLength": 1
+        },
+        "graph_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "graph_timestamp": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "computation_time_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sample_size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mechanism_family_used": {
+          "$ref": "enums.json#/$defs/mechanism_family_used"
+        },
+        "mechanism_model_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "server_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "server_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cap_spec_version": {
+          "$ref": "enums.json#/$defs/cap_spec_version"
+        }
+      },
+      "required": [
+        "algorithm",
+        "graph_version",
+        "computation_time_ms",
+        "server_name",
+        "server_version",
+        "cap_spec_version"
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_provenance": {
+      "type": "object",
+      "$comment": "The current public adapter uses the same base structure but may emit adapter-specific mechanism labels such as linear_scm and does not yet expose sample_size.",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "minLength": 1
+        },
+        "graph_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "graph_timestamp": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "computation_time_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mechanism_family_used": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "mechanism_model_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "server_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "server_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cap_spec_version": {
+          "$ref": "enums.json#/$defs/cap_spec_version"
+        }
+      },
+      "required": [
+        "algorithm",
+        "graph_version",
+        "computation_time_ms",
+        "server_name",
+        "server_version",
+        "cap_spec_version"
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

@@ -1,0 +1,833 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/capability-card/v0.2.2.json",
+  "title": "CAP Capability Card v0.2.2",
+  "$comment": "Capability card schema extracted from the long-form v0.2.2 draft and the current narrower public adapter. The draft branch is the protocol target; the adapter branch is retained explicitly so the current gap is machine-visible rather than hidden.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/draft_protocol_card"
+    },
+    {
+      "$ref": "#/$defs/current_adapter_card"
+    }
+  ],
+  "$defs": {
+    "schema_url": {
+      "type": "string",
+      "const": "https://causalagentprotocol.org/schema/capability-card/v0.2.2.json"
+    },
+    "provider": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ],
+      "unevaluatedProperties": false
+    },
+    "supported_verbs": {
+      "type": "object",
+      "properties": {
+        "core": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "convenience": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "core",
+        "convenience"
+      ],
+      "unevaluatedProperties": false
+    },
+    "detailed_capabilities": {
+      "type": "object",
+      "properties": {
+        "graph_discovery": {
+          "type": "boolean"
+        },
+        "graph_traversal": {
+          "type": "boolean"
+        },
+        "temporal_multi_lag": {
+          "type": "boolean"
+        },
+        "effect_estimation": {
+          "type": "boolean"
+        },
+        "intervention_simulation": {
+          "type": "boolean"
+        },
+        "counterfactual_scm": {
+          "type": "boolean"
+        },
+        "latent_confounding_modeled": {
+          "type": "boolean"
+        },
+        "partial_identification": {
+          "type": "boolean"
+        },
+        "uncertainty_quantified": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "graph_discovery",
+        "graph_traversal",
+        "temporal_multi_lag",
+        "effect_estimation",
+        "intervention_simulation",
+        "counterfactual_scm",
+        "latent_confounding_modeled",
+        "partial_identification",
+        "uncertainty_quantified"
+      ],
+      "unevaluatedProperties": false
+    },
+    "structural_mechanisms": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "families": {
+          "type": "array",
+          "items": {
+            "$ref": "../shared/enums.json#/$defs/structural_mechanism_family"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "nodes_with_fitted_mechanisms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "residuals_computable": {
+          "type": "boolean"
+        },
+        "residual_semantics": {
+          "$ref": "../shared/enums.json#/$defs/residual_semantics"
+        },
+        "mechanism_override_supported": {
+          "type": "boolean"
+        },
+        "counterfactual_ready": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "available",
+        "families",
+        "nodes_with_fitted_mechanisms",
+        "residuals_computable",
+        "residual_semantics",
+        "mechanism_override_supported",
+        "counterfactual_ready"
+      ],
+      "unevaluatedProperties": false
+    },
+    "causal_engine": {
+      "type": "object",
+      "properties": {
+        "family": {
+          "$ref": "../shared/enums.json#/$defs/causal_engine_family"
+        },
+        "algorithm": {
+          "type": "string",
+          "minLength": 1
+        },
+        "discovery_method": {
+          "$ref": "../shared/enums.json#/$defs/causal_engine_discovery_method"
+        },
+        "supports_time_lag": {
+          "type": "boolean"
+        },
+        "supports_latent_variables": {
+          "type": "boolean"
+        },
+        "supports_nonlinear": {
+          "type": "boolean"
+        },
+        "supports_instantaneous": {
+          "type": "boolean"
+        },
+        "structural_mechanisms": {
+          "$ref": "#/$defs/structural_mechanisms"
+        }
+      },
+      "required": [
+        "family",
+        "algorithm",
+        "discovery_method",
+        "supports_time_lag",
+        "supports_latent_variables",
+        "supports_nonlinear",
+        "supports_instantaneous"
+      ],
+      "unevaluatedProperties": false
+    },
+    "graph": {
+      "type": "object",
+      "properties": {
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "node_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "edge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "node_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "edge_types_supported": {
+          "type": "array",
+          "items": {
+            "$ref": "../shared/enums.json#/$defs/graph_edge_type"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "graph_representation": {
+          "$ref": "../shared/enums.json#/$defs/graph_representation"
+        },
+        "update_frequency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "temporal_resolution": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coverage_description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "domains",
+        "node_count",
+        "edge_count",
+        "node_types",
+        "edge_types_supported",
+        "graph_representation",
+        "update_frequency",
+        "temporal_resolution",
+        "coverage_description"
+      ],
+      "unevaluatedProperties": false
+    },
+    "authentication_draft": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "../shared/enums.json#/$defs/authentication_type"
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type",
+        "details"
+      ],
+      "unevaluatedProperties": false
+    },
+    "authentication_adapter": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "none",
+            "api_key"
+          ]
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "details"
+      ],
+      "unevaluatedProperties": false
+    },
+    "rate_limit": {
+      "type": "object",
+      "properties": {
+        "requests_per_hour": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "requests_per_hour"
+      ],
+      "unevaluatedProperties": false
+    },
+    "access_tier_draft": {
+      "type": "object",
+      "properties": {
+        "tier": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verbs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "response_detail": {
+          "$ref": "../shared/enums.json#/$defs/response_detail"
+        },
+        "rate_limit": {
+          "$ref": "#/$defs/rate_limit"
+        }
+      },
+      "required": [
+        "tier",
+        "verbs",
+        "response_detail"
+      ],
+      "unevaluatedProperties": false
+    },
+    "access_tier_adapter": {
+      "type": "object",
+      "properties": {
+        "tier": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verbs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "response_detail": {
+          "type": "string",
+          "enum": [
+            "summary",
+            "full"
+          ]
+        },
+        "hidden_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "tier",
+        "verbs",
+        "response_detail",
+        "hidden_fields"
+      ],
+      "unevaluatedProperties": false
+    },
+    "disclosure_policy_draft": {
+      "type": "object",
+      "properties": {
+        "weight_detail": {
+          "$ref": "../shared/enums.json#/$defs/weight_detail"
+        },
+        "path_detail": {
+          "$ref": "../shared/enums.json#/$defs/path_detail"
+        },
+        "default_response_detail": {
+          "$ref": "../shared/enums.json#/$defs/response_detail"
+        }
+      },
+      "required": [
+        "weight_detail",
+        "path_detail",
+        "default_response_detail"
+      ],
+      "unevaluatedProperties": false
+    },
+    "disclosure_policy_adapter": {
+      "type": "object",
+      "properties": {
+        "hidden_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "default_response_detail": {
+          "type": "string",
+          "enum": [
+            "summary",
+            "full"
+          ]
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "hidden_fields",
+        "default_response_detail",
+        "notes"
+      ],
+      "unevaluatedProperties": false
+    },
+    "bindings": {
+      "type": "object",
+      "properties": {
+        "mcp": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "endpoint": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "enabled",
+            "endpoint"
+          ],
+          "unevaluatedProperties": false
+        },
+        "a2a": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "agent_card_url": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "enabled",
+            "agent_card_url"
+          ],
+          "unevaluatedProperties": false
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "adapter_extension_namespace": {
+      "type": "object",
+      "properties": {
+        "schema_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verbs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "additional_params": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "schema_url",
+        "verbs"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_protocol_card": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "$ref": "#/$defs/schema_url"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cap_spec_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_spec_version"
+        },
+        "provider": {
+          "$ref": "#/$defs/provider"
+        },
+        "endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conformance_level": {
+          "$ref": "../shared/enums.json#/$defs/conformance_level"
+        },
+        "supported_verbs": {
+          "$ref": "#/$defs/supported_verbs"
+        },
+        "causal_engine": {
+          "$ref": "#/$defs/causal_engine"
+        },
+        "detailed_capabilities": {
+          "$ref": "#/$defs/detailed_capabilities"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "reasoning_modes_supported": {
+          "type": "array",
+          "items": {
+            "$ref": "../shared/enums.json#/$defs/reasoning_mode"
+          },
+          "uniqueItems": true
+        },
+        "graph": {
+          "$ref": "#/$defs/graph"
+        },
+        "uncertainty_methods_supported": {
+          "type": "array",
+          "items": {
+            "$ref": "../shared/enums.json#/$defs/uncertainty_method"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "authentication": {
+          "$ref": "#/$defs/authentication_draft"
+        },
+        "access_tiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/access_tier_draft"
+          }
+        },
+        "disclosure_policy": {
+          "$ref": "#/$defs/disclosure_policy_draft"
+        },
+        "bindings": {
+          "$ref": "#/$defs/bindings"
+        },
+        "extensions": {
+          "type": "object",
+          "$comment": "The long-form draft reserves extension namespaces but does not yet define a fully normative nested extension schema in the extracted material used for this repo.",
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "$schema",
+        "name",
+        "description",
+        "version",
+        "cap_spec_version",
+        "provider",
+        "endpoint",
+        "conformance_level",
+        "supported_verbs",
+        "causal_engine",
+        "detailed_capabilities",
+        "assumptions",
+        "reasoning_modes_supported",
+        "graph",
+        "authentication"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "reasoning_modes_supported": {
+                "contains": {
+                  "const": "scm_simulation"
+                }
+              }
+            },
+            "required": [
+              "reasoning_modes_supported"
+            ]
+          },
+          "then": {
+            "properties": {
+              "causal_engine": {
+                "required": [
+                  "structural_mechanisms"
+                ],
+                "properties": {
+                  "structural_mechanisms": {
+                    "properties": {
+                      "available": {
+                        "const": true
+                      },
+                      "mechanism_override_supported": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "available",
+                      "mechanism_override_supported"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "conformance_level": {
+                "const": 1
+              }
+            },
+            "required": [
+              "conformance_level"
+            ]
+          },
+          "then": {
+            "properties": {
+              "supported_verbs": {
+                "properties": {
+                  "core": {
+                    "allOf": [
+                      {
+                        "contains": {
+                          "const": "meta.capabilities"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "const": "graph.neighbors"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "const": "effect.query"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "conformance_level": {
+                "const": 2
+              }
+            },
+            "required": [
+              "conformance_level"
+            ]
+          },
+          "then": {
+            "properties": {
+              "supported_verbs": {
+                "properties": {
+                  "core": {
+                    "allOf": [
+                      {
+                        "contains": {
+                          "const": "meta.capabilities"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "const": "graph.neighbors"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "const": "effect.query"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "const": "graph.paths"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_card": {
+      "type": "object",
+      "$comment": "Current public adapter capability card as implemented in services/cap-reference. This branch deliberately keeps the narrower current model, including non-canonical reasoning mode strings and the adapter-specific disclosure/auth shapes.",
+      "properties": {
+        "$schema": {
+          "$ref": "#/$defs/schema_url"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cap_spec_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_spec_version"
+        },
+        "provider": {
+          "$ref": "#/$defs/provider"
+        },
+        "endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conformance_level": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "supported_verbs": {
+          "$ref": "#/$defs/supported_verbs"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "reasoning_modes_supported": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "graph": {
+          "$ref": "#/$defs/graph"
+        },
+        "authentication": {
+          "$ref": "#/$defs/authentication_adapter"
+        },
+        "access_tiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/access_tier_adapter"
+          }
+        },
+        "disclosure_policy": {
+          "$ref": "#/$defs/disclosure_policy_adapter"
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/adapter_extension_namespace"
+          }
+        }
+      },
+      "required": [
+        "$schema",
+        "name",
+        "description",
+        "version",
+        "cap_spec_version",
+        "provider",
+        "endpoint",
+        "conformance_level",
+        "supported_verbs",
+        "assumptions",
+        "reasoning_modes_supported",
+        "graph",
+        "authentication",
+        "disclosure_policy"
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

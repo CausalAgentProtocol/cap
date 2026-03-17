@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/effect.query.request.json",
+  "title": "effect.query request",
+  "$comment": "Supports both the long-form CAP v0.2.2 draft request shape and the current narrower public adapter request model.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/draft_request"
+    },
+    {
+      "$ref": "#/$defs/current_adapter_request"
+    }
+  ],
+  "$defs": {
+    "draft_intervention": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "../shared/enums.json#/$defs/intervention_unit"
+        }
+      },
+      "required": [
+        "node_id",
+        "value",
+        "unit"
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_params": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "query_type": {
+          "$ref": "../shared/enums.json#/$defs/query_type"
+        },
+        "intervention": {
+          "$ref": "#/$defs/draft_intervention"
+        },
+        "top_k_causes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "include_provenance": {
+          "type": "boolean"
+        },
+        "include_paths": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "target",
+        "query_type"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "query_type": {
+                "const": "interventional"
+              }
+            },
+            "required": [
+              "query_type"
+            ]
+          },
+          "then": {
+            "required": [
+              "intervention"
+            ]
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_params": {
+      "type": "object",
+      "$comment": "Current public adapter model from cap_protocol.core.contracts.EffectQueryParams.",
+      "properties": {
+        "query_type": {
+          "$ref": "../shared/enums.json#/$defs/query_type"
+        },
+        "target_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "treatment_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "treatment_value": {
+          "type": "number"
+        },
+        "outcome_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "horizon_steps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 168
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "feature_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "query_type"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "query_type": {
+                "const": "observational"
+              }
+            },
+            "required": [
+              "query_type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target_node"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "query_type": {
+                "const": "interventional"
+              }
+            },
+            "required": [
+              "query_type"
+            ]
+          },
+          "then": {
+            "required": [
+              "treatment_node",
+              "treatment_value",
+              "outcome_node"
+            ]
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "draft_request": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "effect.query"
+            },
+            "params": {
+              "$ref": "#/$defs/draft_params"
+            }
+          },
+          "required": [
+            "verb",
+            "params"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "current_adapter_request": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "effect.query"
+            },
+            "params": {
+              "$ref": "#/$defs/current_adapter_params"
+            }
+          },
+          "required": [
+            "verb",
+            "params"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

@@ -1,0 +1,6 @@
+CAP_REPO_PLAN.md
+NEXT_AGENT_HANDOFF.md
+.DS_Store
+site/node_modules
+site/dist
+site/.astro
