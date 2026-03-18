@@ -1,80 +1,50 @@
 # Write an Honest Capability Card
 
-This guide focuses on one CAP principle: semantic honesty.
+This guide covers one of CAP's core differentiators: capability disclosure before invocation.
 
-The capability card is where a server tells clients what kind of causal surface it is actually exposing. If that disclosure is overstated, the rest of the protocol becomes much less trustworthy.
+## What A Client Must Decide Before The First Call
 
-## 1. Start From Public Runtime Behavior
+A client should be able to decide, before sending a request:
 
-Write the card from the behavior your public server actually exposes.
+- what conformance level the server claims
+- which verbs the server actually supports
+- what assumptions shape the server's claims
+- which reasoning modes may appear in responses
+- what graph scope is available
+- what authentication is required
 
-Do not write it from:
+Write the card from public runtime behavior, not from roadmap intent, internal experiments, or private product surfaces.
 
-- internal roadmap intent
-- unpublished research capabilities
-- features only available through private extensions
+## Minimum Fields Versus Richer Draft Fields
 
-## 2. Declare The Lowest Honest Level
+Publish the minimum honest card first.
 
-- choose Level 1 unless you truly support interventional semantics
-- choose Level 2 only when your public interface can satisfy the Level 2 contract
-- do not claim Level 3 under `v0.2.x`
+At minimum, a CAP server should disclose:
 
-## 3. Be Conservative About Verb Support
-
-List only verbs that a client can actually invoke successfully.
-
-Keep CAP core separate from extensions:
-
-- CAP core verbs belong in `supported_verbs`
-- implementation-specific verbs belong in extension namespaces
-
-## 4. Disclose Engine And Capability Shape Clearly
-
-Do not stop at the level number.
-
-Be explicit about:
-
-- `causal_engine`
-- `detailed_capabilities`
+- `conformance_level`
+- `supported_verbs`
+- `assumptions`
 - `reasoning_modes_supported`
 - `graph`
+- `authentication`
 
-This is how a client tells, for example, whether a server is closer to graph propagation or mechanism-backed simulation.
+Some servers will also publish richer draft-era fields such as `causal_engine`, `detailed_capabilities`, `access_tiers`, `disclosure_policy`, or `bindings`.
 
-## 5. Write Assumptions Precisely
+Do not treat richer draft metadata as required merely because the long-form draft sketches it. Publish the minimum honest card first; add richer capability detail only when it is stable and truly supported by the public surface.
 
-`assumptions` should describe what must hold for the server's claims to be interpreted correctly.
+## Common Ways To Overstate Support
 
-Good assumption disclosure is:
+The most common mistakes are:
 
-- specific
-- conservative
-- stable enough to be machine-read
+- claiming a higher conformance level than the public interface actually satisfies
+- listing verbs that only work through private adapters or extensions
+- advertising reasoning modes the server cannot defend technically
+- presenting product-specific discovery or workflow semantics as CAP core
+- hiding draft-versus-implementation narrowing instead of labeling it explicitly
 
-Avoid vague promotional language where a client needs machine-readable constraints.
-
-## 6. Do Not Overstate Interventional Semantics
-
-If you cannot support a stronger causal claim, say so.
-
-Examples:
-
-- do not advertise `scm_simulation` unless the server genuinely supports it
-- do not imply counterfactual conformance because you have partial internal machinery
-- do not hide narrower semantics behind broad labels like "causal AI"
-
-## 7. Keep Draft-Implementation Gaps Explicit
-
-If your public implementation is narrower than the richer protocol direction:
-
-- document the narrowing explicitly
-- do not silently redefine CAP core to match your implementation
-
-That keeps the protocol honest while still allowing phased adoption.
+If your public implementation is narrower than the richer protocol direction, document that narrowing clearly. Do not redefine CAP core downward just to match a temporary adapter.
 
 ## Read Next
 
-- [Capability Card Concept](../concepts/capability-card.md)
-- [Capability Card Spec](../../specification/capability-card.md)
 - [Quickstart for Servers](../quickstart-server.md)
+- [Capability Card Specification](../../specification/capability-card.md)

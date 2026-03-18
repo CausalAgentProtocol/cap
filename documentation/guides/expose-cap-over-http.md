@@ -1,8 +1,8 @@
 # Expose CAP Over HTTP
 
-HTTP is the primary CAP binding.
+This guide explains one practical way to expose a CAP server over HTTP.
 
-This guide covers the minimum public surface an implementation should expose over HTTP without mixing in implementation-specific semantics.
+It is not the normative protocol definition. The normative contract lives in `specification/`. This guide focuses on implementation choices that preserve CAP semantics without mixing in implementation-specific product behavior.
 
 ## 1. Publish The Capability Card
 
@@ -10,65 +10,49 @@ Expose:
 
 - `GET /.well-known/cap.json`
 
-This is the first discovery entry point for clients.
+This is the primary discovery path for clients.
 
 If you also expose `meta.capabilities`, it should return the same capability information through the CAP envelope.
 
-## 2. Accept CAP Request Envelopes Over POST
+## 2. Carry CAP Envelopes Over HTTP
 
-The long-form draft uses verb-category paths:
+The current public draft uses verb-category paths such as:
 
 - `POST {endpoint}/{verb_category}/{verb_name}`
 
 Example:
 
-- `intervene.do` becomes `POST {endpoint}/intervene/do`
+- `intervene.do` -> `POST {endpoint}/intervene/do`
 
-The important rule is not your internal router shape. The important rule is that the HTTP binding preserves CAP request and response semantics.
+The important rule is not the router shape. The important rule is that HTTP preserves CAP request and response semantics.
 
-## 3. Keep The Envelope Stable
+## 3. Keep Auth Visible Up Front
 
-HTTP should carry the CAP request envelope, including:
+Declare authentication in the capability card and enforce it consistently.
 
-- `cap_version`
-- `request_id`
-- `verb`
-- `params`
-- optional `options`
+Clients should be able to determine the basic invocation requirement before making protected requests.
 
-Responses should carry:
+## 4. Return Protocol Errors
 
-- `status`
-- `result` or `error`
-- optional `provenance`
-
-## 4. Make Auth Visible Up Front
-
-Clients should not have to guess auth behavior.
-
-Declare authentication in the capability card and enforce it consistently in HTTP handlers.
-
-Current source materials include models such as:
-
-- `none`
-- `api_key`
-- `oauth2`
-
-## 5. Return Protocol Errors, Not Silent Fallbacks
+Prefer explicit protocol behavior over silent fallbacks.
 
 Examples:
 
-- use `verb_not_supported` when a verb is unavailable
-- use `query_type_not_supported` when Level 1 cannot satisfy interventional `effect.query`
-- use `invalid_intervention` when intervention parameters are invalid
+- `verb_not_supported`
+- `query_type_not_supported`
+- `invalid_intervention`
 
-## 6. Keep The Binding Separate From Product Internals
+## 5. Keep The Binding Separate From Product Internals
 
-Do not let internal URL layout or service topology redefine CAP semantics.
+HTTP is a binding for CAP, not a place to promote internal URL topology or product workflow concepts into protocol core.
 
-The HTTP layer is a binding for CAP, not a place to smuggle in product-specific concepts as if they were CAP core.
+## Other Integration Surfaces
+
+MCP can wrap CAP verbs, but it does not replace CAP capability disclosure or causal semantics.
+
+A2A can help with discovery or delegation, but it does not redefine CAP request meaning, response meaning, or semantic honesty rules.
 
 ## Read Next
 
-- [Message Format Spec](../../specification/message-format.md)
-- [Transport Bindings Spec](../../specification/transport-bindings.md)
+- [Protocol Specification](../../specification/protocol.md)
+- [Message Format Specification](../../specification/message-format.md)

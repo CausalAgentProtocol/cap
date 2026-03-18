@@ -4,112 +4,73 @@
 
 Every CAP server MUST publish a machine-readable capability card at `/.well-known/cap.json`.
 
-If the server also exposes `meta.capabilities`, that verb MUST return capability information that is semantically equivalent to the well-known document.
-
-The machine-readable contract for this object lives in `schema/capability-card/v0.2.2.json`.
+If a server also exposes `meta.capabilities`, that verb MUST return capability information that is semantically equivalent to the well-known document.
 
 ## Purpose
 
 The capability card exists so a client can determine, before invocation:
 
-- which CAP version the server implements
-- which conformance level it claims
-- which verbs it supports
-- which assumptions the server depends on
-- which reasoning modes may appear in responses
-- what graph coverage, authentication, and disclosure constraints apply
+- claimed conformance level
+- supported verbs
+- assumptions
+- reasoning modes that may appear in responses
+- graph scope or availability
+- authentication requirements
 
-Without this object, CAP loses one of its main interoperability guarantees and collapses toward a generic RPC surface.
+## Minimum Required Disclosure
 
-## Required Field Groups
+A CAP server MUST disclose enough information for a client to determine:
 
-The v0.2.2 protocol draft requires these top-level groups:
+- claimed conformance level
+- supported verbs
+- assumptions
+- reasoning modes that may appear in responses
+- graph scope or availability
+- authentication requirements
 
-- identity: `name`, `description`, `version`, `cap_spec_version`, `provider`, `endpoint`
-- conformance: `conformance_level`, `supported_verbs`
-- engine disclosure: `causal_engine`
-- detailed capability disclosure: `detailed_capabilities`
-- semantic disclosure: `assumptions`, `reasoning_modes_supported`
-- graph metadata: `graph`
-- authentication: `authentication`
+At minimum, this includes these field groups:
 
-The draft also defines these optional but important groups:
+- `conformance_level`
+- `supported_verbs`
+- `assumptions`
+- `reasoning_modes_supported`
+- `graph`
+- `authentication`
 
+## Additional Draft-Era Disclosure
+
+The long-form draft also defines richer fields such as:
+
+- `causal_engine`
+- `structural_mechanisms`
+- `detailed_capabilities`
 - `uncertainty_methods_supported`
 - `access_tiers`
 - `disclosure_policy`
 - `bindings`
 - `extensions`
 
-## Engine Disclosure
+These remain part of CAP protocol direction even when a current implementation does not yet expose all of them publicly.
 
-`causal_engine` is part of the normative contract, not optional narrative.
+## Authentication And Access Disclosure
 
-It MUST disclose:
+A CAP server MUST declare its authentication model in the capability card.
 
-- `family`
-- `algorithm`
-- `discovery_method`
-- `supports_time_lag`
-- `supports_latent_variables`
-- `supports_nonlinear`
-- `supports_instantaneous`
+Clients MUST be able to determine the basic invocation requirement before making protected requests.
 
-If a server claims `scm_simulation` in `reasoning_modes_supported`, then `causal_engine.structural_mechanisms` becomes conditionally required.
+When a server uses access tiers or progressive disclosure, it SHOULD describe that policy in a machine-discoverable way where possible.
 
-In that case:
+## Disclosure Integrity
 
-- `structural_mechanisms.available` MUST be `true`
-- `structural_mechanisms.mechanism_override_supported` MUST be `true`
+The capability card MUST distinguish between:
 
-Claiming `scm_simulation` without that disclosure is a conformance violation.
+- what a server can compute
+- what a server is willing to disclose at a given access level
 
-## Verb And Level Disclosure
+A server MUST NOT overstate causal semantics, reasoning modes, or verb support because richer detail is hidden, summarized, or redacted.
 
-`supported_verbs.core` is the conformance-relevant verb surface.
+## Draft Gap Rule
 
-Minimum rules:
+Current adapters may trail richer draft-era disclosure.
 
-- Level 1 cards MUST disclose support for `meta.capabilities`, `graph.neighbors`, and `effect.query`
-- Level 2 cards MUST additionally disclose `graph.paths`
-- convenience verbs MAY be listed in `supported_verbs.convenience`, but they do not redefine CAP core
-
-## Semantic Disclosure
-
-The capability card MUST disclose:
-
-- server-level `assumptions`
-- `reasoning_modes_supported`
-
-These fields are central to CAP's semantic honesty model. A server MUST NOT advertise:
-
-- a conformance level it does not implement
-- reasoning modes it never returns
-- extension verbs as CAP core
-
-## Access And Disclosure Controls
-
-`authentication` is required because a client must know how to invoke the server safely.
-
-`access_tiers` and `disclosure_policy` are how a server explains progressive disclosure. When present, they SHOULD let a client infer:
-
-- which verbs are available at each tier
-- which response detail levels are available
-- whether weights or paths may be hidden or obfuscated
-
-## Current Draft-Implementation Gap
-
-The long-form v0.2.2 draft defines a richer capability card than the current public `cap-reference` adapter currently emits.
-
-Notable draft fields that the current adapter does not yet expose include:
-
-- `causal_engine`
-- `structural_mechanisms`
-- `detailed_capabilities`
-- `uncertainty_methods_supported`
-- `bindings`
-
-The repo rule is:
-
-- the normative protocol definition keeps the richer draft boundary
-- the machine schema records the current narrower adapter explicitly rather than silently collapsing the protocol to it
+That gap does not shrink CAP core by itself. It means implementations should either expose the richer fields or label their narrower public surface explicitly.

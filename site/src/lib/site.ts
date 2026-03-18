@@ -254,7 +254,6 @@ export async function getSidebarGroups(currentRoute: string): Promise<SidebarGro
           ].includes(entry.route)
         )
       },
-      { title: "Concepts", links: byPrefix("/docs/concepts") },
       { title: "Guides", links: byPrefix("/docs/guides") },
       { title: "Rationale", links: byPrefix("/docs/rationale") },
       {

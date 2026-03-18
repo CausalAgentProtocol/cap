@@ -1,52 +1,61 @@
 # Quickstart for Servers
 
-This is the minimal path to expose a causal engine through CAP without overstating what the server can do.
+This is the smallest honest path for exposing a causal engine through CAP.
+
+Start by choosing the lowest conformance level your public interface actually satisfies. CAP rewards honest disclosure more than ambitious labeling. A narrower but truthful Level 1 or Level 2 surface is better than a richer surface that overstates semantics or capabilities.
 
 ## 1. Choose The Lowest Honest Level
 
-- choose Level 1 if you support capability disclosure, graph traversal, and observational querying
-- choose Level 2 only if you can honestly support interventional querying and the required semantic disclosure
+Choose Level 1 when your public interface can support:
 
-Do not choose a level based on roadmap intent, internal experiments, or a partially wired demo. Choose the level your public interface actually satisfies today.
-
-## 2. Build The Smallest Honest Surface
-
-A Level 1 server needs:
-
-- `GET /.well-known/cap.json`
+- capability disclosure
 - `meta.capabilities`
 - `graph.neighbors`
-- `effect.query` for observational queries
+- observational `effect.query`
 
-That is the minimum viable CAP server.
+Choose Level 2 only when your public interface can also support:
 
-A Level 2 server additionally needs:
-
-- `effect.query` for interventional queries
+- interventional `effect.query`
 - `graph.paths`
+- structured semantic disclosure for interventional responses
 
-`intervene.do` is strongly recommended for Level 2, but it is still a convenience verb rather than a conformance-defining core verb.
+If the answer is uncertain, choose the lower level.
 
-## 3. Publish The Capability Card Before You Tune Ergonomics
+## 2. Publish The Minimum Capability Card
 
-Your capability card should be complete enough for a client to decide whether to call you at all.
+Before tuning ergonomics, publish a truthful capability card.
 
-Be precise about:
+At minimum, clients should be able to determine:
 
 - `conformance_level`
 - `supported_verbs`
-- `causal_engine`
-- `detailed_capabilities`
 - `assumptions`
 - `reasoning_modes_supported`
 - `graph`
 - `authentication`
 
-If you claim `scm_simulation`, your card must also disclose `causal_engine.structural_mechanisms` with honest mechanism coverage information.
+Richer draft-era fields are useful when stable, but the minimum honest card comes first.
 
-## 4. Return Honest Semantics
+## 3. Expose The Minimum Verb Surface
 
-If you return interventional results, you must include:
+The smallest useful CAP surface is:
+
+- `meta.capabilities`
+- `graph.neighbors`
+- `effect.query` for observational use
+
+Level 2 adds:
+
+- `graph.paths`
+- `effect.query` for interventional use
+
+`intervene.do` is practical and valuable, but it should not be presented here as the whole conformance boundary.
+
+## 4. Return Semantically Honest Responses
+
+If you return stronger causal claims, disclose them clearly.
+
+For interventional responses, include:
 
 - `reasoning_mode`
 - `identification_status`
@@ -54,46 +63,18 @@ If you return interventional results, you must include:
 
 If you cannot support the requested semantics, return a protocol error instead of a stronger-looking answer.
 
-Examples:
+## 5. Keep Draft Gaps Explicit
 
-- Level 1 receiving interventional `effect.query` should return `query_type_not_supported`
-- a server without full mechanism coverage should not label a target effect `scm_simulation`
+Current public adapters still trail parts of the richer draft.
 
-## 5. The Smallest Level 1 Implementation Shape
+Do this:
 
-For many teams, the easiest way to start is:
+- align new work to the CAP protocol boundary where possible
+- document implementation narrowing explicitly when needed
+- keep product-specific behavior in extensions rather than CAP core
 
-1. publish a truthful capability card
-2. implement `meta.capabilities` by returning that same card through the CAP envelope
-3. implement `graph.neighbors` over your existing graph store
-4. implement `effect.query` only for `query_type: "observational"`
+## Read Next
 
-That gives clients something real to integrate against without pretending you already support intervention semantics.
-
-## 6. Keep The Draft-Adapter Gap Explicit
-
-Current CAP source materials still record a few visible gaps between the long-form `v0.2.2` draft and the current public adapter.
-
-Do not erase those gaps in prose.
-
-Instead:
-
-- align new implementations to the richer protocol direction where possible
-- document intentional narrowing when you must match a narrower adapter
-- keep implementation-specific behavior in convenience surfaces or extensions, not CAP core
-
-## 7. Validate Against The Source Of Truth
-
-Use these files as primary references:
-
-- [Conformance](../specification/conformance.md)
-- [Capability Card](../specification/capability-card.md)
-- [Causal Semantics](../specification/causal-semantics.md)
-- [Verbs](../specification/verbs.md)
-- [Message Format](../specification/message-format.md)
-
-Machine-readable contracts live in:
-
-- `schema/capability-card/v0.2.2.json`
-- `schema/envelopes/v0.2.2.json`
-- `schema/verbs/`
+- [Write an Honest Capability Card](guides/write-an-honest-capability-card.md)
+- [Conformance Specification](../specification/conformance.md)
+- [Verbs Specification](../specification/verbs.md)

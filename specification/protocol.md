@@ -2,35 +2,35 @@
 
 ## Scope
 
-CAP defines a causal semantics layer for discovering, invoking, and interpreting causal reasoning capabilities.
+CAP defines the semantic protocol layer for discovering, invoking, and interpreting causal reasoning capabilities.
 
 CAP standardizes:
 
 - capability disclosure
-- causal verb semantics
-- message envelopes
-- conformance levels
-- assumptions and provenance disclosure
-- transport bindings
+- verb semantics
+- common request and response envelopes
+- conformance boundaries
+- semantic honesty and provenance expectations
 
 CAP does not standardize:
 
-- how an engine discovers causal structure
-- how a server ingests or stores source data
+- graph-learning or model-fitting internals
+- source-data ingestion or storage
+- product-specific discovery surfaces
 - agent orchestration
-- implementation-specific discovery surfaces
 
 ## Roles
 
-- `CAP Client`: invokes causal reasoning through CAP
-- `CAP Server`: exposes a causal engine through CAP and is responsible for honest disclosure
+- `CAP Client`: discovers a CAP server, invokes CAP verbs, and interprets results
+- `CAP Server`: exposes a causal service and is responsible for truthful capability and response disclosure
 
 ## Protocol Flow
 
-1. Discover the server through `/.well-known/cap.json`
-2. Inspect the capability card for level, verbs, assumptions, and auth
-3. Invoke a CAP verb
-4. Interpret the response using `reasoning_mode`, `identification_status`, `assumptions`, and `provenance`
+1. A client discovers the server's capability card.
+2. The client evaluates conformance level, supported verbs, assumptions, and invocation requirements.
+3. The client invokes a CAP verb through a transport binding.
+4. The server returns a CAP response envelope.
+5. The client interprets the result using the disclosed semantics and provenance.
 
 ## State Model
 
@@ -38,18 +38,30 @@ CAP `v0.2.x` is stateless.
 
 Rules:
 
-- every request must be self-contained
-- there is no required server-side session
-- a server may expose `graph_version` or other freshness metadata in provenance
-- freshness metadata is informational, not a session mechanism
+- each request MUST be self-contained
+- CAP does not require server-side session state
+- freshness metadata MAY appear in provenance
+- freshness metadata MUST NOT be treated as a session mechanism
 
-## Independent Layer
+## Binding Model
 
-CAP is an independent semantics layer.
+CAP is transport-agnostic at the semantic layer.
 
-Implications:
+Bindings may change discovery or invocation mechanics, but they MUST NOT change the meaning of capability disclosure, verb semantics, semantic honesty fields, or provenance.
 
-- CAP can be exposed natively over HTTP
-- CAP can be bound into MCP
-- CAP can be referenced from A2A discovery and delegation
-- the semantics do not change across bindings
+HTTP is the primary current public binding.
+
+Other integration surfaces such as MCP or A2A MAY carry or expose CAP behavior, but they do not redefine CAP semantics.
+
+If the same capability is exposed through multiple bindings, the server MUST preserve the same:
+
+- capability disclosure
+- verb semantics
+- semantic honesty obligations
+- provenance expectations
+
+## Disclosure And Redaction
+
+A server MAY summarize, quantize, or redact parts of a response according to its disclosure policy.
+
+A server MUST NOT use disclosure limits as a reason to overstate causal semantics, identification strength, or evidentiary status.

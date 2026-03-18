@@ -33,52 +33,10 @@
       "source": "documentation/quickstart-server.md"
     },
     {
-      "route": "/docs/concepts/capability-card",
+      "route": "/docs/guides/write-an-honest-capability-card",
       "section": "documentation",
-      "title": "Capability Card",
-      "source": "documentation/concepts/capability-card.md"
-    },
-    {
-      "route": "/docs/concepts/causal-hierarchy",
-      "section": "documentation",
-      "title": "Causal Hierarchy",
-      "source": "documentation/concepts/causal-hierarchy.md"
-    },
-    {
-      "route": "/docs/concepts/conformance-levels",
-      "section": "documentation",
-      "title": "Conformance Levels",
-      "source": "documentation/concepts/conformance-levels.md"
-    },
-    {
-      "route": "/docs/concepts/reasoning-modes",
-      "section": "documentation",
-      "title": "Reasoning Modes",
-      "source": "documentation/concepts/reasoning-modes.md"
-    },
-    {
-      "route": "/docs/concepts/provenance",
-      "section": "documentation",
-      "title": "Provenance",
-      "source": "documentation/concepts/provenance.md"
-    },
-    {
-      "route": "/docs/concepts/independent-layer",
-      "section": "documentation",
-      "title": "Independent Layer",
-      "source": "documentation/concepts/independent-layer.md"
-    },
-    {
-      "route": "/docs/concepts/extensions",
-      "section": "documentation",
-      "title": "Extensions",
-      "source": "documentation/concepts/extensions.md"
-    },
-    {
-      "route": "/docs/guides/choose-a-conformance-level",
-      "section": "documentation",
-      "title": "Choose a Conformance Level",
-      "source": "documentation/guides/choose-a-conformance-level.md"
+      "title": "Write an Honest Capability Card",
+      "source": "documentation/guides/write-an-honest-capability-card.md"
     },
     {
       "route": "/docs/guides/expose-cap-over-http",
@@ -87,64 +45,22 @@
       "source": "documentation/guides/expose-cap-over-http.md"
     },
     {
-      "route": "/docs/guides/expose-cap-via-mcp",
-      "section": "documentation",
-      "title": "Expose CAP via MCP",
-      "source": "documentation/guides/expose-cap-via-mcp.md"
-    },
-    {
-      "route": "/docs/guides/integrate-cap-with-a2a",
-      "section": "documentation",
-      "title": "Integrate CAP With A2A",
-      "source": "documentation/guides/integrate-cap-with-a2a.md"
-    },
-    {
-      "route": "/docs/guides/write-an-honest-capability-card",
-      "section": "documentation",
-      "title": "Write an Honest Capability Card",
-      "source": "documentation/guides/write-an-honest-capability-card.md"
-    },
-    {
       "route": "/docs/guides/migrate-from-proprietary-causal-api",
       "section": "documentation",
       "title": "Migrate From a Proprietary Causal API",
       "source": "documentation/guides/migrate-from-proprietary-causal-api.md"
     },
     {
-      "route": "/docs/guides/author-a-domain-extension",
+      "route": "/docs/guides/extensions",
       "section": "documentation",
-      "title": "Author a Domain Extension",
-      "source": "documentation/guides/author-a-domain-extension.md"
+      "title": "Extensions",
+      "source": "documentation/guides/extensions.md"
     },
     {
       "route": "/docs/rationale/why-cap",
       "section": "documentation",
       "title": "Why CAP",
       "source": "documentation/rationale/why-cap.md"
-    },
-    {
-      "route": "/docs/rationale/why-not-mcp-tools-alone",
-      "section": "documentation",
-      "title": "Why Not MCP Tools Alone",
-      "source": "documentation/rationale/why-not-mcp-tools-alone.md"
-    },
-    {
-      "route": "/docs/rationale/semantic-honesty",
-      "section": "documentation",
-      "title": "Semantic Honesty",
-      "source": "documentation/rationale/semantic-honesty.md"
-    },
-    {
-      "route": "/docs/rationale/open-protocol-closed-engines",
-      "section": "documentation",
-      "title": "Open Protocol, Closed Engines",
-      "source": "documentation/rationale/open-protocol-closed-engines.md"
-    },
-    {
-      "route": "/docs/rationale/protocol-evolution-notes",
-      "section": "documentation",
-      "title": "Protocol Evolution Notes",
-      "source": "documentation/rationale/protocol-evolution-notes.md"
     },
     {
       "route": "/spec",
@@ -181,18 +97,6 @@
       "section": "specification",
       "title": "Message Format",
       "source": "specification/message-format.md"
-    },
-    {
-      "route": "/spec/transport-bindings",
-      "section": "specification",
-      "title": "Transport Bindings",
-      "source": "specification/transport-bindings.md"
-    },
-    {
-      "route": "/spec/security",
-      "section": "specification",
-      "title": "Security",
-      "source": "specification/security.md"
     },
     {
       "route": "/spec/conformance",

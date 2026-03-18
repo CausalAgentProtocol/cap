@@ -2,11 +2,11 @@
 
 Use this guide when you already have a private causal API and want to expose an interoperable CAP surface without flattening product-specific features into CAP core.
 
+Migration should preserve CAP semantics first and transport ergonomics second.
+
 ## 1. Inventory What Your API Actually Does
 
-Before you map anything to CAP, list your current public operations and classify them by purpose.
-
-Typical buckets:
+Before mapping anything to CAP, classify current public operations by purpose:
 
 - capability discovery
 - graph traversal
@@ -15,102 +15,67 @@ Typical buckets:
 - metadata and health
 - product-specific helper endpoints
 
-Do not start by renaming endpoints. Start by understanding what semantic claim each operation makes.
+Do not start by renaming endpoints. Start by identifying what semantic claim each operation makes.
 
 ## 2. Separate CAP Core From Product Surfaces
 
-Map operations into three groups:
+Map operations into:
 
 - CAP core verbs
 - CAP convenience verbs
 - extensions
 
-Examples:
-
-- neighborhood or path lookup may map to `graph.neighbors` or `graph.paths`
-- observational prediction may map to `effect.query` with `query_type: "observational"`
-- intervention simulation may map to Level 2 `effect.query` or `intervene.do`
-- product-specific helper endpoints should remain extensions
-
 Do not force product discovery surfaces or internal workflow helpers into CAP core just because they already exist.
 
 ## 3. Translate Semantics, Not Just Names
 
-The hard part of migration is semantic mapping, not endpoint renaming.
-
-Ask for each existing endpoint:
+For each existing endpoint, ask:
 
 - is this observational, interventional, or something else
-- what assumptions does this result rely on
-- what reasoning mode would honestly describe this result
-- is the result formally identified, estimated, simulated, or heuristic
+- what assumptions does the result depend on
+- what reasoning mode would honestly describe the result
+- is the claim identified, simulated, heuristic, or merely predictive
 
-If your existing API cannot answer those questions, the migration is not only an adapter exercise. It is also a disclosure exercise.
+If you cannot answer those questions, the migration is also a disclosure exercise.
 
 ## 4. Publish A Capability Card Early
 
-The capability card is the front door for CAP clients.
-
-Use it to disclose:
+Use the capability card to disclose the minimum honest surface first:
 
 - `conformance_level`
 - `supported_verbs`
-- `causal_engine`
-- `detailed_capabilities`
 - `assumptions`
 - `reasoning_modes_supported`
 - `graph`
 - `authentication`
 
-This is where product-specific wording gets replaced with interoperable protocol disclosure.
+Add richer draft-era fields when they are stable and genuinely public.
 
 ## 5. Keep Product-Specific Features As Extensions
 
-If your private API has features that are useful but not CAP core, expose them as explicit extensions.
+Useful proprietary surfaces can remain public without becoming CAP core.
 
-Common cases:
+Common examples:
 
 - domain-specific node metadata
 - custom traversal helpers
-- product-tiered analytics verbs
-- preview counterfactual or diagnostic surfaces
-
-Clients should be able to tell clearly which parts are:
-
-- CAP core
-- CAP convenience
-- your extension surface
+- tier-specific analytics verbs
+- preview diagnostic or counterfactual helpers
 
 ## 6. Tighten Error Behavior
 
-A proprietary API may rely on implicit fallbacks or product-specific error conventions.
+Prefer explicit CAP errors over implicit fallbacks:
 
-When migrating to CAP, prefer explicit protocol behavior.
-
-Examples:
-
-- unsupported verbs should return `verb_not_supported`
-- Level 1 interventional `effect.query` should return `query_type_not_supported`
-- invalid intervention parameters should return `invalid_intervention`
+- `verb_not_supported`
+- `query_type_not_supported`
+- `invalid_intervention`
 
 ## 7. Do Not Overstate The First CAP Release
 
-Your first CAP surface does not need to expose every internal feature.
-
 A smaller honest Level 1 or Level 2 interface is better than a broader but semantically ambiguous adapter.
-
-## Practical Migration Pattern
-
-For many teams, the cleanest order is:
-
-1. publish `/.well-known/cap.json`
-2. implement `meta.capabilities`
-3. expose the minimum honest verb surface
-4. move proprietary extras into named extensions
-5. add richer CAP coverage later if the semantics are stable
 
 ## Read Next
 
-- [Choose a Conformance Level](choose-a-conformance-level.md)
+- [Quickstart for Servers](../quickstart-server.md)
 - [Write an Honest Capability Card](write-an-honest-capability-card.md)
-- [Author a Domain Extension](author-a-domain-extension.md)
+- [Extensions](extensions.md)
