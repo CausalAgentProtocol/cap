@@ -49,7 +49,3 @@ This repository contains the CAP normative specification, supporting schemas, re
 - minimal capability-card examples live in `schema/examples/`
 - example implementations and adapters are useful references, but they are not the CAP standard itself
 - the site should source content from this repo rather than becoming a second content fork
-
-## Planning Notes
-
-- see [CAP_REPO_PLAN.md](CAP_REPO_PLAN.md) for repo structure, IA, migration mapping, and boundary decisions
