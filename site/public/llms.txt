@@ -1,0 +1,38 @@
+# CAP
+
+> CAP is an open protocol for discovering, invoking, and interpreting causal reasoning capabilities across compliant causal systems. Use the specification pages for normative protocol requirements and the documentation pages for onboarding, implementation guidance, and examples.
+
+## Start Here
+
+- [Overview](https://causalagentprotocol.io/docs/overview): Plain-language introduction to CAP and its protocol boundary.
+- [Getting Started](https://causalagentprotocol.io/docs/getting-started): Recommended entry point for implementers and readers new to CAP.
+- [Specification](https://causalagentprotocol.io/spec): Normative CAP specification landing page.
+
+## Documentation
+
+- [What Is Causality?](https://causalagentprotocol.io/docs/concepts/what-is-causality): Background on causality concepts used by CAP.
+- [Quickstart for Clients](https://causalagentprotocol.io/docs/quickstart-client): How CAP clients discover and call CAP servers.
+- [Quickstart for Servers](https://causalagentprotocol.io/docs/quickstart-server): How to expose a CAP server over HTTP.
+- [Write an Honest Capability Card](https://causalagentprotocol.io/docs/guides/write-an-honest-capability-card): Guidance for truthful capability disclosure.
+- [Expose CAP Over HTTP](https://causalagentprotocol.io/docs/guides/expose-cap-over-http): HTTP binding guidance and request flow.
+- [Migrate From a Proprietary Causal API](https://causalagentprotocol.io/docs/guides/migrate-from-proprietary-causal-api): Migration guidance for existing causal APIs.
+- [Extensions](https://causalagentprotocol.io/docs/guides/extensions): How to think about CAP extensions.
+- [Why CAP](https://causalagentprotocol.io/docs/rationale/why-cap): Protocol rationale and positioning.
+
+## Specification
+
+- [Protocol](https://causalagentprotocol.io/spec/protocol): CAP scope, roles, state model, and binding model.
+- [Capability Card](https://causalagentprotocol.io/spec/capability-card): Normative disclosure requirements for `/.well-known/cap.json`.
+- [Causal Semantics](https://causalagentprotocol.io/spec/causal-semantics): `reasoning_mode`, `identification_status`, and `assumptions`.
+- [Verbs](https://causalagentprotocol.io/spec/verbs): CAP verb surface and semantic expectations.
+- [Message Format](https://causalagentprotocol.io/spec/message-format): Request and response envelope structure.
+- [Conformance](https://causalagentprotocol.io/spec/conformance): Level model and current `v0.2.x` conformance rules.
+- [Extensions](https://causalagentprotocol.io/spec/extensions): Extension boundaries and compatibility expectations.
+- [Specification Changelog](https://causalagentprotocol.io/spec/changelog): Changelog for spec-level changes.
+
+## Notes
+
+- CAP `v0.2.x` treats specification prose as the normative source of truth.
+- Machine-readable contract artifacts live in the repository schema layer, including capability-card, envelope, verb, and shared enum schemas.
+- Level 3 counterfactual conformance remains reserved in `v0.2.x`.
+- The current public reference implementation is narrower than the long-form draft in several places; prefer the specification pages when protocol requirements and implementation surface differ.
