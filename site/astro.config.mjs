@@ -1,6 +1,13 @@
 import { defineConfig } from "astro/config";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  redirects: {
+    "/": "/docs/overview",
+    "/docs": "/docs/overview"
+  },
+  build: {
+    redirects: command !== "build"
+  },
   markdown: {
     syntaxHighlight: "shiki",
     shikiConfig: {
@@ -8,4 +15,4 @@ export default defineConfig({
     }
   },
   output: "static"
-});
+}));

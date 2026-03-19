@@ -3,12 +3,6 @@
   "policy": "Site routes must point back to repository source files. The site is a presentation layer and must not become a second content fork.",
   "routes": [
     {
-      "route": "/",
-      "section": "page",
-      "title": "CAP",
-      "source": "site/content/pages/index.md"
-    },
-    {
       "route": "/docs/overview",
       "section": "documentation",
       "title": "Overview",

@@ -322,13 +322,9 @@ export async function getSidebarGroups(currentRoute: string): Promise<SidebarGro
       {
         title: "Start",
         links: siteMap.routes.filter((entry) =>
-          [
-            "/docs/overview",
-            "/docs/getting-started",
-            "/docs/concepts/what-is-causality",
-            "/docs/quickstart-client",
-            "/docs/quickstart-server"
-          ].includes(entry.route)
+          ["/docs/overview", "/docs/getting-started", "/docs/quickstart-client", "/docs/quickstart-server"].includes(
+            entry.route
+          )
         )
       },
       { title: "Concepts", links: byPrefix("/docs/concepts") },

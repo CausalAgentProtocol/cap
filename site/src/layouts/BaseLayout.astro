@@ -10,16 +10,14 @@ interface Props {
   title: string;
   currentRoute: string;
   currentSection?: string;
-  sourcePath?: string;
   description?: string;
   sidebar?: SidebarGroup[];
   toc?: TocHeading[];
 }
 
-const { title, currentRoute, currentSection, sourcePath, description, sidebar = [], toc = [] } = Astro.props;
+const { title, currentRoute, currentSection, description, sidebar = [], toc = [] } = Astro.props;
 
 const topNav = [
-  { href: "/", label: "Home", active: currentRoute === "/" },
   {
     href: "/docs/overview",
     label: "Docs",
@@ -529,7 +527,7 @@ const topNav = [
       <div class="frame">
         <header class="masthead">
           <div class="masthead-top">
-            <a class="brand" href="/">Causal Agent Protocol</a>
+            <a class="brand" href="/docs/overview">Causal Agent Protocol</a>
             <nav class="nav" aria-label="Primary">
               {
                 topNav.map((item) => (
@@ -565,7 +563,6 @@ const topNav = [
             )
           }
           <div class="main">
-            {sourcePath && <div class="source">Source: {sourcePath}</div>}
             <div class="prose">
               <slot />
             </div>
