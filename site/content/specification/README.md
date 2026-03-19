@@ -4,7 +4,7 @@ This directory holds the site-facing specification landing content.
 
 Preferred source of truth:
 
-- `../../specification/`
+- [`../../specification/`](../../../specification/index.md)
 
 Navigation and route-to-source mapping live in:
 
@@ -12,4 +12,4 @@ Navigation and route-to-source mapping live in:
 
 Rule:
 
-- do not fork normative specification text here when it can be sourced directly from `../../specification/`
+- do not fork normative specification text here when it can be sourced directly from [`../../specification/`](../../../specification/index.md)

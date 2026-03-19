@@ -2,7 +2,7 @@
 
 This guide explains one practical way to expose a CAP server over HTTP.
 
-It is not the normative protocol definition. The normative contract lives in `specification/`. This guide focuses on implementation choices that preserve CAP semantics without mixing in implementation-specific product behavior.
+It is not the normative protocol definition. The normative contract lives in [the specification](../../specification/index.md). This guide focuses on implementation choices that preserve CAP semantics without mixing in implementation-specific product behavior.
 
 The current `cap-reference` implementation uses a single HTTP entrypoint with CAP envelopes, not one path per verb. In practice that means clients post to `/api/v1/cap` and the server dispatches by the request's `verb` field. The same app also serves `GET /`, `GET /.well-known/cap.json`, and `GET /api/v1/health` as discovery and operational metadata.
 
@@ -29,10 +29,16 @@ Example request:
   "cap_version": "0.2.2",
   "request_id": "req-neighbors-1",
   "verb": "graph.neighbors",
+  "context": {
+    "graph_ref": {
+      "graph_id": "abel-main",
+      "graph_version": "CausalNodeV2"
+    }
+  },
   "params": {
     "node_id": "<node-id>",
-    "direction": "both",
-    "top_k": 5
+    "scope": "parents",
+    "max_neighbors": 5
   }
 }
 ```
@@ -56,8 +62,8 @@ Prefer explicit protocol behavior over silent fallbacks.
 Examples:
 
 - `verb_not_supported`
-- `query_type_not_supported`
 - `invalid_intervention`
+- `upstream_error`
 
 ## 5. Keep The Binding Separate From Product Internals
 

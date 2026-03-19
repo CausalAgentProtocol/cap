@@ -53,7 +53,7 @@ Additional binding rule:
 
 - if a server advertises `scm_simulation`, its capability card MUST disclose `causal_engine.structural_mechanisms`
 - that object MUST show `available: true`
-- that object MUST show `mechanism_override_supported: true`
+- any public mechanism-override support MUST be disclosed truthfully and MUST NOT be implied by `scm_simulation` alone
 
 ## Identification Status
 
@@ -116,6 +116,8 @@ When a server needs narrower implementation-specific assumptions, it MAY add cus
 
 If a server emits a nonstandard algorithm label, it SHOULD still prefer a stable, human-recognizable spelling and avoid overloading an existing canonical name.
 
+Current public implementations may also disclose mechanism families such as `linear_scm` in capability cards or provenance when that is the stable implementation-facing spelling. Repository schemas and examples should preserve that disclosure instead of forcing a looser label.
+
 ## Science Boundary
 
 CAP does not standardize which engine is scientifically correct.
@@ -134,7 +136,13 @@ That boundary is the protocol's semantic honesty layer.
 
 Some richer CAP payloads may eventually use a shared `default_reasoning_mode` plus per-claim override.
 
-The current `cap-reference` contract is narrower: `intervene.do` selects one `outcome_node`, returns one `outcome_summary`, and carries a singular result-level `reasoning_mode`.
+The current `cap-reference` contract is narrower: core `intervene.do` carries one treatment and one selected `outcome_node`, and exposes a singular result-level `reasoning_mode` for that one interventional claim.
+
+Structural verbs need the same semantic honesty discipline. In particular:
+
+- Markov blanket membership SHOULD use `reasoning_mode = "structural_semantics"`
+- Markov blanket membership SHOULD use `identification_status = "not_applicable"`
+- servers SHOULD avoid framing Markov blanket membership as an identified causal effect unless they are actually returning a different effect-bearing relation
 
 ## Current Reference Note
 

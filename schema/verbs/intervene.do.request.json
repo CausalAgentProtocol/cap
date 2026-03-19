@@ -2,17 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/verbs/intervene.do.request.json",
   "title": "intervene.do request",
-  "$comment": "Supports the long-form draft request shape and the narrower current public adapter request model.",
+  "$comment": "Supports the current public CAP intent-only request shape plus the older richer draft shape kept for compatibility review.",
   "anyOf": [
     {
-      "$ref": "#/$defs/draft_request"
+      "$ref": "#/$defs/current_request"
     },
     {
-      "$ref": "#/$defs/current_adapter_request"
+      "$ref": "#/$defs/legacy_request"
     }
   ],
   "$defs": {
-    "draft_intervention": {
+    "legacy_intervention": {
       "type": "object",
       "properties": {
         "node_id": {
@@ -33,13 +33,13 @@
       ],
       "unevaluatedProperties": false
     },
-    "draft_params": {
+    "legacy_params": {
       "type": "object",
       "properties": {
         "interventions": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/draft_intervention"
+            "$ref": "#/$defs/legacy_intervention"
           },
           "minItems": 1
         },
@@ -66,7 +66,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_params": {
+    "current_params": {
       "type": "object",
       "properties": {
         "treatment_node": {
@@ -79,24 +79,16 @@
         "outcome_node": {
           "type": "string",
           "minLength": 1
-        },
-        "horizon_steps": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 168
-        },
-        "model": {
-          "type": "string",
-          "minLength": 1
         }
       },
       "required": [
         "treatment_node",
-        "treatment_value"
+        "treatment_value",
+        "outcome_node"
       ],
       "unevaluatedProperties": false
     },
-    "draft_request": {
+    "current_request": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
@@ -108,7 +100,7 @@
               "const": "intervene.do"
             },
             "params": {
-              "$ref": "#/$defs/draft_params"
+              "$ref": "#/$defs/current_params"
             }
           },
           "required": [
@@ -119,7 +111,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_request": {
+    "legacy_request": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
@@ -131,7 +123,7 @@
               "const": "intervene.do"
             },
             "params": {
-              "$ref": "#/$defs/current_adapter_params"
+              "$ref": "#/$defs/legacy_params"
             }
           },
           "required": [

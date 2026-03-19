@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/graph.markov_blanket.response.json",
+  "title": "graph.markov_blanket response",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/success_response"
+    },
+    {
+      "$ref": "#/$defs/error_response"
+    }
+  ],
+  "$defs": {
+    "neighbor": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "../shared/enums.json#/$defs/graph_neighbor_role"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "node_id",
+        "roles"
+      ],
+      "unevaluatedProperties": false
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "neighbors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/neighbor"
+          }
+        },
+        "total_candidate_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "edge_semantics": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reasoning_mode": {
+          "$ref": "../shared/enums.json#/$defs/reasoning_mode"
+        },
+        "identification_status": {
+          "$ref": "../shared/enums.json#/$defs/identification_status"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "node_id",
+        "neighbors",
+        "truncated",
+        "reasoning_mode",
+        "identification_status",
+        "assumptions"
+      ],
+      "unevaluatedProperties": false
+    },
+    "success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "graph.markov_blanket"
+            },
+            "result": {
+              "$ref": "#/$defs/result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "error_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/error_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "graph.markov_blanket"
+            }
+          },
+          "required": [
+            "verb"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

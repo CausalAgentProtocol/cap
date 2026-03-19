@@ -2,20 +2,20 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/verbs/intervene.do.response.json",
   "title": "intervene.do response",
-  "$comment": "Supports the long-form draft response shape and the current public adapter response shape. The draft stays claim-scoped with singular reasoning_mode, while the current adapter narrows intervene.do to a selected outcome summary and singular result-level reasoning_mode.",
+  "$comment": "Supports the current public single-claim CAP response shape plus the older richer draft shape kept for compatibility review.",
   "anyOf": [
     {
-      "$ref": "#/$defs/draft_success_response"
+      "$ref": "#/$defs/current_success_response"
     },
     {
-      "$ref": "#/$defs/current_adapter_success_response"
+      "$ref": "#/$defs/legacy_success_response"
     },
     {
       "$ref": "#/$defs/error_response"
     }
   ],
   "$defs": {
-    "draft_intervention": {
+    "legacy_intervention": {
       "type": "object",
       "properties": {
         "node_id": {
@@ -36,7 +36,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "draft_path_edge": {
+    "legacy_path_edge": {
       "type": "object",
       "properties": {
         "from": {
@@ -66,7 +66,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "draft_effect": {
+    "legacy_effect": {
       "type": "object",
       "properties": {
         "target": {
@@ -109,7 +109,7 @@
         "causal_path": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/draft_path_edge"
+            "$ref": "#/$defs/legacy_path_edge"
           }
         }
       },
@@ -142,20 +142,20 @@
       ],
       "unevaluatedProperties": false
     },
-    "draft_result": {
+    "legacy_result": {
       "type": "object",
       "properties": {
         "interventions": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/draft_intervention"
+            "$ref": "#/$defs/legacy_intervention"
           },
           "minItems": 1
         },
         "effects": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/draft_effect"
+            "$ref": "#/$defs/legacy_effect"
           }
         },
         "identification_status": {
@@ -178,49 +178,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_node_effect_summary": {
-      "type": "object",
-      "properties": {
-        "node_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "final_cumulative_effect": {
-          "type": "number"
-        },
-        "first_arrive_step": {
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "last_arrive_step": {
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "event_count": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "mechanism_coverage_complete": {
-          "type": [
-            "boolean",
-            "null"
-          ]
-        }
-      },
-      "required": [
-        "node_id",
-        "final_cumulative_effect"
-      ],
-      "unevaluatedProperties": false
-    },
-    "current_adapter_result": {
+    "current_result": {
       "type": "object",
       "properties": {
         "treatment_node": {
@@ -230,35 +188,19 @@
         "treatment_value": {
           "type": "number"
         },
-        "model": {
-          "type": "string",
-          "minLength": 1
-        },
         "delta_unit": {
           "type": "string",
           "minLength": 1
         },
-        "horizon_steps": {
-          "type": "integer",
-          "minimum": 1
+        "reasoning_mode": {
+          "$ref": "../shared/enums.json#/$defs/reasoning_mode"
         },
         "outcome_node": {
           "type": "string",
           "minLength": 1
         },
-        "outcome_summary": {
-          "$ref": "#/$defs/current_adapter_node_effect_summary"
-        },
-        "reasoning_mode": {
-          "$ref": "../shared/enums.json#/$defs/reasoning_mode"
-        },
-        "total_events": {
-          "type": "integer",
-          "minimum": 0
-        },
         "identification_status": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "../shared/enums.json#/$defs/identification_status"
         },
         "assumptions": {
           "type": "array",
@@ -271,16 +213,15 @@
       "required": [
         "treatment_node",
         "treatment_value",
-        "model",
-        "outcome_node",
-        "outcome_summary",
+        "delta_unit",
         "reasoning_mode",
+        "outcome_node",
         "identification_status",
         "assumptions"
       ],
       "unevaluatedProperties": false
     },
-    "draft_success_response": {
+    "current_success_response": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
@@ -292,7 +233,7 @@
               "const": "intervene.do"
             },
             "result": {
-              "$ref": "#/$defs/draft_result"
+              "$ref": "#/$defs/current_result"
             }
           },
           "required": [
@@ -303,7 +244,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_success_response": {
+    "legacy_success_response": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
@@ -315,7 +256,7 @@
               "const": "intervene.do"
             },
             "result": {
-              "$ref": "#/$defs/current_adapter_result"
+              "$ref": "#/$defs/legacy_result"
             }
           },
           "required": [

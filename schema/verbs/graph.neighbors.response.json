@@ -2,102 +2,98 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/verbs/graph.neighbors.response.json",
   "title": "graph.neighbors response",
-  "$comment": "Supports the richer long-form draft response and the current public adapter response. The adapter currently returns semantic honesty fields here even though the draft shape does not require them for this verb.",
+  "$comment": "Supports the current public CAP response shape plus the older legacy shape kept for compatibility review.",
   "anyOf": [
     {
-      "$ref": "#/$defs/draft_success_response"
+      "$ref": "#/$defs/current_success_response"
     },
     {
-      "$ref": "#/$defs/current_adapter_success_response"
+      "$ref": "#/$defs/legacy_success_response"
     },
     {
       "$ref": "#/$defs/error_response"
     }
   ],
   "$defs": {
-    "draft_neighbor": {
+    "current_neighbor": {
       "type": "object",
       "properties": {
         "node_id": {
           "type": "string",
           "minLength": 1
         },
-        "node_name": {
-          "type": "string",
-          "minLength": 1
-        },
-        "node_type": {
-          "type": "string",
-          "minLength": 1
-        },
-        "domain": {
-          "type": "string",
-          "minLength": 1
-        },
-        "edge_type": {
-          "$ref": "../shared/enums.json#/$defs/graph_edge_type"
-        },
-        "weight": {
-          "type": "number"
-        },
-        "tau": {
-          "type": "integer"
-        },
-        "tau_duration": {
-          "type": "string",
-          "minLength": 1
-        },
-        "current_value": {
-          "type": "number"
-        },
-        "current_change_percent": {
-          "type": "number"
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "../shared/enums.json#/$defs/graph_neighbor_role"
+          },
+          "uniqueItems": true
         }
       },
       "required": [
         "node_id",
-        "node_name",
-        "node_type",
-        "domain",
-        "edge_type",
-        "weight",
-        "tau",
-        "tau_duration"
+        "roles"
       ],
       "unevaluatedProperties": false
     },
-    "draft_result": {
+    "current_result": {
       "type": "object",
       "properties": {
         "node_id": {
           "type": "string",
           "minLength": 1
         },
-        "direction": {
-          "$ref": "../shared/enums.json#/$defs/graph_direction"
+        "scope": {
+          "$ref": "../shared/enums.json#/$defs/graph_neighbor_scope"
         },
         "neighbors": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/draft_neighbor"
+            "$ref": "#/$defs/current_neighbor"
           }
         },
-        "intercept": {
-          "type": "number"
-        },
-        "undetermined_neighbor_count": {
-          "type": "integer",
+        "total_candidate_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 0
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "edge_semantics": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reasoning_mode": {
+          "$ref": "../shared/enums.json#/$defs/reasoning_mode"
+        },
+        "identification_status": {
+          "$ref": "../shared/enums.json#/$defs/identification_status"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       },
       "required": [
         "node_id",
-        "direction",
-        "neighbors"
+        "scope",
+        "neighbors",
+        "truncated",
+        "reasoning_mode",
+        "identification_status",
+        "assumptions"
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_neighbor": {
+    "legacy_neighbor": {
       "type": "object",
       "properties": {
         "node_id": {
@@ -114,7 +110,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_result": {
+    "legacy_result": {
       "type": "object",
       "properties": {
         "node_id": {
@@ -127,7 +123,7 @@
         "neighbors": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/current_adapter_neighbor"
+            "$ref": "#/$defs/legacy_neighbor"
           }
         },
         "reasoning_mode": {
@@ -156,7 +152,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "draft_success_response": {
+    "current_success_response": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
@@ -168,7 +164,7 @@
               "const": "graph.neighbors"
             },
             "result": {
-              "$ref": "#/$defs/draft_result"
+              "$ref": "#/$defs/current_result"
             }
           },
           "required": [
@@ -179,7 +175,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_success_response": {
+    "legacy_success_response": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
@@ -191,7 +187,7 @@
               "const": "graph.neighbors"
             },
             "result": {
-              "$ref": "#/$defs/current_adapter_result"
+              "$ref": "#/$defs/legacy_result"
             }
           },
           "required": [

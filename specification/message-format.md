@@ -13,7 +13,15 @@ A CAP request envelope MUST include:
 It MAY include:
 
 - `request_id`
+- `context`
 - `options`
+
+If `context` is present, it MAY include shared cross-verb request state such as:
+
+- `graph_ref.graph_id`
+- `graph_ref.graph_version`
+
+Shared request context SHOULD be used for cross-cutting selection state rather than reintroducing the same selector independently on multiple verb payloads.
 
 ## Response Envelope
 

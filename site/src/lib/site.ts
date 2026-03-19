@@ -1,3 +1,4 @@
+import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import MarkdownIt from "markdown-it";
@@ -30,12 +31,22 @@ export type TocHeading = {
 const siteRoot = path.resolve(import.meta.dirname, "..", "..");
 const capRoot = path.resolve(siteRoot, "..");
 const siteMapPath = path.join(siteRoot, "content", "site-map.json");
+const externalLinksPath = path.join(capRoot, "config", "external-links.json");
+
+type ExternalLinksConfig = {
+  docsBaseUrl: string;
+  githubOrgBaseUrl: string;
+  repositories: {
+    cap: string;
+  };
+};
 
 let cachedSiteMap: SiteMap | null = null;
 let cachedCodeHighlighterPromise: Promise<ReturnType<typeof createHighlighter> extends Promise<infer T> ? T : never> | null = null;
 
 const SHIKI_THEME = "github-light";
 const SHIKI_LANGS = ["python", "json", "bash", "typescript", "javascript", "yaml", "markdown", "text"] as const;
+const externalLinks = JSON.parse(fsSync.readFileSync(externalLinksPath, "utf8")) as ExternalLinksConfig;
 
 export async function getSiteMap(): Promise<SiteMap> {
   if (cachedSiteMap) {
@@ -71,6 +82,27 @@ export function resolveSourcePath(source: string): string {
 
 function normalizePathForLookup(target: string): string {
   return target.replaceAll(path.sep, "/");
+}
+
+function trimTrailingSlash(value: string): string {
+  return value.replace(/\/+$/, "");
+}
+
+function joinUrl(base: string, pathname = ""): string {
+  const normalizedBase = trimTrailingSlash(base);
+
+  if (!pathname) {
+    return normalizedBase;
+  }
+
+  return `${normalizedBase}/${pathname.replace(/^\/+/, "")}`;
+}
+
+function githubCapUrl(pathname = ""): string {
+  return joinUrl(
+    externalLinks.githubOrgBaseUrl,
+    `${externalLinks.repositories.cap}${pathname ? `/${pathname.replace(/^\/+/, "")}` : ""}`
+  );
 }
 
 function createMarkdownRenderer(currentSource: string, siteMap: SiteMap) {
@@ -285,7 +317,16 @@ function rewriteHref(href: string, currentSource: string, sourceToRoute: Map<str
   const mappedRoute = sourceToRoute.get(resolvedRelative);
 
   if (!mappedRoute) {
-    return href;
+    if (!fsSync.existsSync(resolvedAbsolute)) {
+      return href;
+    }
+
+    const stats = fsSync.statSync(resolvedAbsolute);
+    const githubPath = stats.isDirectory()
+      ? `tree/main/${resolvedRelative}`
+      : `blob/main/${resolvedRelative}`;
+
+    return hash ? `${githubCapUrl(githubPath)}#${hash}` : githubCapUrl(githubPath);
   }
 
   return hash ? `${mappedRoute}#${hash}` : mappedRoute;

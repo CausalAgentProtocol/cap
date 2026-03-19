@@ -32,7 +32,7 @@ Some servers may expose richer draft-era fields such as `causal_engine`, `detail
 Good first requests are:
 
 - `graph.neighbors`
-- `effect.query` with `query_type: "observational"`
+- `observe.predict`
 
 With the current Python client:
 
@@ -40,19 +40,27 @@ With the current Python client:
 import asyncio
 
 from cap_protocol.client import AsyncCAPClient
+from cap_protocol.core import CAPGraphRef
 
 
 async def main() -> None:
     client = AsyncCAPClient("http://127.0.0.1:8000")
     try:
+        graph_ref = CAPGraphRef(graph_id="abel-main", graph_version="CausalNodeV2")
         capabilities = await client.meta_capabilities()
         neighbors = await client.graph_neighbors(
             node_id="<node-id>",
-            direction="both",
-            top_k=5,
+            scope="parents",
+            max_neighbors=5,
+            graph_ref=graph_ref,
+        )
+        prediction = await client.observe_predict(
+            target_node="<target-node-id>",
+            graph_ref=graph_ref,
         )
         print(capabilities.model_dump(mode="json", exclude_none=True))
         print(neighbors.model_dump(mode="json", exclude_none=True))
+        print(prediction.model_dump(mode="json", exclude_none=True))
     finally:
         await client.aclose()
 
@@ -62,18 +70,18 @@ asyncio.run(main())
 
 Under the hood, the SDK posts a CAP envelope to the single HTTP entrypoint and sets `verb` for you. Route-style aliases can also be accepted by the SDK, but they are normalized client-side before the request is sent.
 
-For observational `effect.query`, the current Python client follows the narrower public adapter shape:
+The current Python client passes graph selection as shared request context rather than duplicating graph selectors per verb:
 
 ```python
-response = await client.effect_query(
-    query_type="observational",
-    target_node="<target-node-id>",
-    model="linear",
-    feature_type="parents",
+response = await client.intervene_do(
+    treatment_node="<treatment-node-id>",
+    treatment_value=1.0,
+    outcome_node="<outcome-node-id>",
+    graph_ref=CAPGraphRef(graph_id="abel-main", graph_version="CausalNodeV2"),
 )
 ```
 
-Treat that narrower request shape as a current implementation detail or draft gap, not as the whole CAP boundary.
+Treat fixed server-side execution choices such as mechanism family or rollout horizon as server disclosure, not as mandatory client-supplied CAP core input.
 
 ## 4. Interpret Semantic Disclosure
 
@@ -88,7 +96,11 @@ Inspect:
 
 Those fields tell you what kind of claim the server is making and how comparable it is to answers from other systems. In causal systems, that context is part of the answer.
 
-In the current `cap-reference` contract, both `effect.query` and `intervene.do` expose a singular `reasoning_mode`. `intervene.do` is narrowed to a selected `outcome_node` plus its `outcome_summary`, rather than a multi-claim result set.
+In the current `cap-reference` contract:
+
+- `observe.predict` exposes observational intent and may disclose `observational_prediction`
+- `graph.markov_blanket` is treated as structural semantics, not an identified causal effect
+- core `intervene.do` exposes one treatment-to-outcome claim and discloses fixed mechanism usage through provenance rather than request params
 
 ## 5. Keep The Draft Gap Explicit
 
@@ -99,6 +111,7 @@ Practical rule:
 - treat the minimum card fields and core verb contract as the stable base
 - treat richer draft fields as protocol direction when the server exposes them
 - treat adapter-specific narrowing as a compatibility detail, not as a semantic rewrite
+- treat older `effect.query` examples as archival draft material rather than the current public CAP core surface
 
 ## Read Next
 

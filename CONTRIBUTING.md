@@ -4,9 +4,9 @@ This repository contains the public specification, documentation, schemas, and s
 
 Contribution rules:
 
-- normative protocol changes belong under `specification/`
-- tutorials and explainers belong under `documentation/`
-- machine-readable artifacts belong under `schema/`
+- normative protocol changes belong under [`specification/`](specification/index.md)
+- tutorials and explainers belong under [`documentation/`](documentation/getting-started.md)
+- machine-readable artifacts belong under [`schema/`](schema/README.md)
 - `site/` should reuse repo content instead of rewriting it
 
 Editorial constraints:

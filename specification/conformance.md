@@ -17,22 +17,22 @@ Level 1 is the minimum viable CAP server.
 A Level 1 server MUST implement these core verbs:
 
 - `meta.capabilities`
+- `observe.predict`
 - `graph.neighbors`
-- `effect.query` for observational queries
+- `graph.markov_blanket`
 
 A Level 1 server SHOULD implement these convenience verbs:
 
-- `observe.predict`
 - `traverse.parents`
-- `meta.health`
+- `traverse.children`
 
 Level 1 MUST NOT imply interventional support.
 
-When a Level 1 server receives `effect.query` with `query_type = "interventional"`, it MUST return `query_type_not_supported`.
-
-Level 1 does not require `reasoning_mode`, `identification_status`, or response-level `assumptions` for ordinary observational results.
+Level 1 does not require `reasoning_mode`, `identification_status`, or response-level `assumptions` for ordinary observational prediction results.
 
 Level 1 servers MAY still include those fields on observational or structural verbs when doing so improves semantic clarity.
+
+When a Level 1 server exposes `graph.markov_blanket`, it MUST NOT describe blanket membership as an identified interventional effect.
 
 ## Level 2: Intervene
 
@@ -41,25 +41,30 @@ Level 2 extends Level 1 for engines that can simulate or estimate interventions.
 A Level 2 server MUST implement:
 
 - all Level 1 requirements
-- `effect.query` for interventional queries
+- `intervene.do`
 - `graph.paths`
 
 A Level 2 server SHOULD implement:
 
-- `intervene.do`
+- `traverse.parents`
 - `traverse.children`
 
-For every `intervene.*` response and every `effect.query` response with `query_type = "interventional"`, the server MUST disclose:
+For every `intervene.*` response, the server MUST disclose:
 
 - `reasoning_mode`
 - `identification_status`
 - `assumptions`
 
-For multi-effect `intervene.do` payloads, that disclosure SHOULD remain inspectable at effect level, either directly on each effect summary or through a shared result-level `default_reasoning_mode` plus effect-level override.
+The CAP core `intervene.do` request is intent-only:
 
-The current `cap-reference` contract is narrower: it requires an `outcome_node`, returns a selected `outcome_summary`, and keeps singular result-level `reasoning_mode`.
+- `treatment_node`
+- `treatment_value`
+- `outcome_node`
+- optional `context.graph_ref`
 
-`effect.query` remains a single-claim surface under the current contract and therefore keeps singular `reasoning_mode`.
+Servers MUST NOT present fixed execution defaults such as one hardcoded mechanism family or one hardcoded rollout horizon as if they were generic user-controlled CAP core parameters.
+
+If a server needs richer intervention controls, it SHOULD expose them through an extension or another explicitly non-core surface until CAP standardizes those controls normatively.
 
 ## Level 3: Counterfact
 

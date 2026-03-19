@@ -37,6 +37,7 @@ const topNav = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} | CAP</title>
+    <link rel="icon" type="image/svg+xml" href="/icons/cap-logo-c-sharp-transparent.svg" />
     <ClientRouter />
     <script>
       const copySectionLink = async (trigger) => {
@@ -154,11 +155,25 @@ const topNav = [
 
       .brand {
         flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
         text-decoration: none;
         color: var(--ink);
         font-size: 0.9375rem;
         font-weight: var(--font-weight-medium);
         letter-spacing: -0.01em;
+      }
+
+      .brand-mark {
+        flex: 0 0 auto;
+        width: 1.15rem;
+        height: 1.15rem;
+        display: block;
+      }
+
+      .brand-wordmark {
+        white-space: nowrap;
       }
 
       .nav {
@@ -492,6 +507,10 @@ const topNav = [
           justify-content: flex-start;
         }
 
+        .brand-wordmark {
+          white-space: normal;
+        }
+
         .nav a {
           height: auto;
           padding: 0.8rem 0.95rem 0.65rem;
@@ -527,7 +546,10 @@ const topNav = [
       <div class="frame">
         <header class="masthead">
           <div class="masthead-top">
-            <a class="brand" href="/docs/overview">Causal Agent Protocol</a>
+            <a class="brand" href="/docs/overview" aria-label="Causal Agent Protocol">
+              <img class="brand-mark" src="/icons/cap-logo-c-sharp.svg" alt="" aria-hidden="true" />
+              <span class="brand-wordmark">Causal Agent Protocol</span>
+            </a>
             <nav class="nav" aria-label="Primary">
               {
                 topNav.map((item) => (

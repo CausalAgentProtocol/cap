@@ -4,8 +4,8 @@ This directory holds site-facing documentation landing content and ingestion met
 
 Preferred source of truth:
 
-- `../../documentation/`
-- `../../specification/`
+- [`../../documentation/`](../../../documentation/getting-started.md)
+- [`../../specification/`](../../../specification/index.md)
 
 Navigation and route-to-source mapping live in:
 
@@ -13,4 +13,4 @@ Navigation and route-to-source mapping live in:
 
 Rule:
 
-- do not fork documentation copy here when it can be sourced directly from `../../documentation/`
+- do not fork documentation copy here when it can be sourced directly from [`../../documentation/`](../../../documentation/getting-started.md)

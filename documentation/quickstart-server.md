@@ -14,12 +14,13 @@ Choose Level 1 when your public interface can support:
 
 - capability disclosure
 - `meta.capabilities`
+- `observe.predict`
 - `graph.neighbors`
-- observational `effect.query`
+- `graph.markov_blanket`
 
 Choose Level 2 only when your public interface can also support:
 
-- interventional `effect.query`
+- `intervene.do`
 - `graph.paths`
 - structured semantic disclosure for interventional responses
 
@@ -46,10 +47,14 @@ from cap_protocol.core import (
     CapabilityAccessTier,
     CapabilityAuthentication,
     CapabilityCard,
+    CapabilityCausalEngine,
+    CapabilityDetailedCapabilities,
     CapabilityDisclosurePolicy,
     CapabilityGraphMetadata,
     CapabilityProvider,
+    CapabilityStructuralMechanisms,
     REASONING_MODE_GRAPH_PROPAGATION,
+    REASONING_MODE_IDENTIFIED_CAUSAL_EFFECT,
     REASONING_MODE_OBSERVATIONAL_PREDICTION,
     REASONING_MODE_STRUCTURAL_SEMANTICS,
 )
@@ -70,9 +75,39 @@ def build_capability_card(settings: Settings, *, public_base_url: str) -> Capabi
         endpoint=f"{public_base_url.rstrip('/')}{settings.api_v1_prefix}",
         conformance_level=2,
         supported_verbs=supported_verbs,
+        causal_engine=CapabilityCausalEngine(
+            family="scm",
+            algorithm="Example Graph Primitives",
+            discovery_method="structural_equation_fitting",
+            supports_time_lag=True,
+            supports_latent_variables=False,
+            supports_nonlinear=False,
+            supports_instantaneous=False,
+            structural_mechanisms=CapabilityStructuralMechanisms(
+                available=True,
+                families=["linear_scm"],
+                nodes_with_fitted_mechanisms=1234,
+                residuals_computable=True,
+                residual_semantics="additive",
+                mechanism_override_supported=False,
+                counterfactual_ready=False,
+            ),
+        ),
+        detailed_capabilities=CapabilityDetailedCapabilities(
+            graph_discovery=False,
+            graph_traversal=True,
+            temporal_multi_lag=True,
+            effect_estimation=True,
+            intervention_simulation=True,
+            counterfactual_scm=False,
+            latent_confounding_modeled=False,
+            partial_identification=False,
+            uncertainty_quantified=False,
+        ),
         assumptions=DEFAULT_ASSUMPTIONS,
         reasoning_modes_supported=[
             REASONING_MODE_OBSERVATIONAL_PREDICTION,
+            REASONING_MODE_IDENTIFIED_CAUSAL_EFFECT,
             REASONING_MODE_STRUCTURAL_SEMANTICS,
             REASONING_MODE_GRAPH_PROPAGATION,
         ],
@@ -115,20 +150,28 @@ For a quickstart, keep registration explicit and register handler functions dire
 from abel_cap_server.cap import handlers
 from cap_protocol.server import (
     CAPVerbRegistry,
-    EFFECT_QUERY_CONTRACT,
+    GRAPH_MARKOV_BLANKET_CONTRACT,
     GRAPH_NEIGHBORS_CONTRACT,
     GRAPH_PATHS_CONTRACT,
+    INTERVENE_DO_CONTRACT,
     META_CAPABILITIES_CONTRACT,
+    OBSERVE_PREDICT_CONTRACT,
+    TRAVERSE_CHILDREN_CONTRACT,
     TRAVERSE_PARENTS_CONTRACT,
 )
 
 DISPATCH_REGISTRY = CAPVerbRegistry()
 DISPATCH_REGISTRY.core(META_CAPABILITIES_CONTRACT)(handlers.meta_capabilities)
-DISPATCH_REGISTRY.core(EFFECT_QUERY_CONTRACT)(handlers.effect_query)
+DISPATCH_REGISTRY.core(OBSERVE_PREDICT_CONTRACT)(handlers.observe_predict)
+DISPATCH_REGISTRY.core(INTERVENE_DO_CONTRACT)(handlers.intervene_do)
 DISPATCH_REGISTRY.core(GRAPH_NEIGHBORS_CONTRACT)(handlers.graph_neighbors)
+DISPATCH_REGISTRY.core(GRAPH_MARKOV_BLANKET_CONTRACT)(handlers.graph_markov_blanket)
 DISPATCH_REGISTRY.core(GRAPH_PATHS_CONTRACT)(handlers.graph_paths)
 DISPATCH_REGISTRY.core(TRAVERSE_PARENTS_CONTRACT, surface="convenience")(
     handlers.traverse_parents
+)
+DISPATCH_REGISTRY.core(TRAVERSE_CHILDREN_CONTRACT, surface="convenience")(
+    handlers.traverse_children
 )
 DISPATCH_REGISTRY.extension(
     namespace="example",
@@ -279,7 +322,9 @@ For interventional responses, include:
 - `identification_status`
 - `assumptions`
 
-If your `intervene.do` result aggregates multiple effect claims, keep reasoning-mode semantics inspectable at the claim level or through a clearly documented shared default. The current `cap-reference` contract is narrower: it requires an `outcome_node`, returns a selected `outcome_summary`, and carries a singular result-level `reasoning_mode`.
+Keep CAP core focused on intent. If your runtime always uses one fixed mechanism family or one fixed rollout horizon, disclose that in capability metadata or provenance instead of pretending it is a generic user-controlled core parameter.
+
+If you need richer rollout controls, time-lag summaries, or preview semantics, expose them as explicitly non-core extensions.
 
 If you cannot support the requested semantics, return a protocol error instead of a stronger-looking answer.
 

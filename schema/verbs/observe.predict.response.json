@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/observe.predict.response.json",
+  "title": "observe.predict response",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/success_response"
+    },
+    {
+      "$ref": "#/$defs/error_response"
+    }
+  ],
+  "$defs": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "target_node": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prediction": {
+          "type": "number"
+        },
+        "intercept": {
+          "type": "number"
+        },
+        "drivers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "reasoning_mode": {
+          "anyOf": [
+            {
+              "$ref": "../shared/enums.json#/$defs/reasoning_mode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "identification_status": {
+          "anyOf": [
+            {
+              "$ref": "../shared/enums.json#/$defs/identification_status"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "target_node",
+        "prediction",
+        "intercept",
+        "drivers",
+        "assumptions"
+      ],
+      "unevaluatedProperties": false
+    },
+    "success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "observe.predict"
+            },
+            "result": {
+              "$ref": "#/$defs/result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "error_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/error_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "observe.predict"
+            }
+          },
+          "required": [
+            "verb"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

@@ -134,6 +134,7 @@
     "structural_mechanism_family": {
       "type": "string",
       "enum": [
+        "linear_scm",
         "linear",
         "gbdt",
         "neural",
@@ -153,6 +154,7 @@
     "mechanism_family_used": {
       "type": "string",
       "enum": [
+        "linear_scm",
         "linear",
         "gbdt",
         "neural",
@@ -188,11 +190,27 @@
         "both"
       ]
     },
+    "graph_neighbor_scope": {
+      "type": "string",
+      "enum": [
+        "parents",
+        "children"
+      ]
+    },
     "neighbor_relationship": {
       "type": "string",
       "enum": [
         "parent",
-        "child"
+        "child",
+        "spouse"
+      ]
+    },
+    "graph_neighbor_role": {
+      "type": "string",
+      "enum": [
+        "parent",
+        "child",
+        "spouse"
       ]
     },
     "effect_direction": {

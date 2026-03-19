@@ -6,8 +6,8 @@ If the docs feel like they are moving too quickly into protocol language, take t
 
 CAP has two layers of reading:
 
-- `documentation/` explains how to use or implement CAP
-- `specification/` defines the normative protocol contract
+- [Documentation](./overview.md) explains how to use or implement CAP
+- [Specification](../specification/index.md) defines the normative protocol contract
 
 Choose the path that matches your role:
 

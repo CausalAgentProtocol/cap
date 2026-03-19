@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/graph.markov_blanket.request.json",
+  "title": "graph.markov_blanket request",
+  "$comment": "Current public CAP request shape for Markov blanket lookup.",
+  "allOf": [
+    {
+      "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "verb": {
+          "const": "graph.markov_blanket"
+        },
+        "params": {
+          "type": "object",
+          "properties": {
+            "node_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "max_neighbors": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            }
+          },
+          "required": [
+            "node_id"
+          ],
+          "unevaluatedProperties": false
+        }
+      },
+      "required": [
+        "verb",
+        "params"
+      ]
+    }
+  ],
+  "unevaluatedProperties": false
+}

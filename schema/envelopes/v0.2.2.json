@@ -18,6 +18,33 @@
     }
   ],
   "$defs": {
+    "graph_ref": {
+      "type": "object",
+      "properties": {
+        "graph_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "graph_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "request_context": {
+      "type": "object",
+      "properties": {
+        "graph_ref": {
+          "$ref": "#/$defs/graph_ref"
+        }
+      },
+      "unevaluatedProperties": false
+    },
     "request_options": {
       "type": "object",
       "properties": {
@@ -94,6 +121,9 @@
             "string",
             "null"
           ]
+        },
+        "context": {
+          "$ref": "#/$defs/request_context"
         },
         "verb": {
           "type": "string",

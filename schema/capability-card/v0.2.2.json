@@ -672,12 +672,17 @@
                       },
                       {
                         "contains": {
+                          "const": "observe.predict"
+                        }
+                      },
+                      {
+                        "contains": {
                           "const": "graph.neighbors"
                         }
                       },
                       {
                         "contains": {
-                          "const": "effect.query"
+                          "const": "graph.markov_blanket"
                         }
                       }
                     ]
@@ -711,12 +716,22 @@
                       },
                       {
                         "contains": {
+                          "const": "observe.predict"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "const": "intervene.do"
+                        }
+                      },
+                      {
+                        "contains": {
                           "const": "graph.neighbors"
                         }
                       },
                       {
                         "contains": {
-                          "const": "effect.query"
+                          "const": "graph.markov_blanket"
                         }
                       },
                       {

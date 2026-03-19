@@ -2,17 +2,39 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/verbs/graph.neighbors.request.json",
   "title": "graph.neighbors request",
-  "$comment": "The draft request shape adds sort_by and include_values over the current public adapter model. Both forms are accepted here.",
+  "$comment": "Supports the current public CAP request shape plus the older direction/top_k legacy shape kept for compatibility review.",
   "anyOf": [
     {
-      "$ref": "#/$defs/draft_request"
+      "$ref": "#/$defs/current_request"
     },
     {
-      "$ref": "#/$defs/current_adapter_request"
+      "$ref": "#/$defs/legacy_request"
     }
   ],
   "$defs": {
-    "draft_params": {
+    "current_params": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "$ref": "../shared/enums.json#/$defs/graph_neighbor_scope"
+        },
+        "max_neighbors": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "node_id",
+        "scope"
+      ],
+      "unevaluatedProperties": false
+    },
+    "legacy_params": {
       "type": "object",
       "properties": {
         "node_id": {
@@ -25,12 +47,6 @@
         "top_k": {
           "type": "integer",
           "minimum": 0
-        },
-        "sort_by": {
-          "$ref": "../shared/enums.json#/$defs/neighbor_sort_by"
-        },
-        "include_values": {
-          "type": "boolean"
         }
       },
       "required": [
@@ -39,29 +55,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_params": {
-      "type": "object",
-      "properties": {
-        "node_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "direction": {
-          "$ref": "../shared/enums.json#/$defs/graph_direction"
-        },
-        "top_k": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 100
-        }
-      },
-      "required": [
-        "node_id",
-        "direction"
-      ],
-      "unevaluatedProperties": false
-    },
-    "draft_request": {
+    "current_request": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
@@ -73,7 +67,7 @@
               "const": "graph.neighbors"
             },
             "params": {
-              "$ref": "#/$defs/draft_params"
+              "$ref": "#/$defs/current_params"
             }
           },
           "required": [
@@ -84,7 +78,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_request": {
+    "legacy_request": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
@@ -96,7 +90,7 @@
               "const": "graph.neighbors"
             },
             "params": {
-              "$ref": "#/$defs/current_adapter_params"
+              "$ref": "#/$defs/legacy_params"
             }
           },
           "required": [

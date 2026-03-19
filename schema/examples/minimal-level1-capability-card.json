@@ -1,7 +1,7 @@
 {
   "$schema": "https://causalagentprotocol.org/schema/capability-card/v0.2.2.json",
   "name": "Example CAP Observe Server",
-  "description": "Minimal Level 1 capability card aligned to the extracted CAP v0.2.2 draft shape.",
+  "description": "Minimal Level 1 capability card aligned to the current CAP public observe surface.",
   "version": "0.1.0",
   "cap_spec_version": "0.2.2",
   "provider": {
@@ -14,10 +14,11 @@
     "core": [
       "meta.capabilities",
       "graph.neighbors",
-      "effect.query"
+      "graph.markov_blanket",
+      "observe.predict"
     ],
     "convenience": [
-      "observe.predict"
+      "traverse.parents"
     ]
   },
   "causal_engine": {
@@ -46,7 +47,9 @@
     "no_latent_confounders_addressed"
   ],
   "reasoning_modes_supported": [
-    "conditional_forecast"
+    "observational_prediction",
+    "identified_causal_effect",
+    "structural_semantics"
   ],
   "graph": {
     "domains": [

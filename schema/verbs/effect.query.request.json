@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/verbs/effect.query.request.json",
-  "title": "effect.query request",
-  "$comment": "Supports both the long-form CAP v0.2.2 draft request shape and the current narrower public adapter request model.",
+  "title": "effect.query request (legacy)",
+  "$comment": "Legacy compatibility schema retained for older CAP draft material. The active public CAP core surface now uses observe.predict and intervene.do instead of effect.query.",
   "anyOf": [
     {
       "$ref": "#/$defs/draft_request"

@@ -2,17 +2,17 @@
 
 This secton is the reader-facing documentation layer for CAP.
 
-Use it for orientation, quickstarts, concepts, guides, and rationale. The source of truth for these pages lives under `documentation/` in the repository.
+Use it for orientation, quickstarts, concepts, guides, and rationale. The source of truth for these pages lives in [the repository documentation source](../../../documentation/getting-started.md).
 
 Normative specification pages, governance, and repository policy pages are separate from `/docs`.
 
 ## Start Here
 
-- `/docs/overview`
-- `/docs/getting-started`
-- `/docs/concepts/what-is-causality`
-- `/docs/quickstart-client`
-- `/docs/quickstart-server`
+- [Overview](/docs/overview)
+- [Getting Started](/docs/getting-started)
+- [What Is Causality?](/docs/concepts/what-is-causality)
+- [Quickstart for Clients](/docs/quickstart-client)
+- [Quickstart for Servers](/docs/quickstart-server)
 
 ## Concepts
 
@@ -43,4 +43,4 @@ Normative specification pages, governance, and repository policy pages are separ
 - open protocol, closed engines
 - protocol evolution notes
 
-This landing page should summarize the documentation layer only. The actual page copy should be sourced from `documentation/`, not rewritten independently here.
+This landing page should summarize the documentation layer only. The actual page copy should be sourced from [the repository documentation source](../../../documentation/getting-started.md), not rewritten independently here.

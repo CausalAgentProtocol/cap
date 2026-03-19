@@ -33,10 +33,10 @@ This repository contains the CAP normative specification, supporting schemas, re
 
 ## Repository Layout
 
-- `specification/` contains the protocol contract
-- `documentation/` contains onboarding, concepts, guides, and rationale
-- `schema/` contains machine-readable artifacts and minimal examples
-- `site/` contains the website source and presentation layer
+- [`specification/`](specification/index.md) contains the protocol contract
+- [`documentation/`](documentation/getting-started.md) contains onboarding, concepts, guides, and rationale
+- [`schema/`](schema/README.md) contains machine-readable artifacts and minimal examples
+- [`site/`](site/README.md) contains the website source and presentation layer
 
 ## Status
 
@@ -46,6 +46,6 @@ This repository contains the CAP normative specification, supporting schemas, re
 
 ## Examples And Notes
 
-- minimal capability-card examples live in `schema/examples/`
+- minimal capability-card examples live in [`schema/examples/`](schema/examples/)
 - example implementations and adapters are useful references, but they are not the CAP standard itself
 - the site should source content from this repo rather than becoming a second content fork

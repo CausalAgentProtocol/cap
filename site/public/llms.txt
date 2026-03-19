@@ -1,8 +1,8 @@
 # CAP
 
-> CAP is an open protocol for discovering, invoking, and interpreting causal reasoning capabilities across compliant causal systems. Use the specification pages for normative protocol requirements and the documentation pages for onboarding, implementation guidance, and examples.
+The Causal Agent Protocol (CAP) is an open protocol for discovering, invoking, and interpreting causal reasoning services.
 
-## Start Here
+## Overview
 
 - [Overview](https://causalagentprotocol.io/docs/overview): Plain-language introduction to CAP and its protocol boundary.
 - [Getting Started](https://causalagentprotocol.io/docs/getting-started): Recommended entry point for implementers and readers new to CAP.
@@ -29,10 +29,3 @@
 - [Conformance](https://causalagentprotocol.io/spec/conformance): Level model and current `v0.2.x` conformance rules.
 - [Extensions](https://causalagentprotocol.io/spec/extensions): Extension boundaries and compatibility expectations.
 - [Specification Changelog](https://causalagentprotocol.io/spec/changelog): Changelog for spec-level changes.
-
-## Notes
-
-- CAP `v0.2.x` treats specification prose as the normative source of truth.
-- Machine-readable contract artifacts live in the repository schema layer, including capability-card, envelope, verb, and shared enum schemas.
-- Level 3 counterfactual conformance remains reserved in `v0.2.x`.
-- The current public reference implementation is narrower than the long-form draft in several places; prefer the specification pages when protocol requirements and implementation surface differ.

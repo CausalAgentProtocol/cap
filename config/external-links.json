@@ -1,0 +1,9 @@
+{
+  "docsBaseUrl": "https://causalagentprotocol.io",
+  "githubOrgBaseUrl": "https://github.com/CausalAgentProtocol",
+  "repositories": {
+    "cap": "cap",
+    "pythonSdk": "python-sdk",
+    "reference": "cap-reference"
+  }
+}
