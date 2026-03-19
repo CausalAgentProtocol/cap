@@ -8,4 +8,4 @@ Machine-readable CAP schemas live in [the schema layer](../../../schema/), inclu
 
 For onboarding, implementation guidance, and examples, use [the documentation pages](/docs/getting-started).
 
-The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", and "MAY" in this section are to be interpreted as described in RFC 2119 and RFC 8174 when, and only when, they appear in all capitals.
+The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", and "MAY" in this section are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) and [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) when, and only when, they appear in all capitals.
