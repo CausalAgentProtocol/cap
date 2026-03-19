@@ -10,11 +10,13 @@ Normative specification pages, governance, and repository policy pages are separ
 
 - `/docs/overview`
 - `/docs/getting-started`
+- `/docs/concepts/what-is-causality`
 - `/docs/quickstart-client`
 - `/docs/quickstart-server`
 
 ## Concepts
 
+- what is causality
 - capability card
 - causal hierarchy
 - conformance levels

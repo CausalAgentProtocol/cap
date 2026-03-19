@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import MarkdownIt from "markdown-it";
+import { createHighlighter } from "shiki";
 
 export type SiteRoute = {
   route: string;
@@ -31,6 +32,10 @@ const capRoot = path.resolve(siteRoot, "..");
 const siteMapPath = path.join(siteRoot, "content", "site-map.json");
 
 let cachedSiteMap: SiteMap | null = null;
+let cachedCodeHighlighterPromise: Promise<ReturnType<typeof createHighlighter> extends Promise<infer T> ? T : never> | null = null;
+
+const SHIKI_THEME = "github-light";
+const SHIKI_LANGS = ["python", "json", "bash", "typescript", "javascript", "yaml", "markdown", "text"] as const;
 
 export async function getSiteMap(): Promise<SiteMap> {
   if (cachedSiteMap) {
@@ -166,6 +171,81 @@ function createMarkdownRenderer(currentSource: string, siteMap: SiteMap) {
   return markdown;
 }
 
+async function getCodeHighlighter() {
+  if (!cachedCodeHighlighterPromise) {
+    cachedCodeHighlighterPromise = createHighlighter({
+      themes: [SHIKI_THEME],
+      langs: [...SHIKI_LANGS]
+    });
+  }
+
+  return cachedCodeHighlighterPromise;
+}
+
+function normalizeCodeLanguage(raw: string): (typeof SHIKI_LANGS)[number] {
+  const language = raw.trim().toLowerCase();
+
+  switch (language) {
+    case "py":
+      return "python";
+    case "js":
+      return "javascript";
+    case "ts":
+      return "typescript";
+    case "yml":
+      return "yaml";
+    case "md":
+      return "markdown";
+    case "sh":
+    case "shell":
+      return "bash";
+    case "plaintext":
+    case "txt":
+      return "text";
+    default:
+      return SHIKI_LANGS.includes(language as (typeof SHIKI_LANGS)[number])
+        ? (language as (typeof SHIKI_LANGS)[number])
+        : "text";
+  }
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+async function highlightFenceTokens(tokens: ReturnType<MarkdownIt["parse"]>): Promise<void> {
+  const highlighter = await getCodeHighlighter();
+
+  await Promise.all(
+    tokens.map(async (token) => {
+      if (token.type !== "fence") {
+        return;
+      }
+
+      const language = normalizeCodeLanguage(token.info.split(/\s+/, 1)[0] ?? "");
+
+      try {
+        token.type = "html_block";
+        token.tag = "";
+        token.nesting = 0;
+        token.content = highlighter.codeToHtml(token.content, {
+          lang: language,
+          theme: SHIKI_THEME
+        });
+      } catch {
+        token.type = "html_block";
+        token.tag = "";
+        token.nesting = 0;
+        token.content = `<pre><code class="language-${language}">${escapeHtml(token.content)}</code></pre>`;
+      }
+    })
+  );
+}
+
 function buildSourceToRoute(siteMap: SiteMap): Map<string, string> {
   const map = new Map(siteMap.routes.map((entry) => [entry.source, entry.route]));
 
@@ -233,10 +313,6 @@ export async function getSidebarGroups(currentRoute: string): Promise<SidebarGro
           siteMap.routes.find((entry) => entry.route === "/spec"),
           ...byPrefix("/spec").filter((entry) => entry.route !== "/spec")
         ].filter(Boolean) as SiteRoute[]
-      },
-      {
-        title: "Repository",
-        links: siteMap.routes.filter((entry) => ["/changelog"].includes(entry.route))
       }
     ];
   }
@@ -249,29 +325,18 @@ export async function getSidebarGroups(currentRoute: string): Promise<SidebarGro
           [
             "/docs/overview",
             "/docs/getting-started",
+            "/docs/concepts/what-is-causality",
             "/docs/quickstart-client",
             "/docs/quickstart-server"
           ].includes(entry.route)
         )
       },
+      { title: "Concepts", links: byPrefix("/docs/concepts") },
       { title: "Guides", links: byPrefix("/docs/guides") },
       { title: "Rationale", links: byPrefix("/docs/rationale") },
       {
         title: "Reference",
-        links: siteMap.routes.filter((entry) => ["/spec", "/changelog"].includes(entry.route))
-      }
-    ];
-  }
-
-  if (["/changelog"].includes(currentRoute)) {
-    return [
-      {
-        title: "Repository",
-        links: siteMap.routes.filter((entry) => ["/changelog"].includes(entry.route))
-      },
-      {
-        title: "Reference",
-        links: siteMap.routes.filter((entry) => ["/docs/overview", "/spec"].includes(entry.route))
+        links: siteMap.routes.filter((entry) => ["/spec"].includes(entry.route))
       }
     ];
   }
@@ -291,10 +356,12 @@ export async function renderRoute(route: string) {
   const markdownSource = await fs.readFile(absoluteSourcePath, "utf8");
   const markdown = createMarkdownRenderer(entry.source, siteMap);
   const env = { toc: [] as TocHeading[] };
+  const tokens = markdown.parse(markdownSource, env);
+  await highlightFenceTokens(tokens);
 
   return {
     entry,
-    html: markdown.render(markdownSource, env),
+    html: markdown.renderer.render(tokens, markdown.options, env),
     toc: env.toc,
     sourcePath: path.relative(capRoot, absoluteSourcePath).replaceAll(path.sep, "/")
   };

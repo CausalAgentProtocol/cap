@@ -29,8 +29,7 @@ const topNav = [
     href: "/spec",
     label: "Spec",
     active: currentSection === "specification" || currentRoute === "/spec" || currentRoute.startsWith("/spec/")
-  },
-  { href: "/changelog", label: "Changelog", active: currentSection === "repository" || currentRoute === "/changelog" }
+  }
 ];
 ---
 
@@ -390,15 +389,18 @@ const topNav = [
       :global(.prose pre) {
         padding: 1rem;
         overflow-x: auto;
+        border: 1px solid rgba(17, 17, 17, 0.14);
         border-radius: 18px;
-        background: #111111;
-        color: #f8f8f8;
+        background: #ffffff;
+        color: #1f2328;
+        box-shadow: 0 1px 2px rgba(17, 17, 17, 0.04);
       }
 
       :global(.prose pre code) {
         background: transparent;
         padding: 0;
         color: inherit;
+        font-weight: var(--font-weight-regular);
       }
 
       :global(.prose a) {

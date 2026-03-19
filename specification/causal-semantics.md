@@ -12,11 +12,22 @@ The normative semantic fields are:
 - `identification_status`
 - `assumptions`
 
+The machine-readable enum catalog for this repository lives in [`schema/shared/enums.json`](../schema/shared/enums.json). It is aligned to the long-form draft where possible and extended where the current `cap-reference` canonical catalog has already stabilized names in code.
+
 ## Reasoning Mode
 
-Every CAP response to an `intervene.*` or `counterfact.*` verb MUST include `reasoning_mode`.
+Every CAP response to an `intervene.*` or `counterfact.*` verb MUST disclose reasoning-mode semantics in a machine-readable way.
 
-Canonical v0.2.2 values are:
+For a single causal claim, that disclosure will usually be a singular `reasoning_mode`.
+
+For a multi-claim result, a server MAY use:
+
+- a shared result-level `default_reasoning_mode`
+- per-claim `reasoning_mode` override
+
+What CAP cares about is claim-level semantic honesty, not one mandatory field layout for every multi-claim payload.
+
+The current repository canonical reasoning-mode catalog is:
 
 - `identified_causal_effect`
 - `scm_simulation`
@@ -24,6 +35,17 @@ Canonical v0.2.2 values are:
 - `reduced_form_estimate`
 - `conditional_forecast`
 - `heuristic`
+- `structural_semantics`
+- `observational_prediction`
+- `validation_gate`
+
+Interpretation guidance:
+
+- `identified_causal_effect` and `scm_simulation` are strong causal-interventional labels
+- `graph_propagation`, `reduced_form_estimate`, and `heuristic` are weaker or fallback causal labels
+- `conditional_forecast` and `observational_prediction` cover observational prediction surfaces
+- `structural_semantics` covers graph-structure or topology disclosure without claiming identified intervention semantics
+- `validation_gate` covers precondition or structural-validity checks that still need explicit semantic disclosure
 
 Servers MUST NOT emit `identified_causal_effect` or `scm_simulation` unless the engine genuinely performs those computations.
 
@@ -68,7 +90,31 @@ Canonical assumption values in the v0.2.2 draft include:
 - `no_interference`
 - `mechanism_invariance_under_intervention`
 
-The machine-readable enum catalog lives in `schema/shared/enums.json`.
+That base catalog remains the preferred unprefixed assumption vocabulary.
+
+When a server needs narrower implementation-specific assumptions, it MAY add custom strings. Those custom strings SHOULD be namespaced to avoid colliding with protocol-level canonical names. The current reference implementation uses labels such as `abel_hidden_field_policy` for that reason.
+
+## Provenance Naming
+
+`provenance.mechanism_family_used` SHOULD use the current repository canonical names when applicable:
+
+- `linear`
+- `gbdt`
+- `neural`
+- `gam`
+- `none`
+
+`provenance.algorithm` and `causal_engine.algorithm` remain open-world strings. CAP currently standardizes recommended spellings, not a closed enum, for common algorithms:
+
+- `PCMCI`
+- `PC`
+- `GES`
+- `FCI`
+- `NOTEARS`
+- `LiNGAM`
+- `VAR-Granger`
+
+If a server emits a nonstandard algorithm label, it SHOULD still prefer a stable, human-recognizable spelling and avoid overloading an existing canonical name.
 
 ## Science Boundary
 
@@ -82,8 +128,16 @@ It standardizes how a server discloses:
 
 That boundary is the protocol's semantic honesty layer.
 
-## Current Adapter Note
+## Granularity Note
 
-The current public `cap-reference` adapter still emits several adapter-specific reasoning mode strings such as `observational_prediction` and `structural_semantics`.
+`reasoning_mode` is conceptually claim-scoped even when a response also exposes shared defaults at the result level.
 
-Those strings are useful for documenting the current implementation surface, but they are narrower implementation behavior, not the canonical v0.2.2 semantic enum set. The schema layer records this mismatch explicitly instead of normalizing it away.
+Some richer CAP payloads may eventually use a shared `default_reasoning_mode` plus per-claim override.
+
+The current `cap-reference` contract is narrower: `intervene.do` selects one `outcome_node`, returns one `outcome_summary`, and carries a singular result-level `reasoning_mode`.
+
+## Current Reference Note
+
+The current public `cap-reference` implementation already uses several of the extended canonical names above, including `observational_prediction`, `structural_semantics`, and `validation_gate`.
+
+That means repository prose, schemas, examples, and conformance notes should treat those strings as part of the active CAP naming catalog rather than as ad hoc adapter-only labels.

@@ -736,7 +736,7 @@
     },
     "current_adapter_card": {
       "type": "object",
-      "$comment": "Current public adapter capability card as implemented in services/cap-reference. This branch deliberately keeps the narrower current model, including non-canonical reasoning mode strings and the adapter-specific disclosure/auth shapes.",
+      "$comment": "Current public adapter capability card as implemented in services/cap-reference. This branch deliberately keeps the narrower current model and the adapter-specific disclosure/auth shapes, while accepting the repository canonical reasoning-mode catalog.",
       "properties": {
         "$schema": {
           "$ref": "#/$defs/schema_url"

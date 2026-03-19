@@ -16,7 +16,9 @@ Under this draft:
 
 ## Known Draft Notes
 
-- the long-form draft and current adapter surfaces still differ in a few places, including capability-card richness, envelope `cap_version` examples, and `intervene.do` response shape
+- the long-form draft and current adapter surfaces still differ in a few places, including capability-card richness, envelope `cap_version` examples, and several payload-shape details
+- the repository canonical-name catalog is no longer limited to the original draft-only reasoning-mode subset; it now also tracks reference-implementation names that have been stabilized in `cap_protocol.core.canonical`
+- the current adapter now treats several temporal intervention fields as optional, requires `outcome_node` for `intervene.do`, and returns a selected `outcome_summary` with singular result-level `reasoning_mode`
 - the schema layer records those draft-versus-adapter differences explicitly rather than silently collapsing them
 - Level 3 counterfactual remains reserved in `v0.2.x`
 

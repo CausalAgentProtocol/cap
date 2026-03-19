@@ -37,6 +37,16 @@ At minimum, this includes these field groups:
 - `graph`
 - `authentication`
 
+## Canonical Naming Guidance
+
+Capability-card fields that expose semantic or provenance-oriented names SHOULD use the shared CAP naming catalog where applicable.
+
+In practice:
+
+- `reasoning_modes_supported` SHOULD use the canonical `reasoning_mode` strings from [`schema/shared/enums.json`](../schema/shared/enums.json)
+- `assumptions` SHOULD use canonical assumption names where they fit, and namespaced custom strings where they do not
+- `causal_engine.algorithm` MAY stay open-world, but servers SHOULD prefer the repository's recommended spellings for common algorithms such as `PCMCI`, `PC`, `GES`, `FCI`, `NOTEARS`, `LiNGAM`, and `VAR-Granger`
+
 ## Additional Draft-Era Disclosure
 
 The long-form draft also defines richer fields such as:

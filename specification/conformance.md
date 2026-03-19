@@ -32,6 +32,8 @@ When a Level 1 server receives `effect.query` with `query_type = "interventional
 
 Level 1 does not require `reasoning_mode`, `identification_status`, or response-level `assumptions` for ordinary observational results.
 
+Level 1 servers MAY still include those fields on observational or structural verbs when doing so improves semantic clarity.
+
 ## Level 2: Intervene
 
 Level 2 extends Level 1 for engines that can simulate or estimate interventions.
@@ -53,7 +55,11 @@ For every `intervene.*` response and every `effect.query` response with `query_t
 - `identification_status`
 - `assumptions`
 
-The long-form draft additionally requires `intervene.do` to carry `reasoning_mode` per target effect rather than only once at result level.
+For multi-effect `intervene.do` payloads, that disclosure SHOULD remain inspectable at effect level, either directly on each effect summary or through a shared result-level `default_reasoning_mode` plus effect-level override.
+
+The current `cap-reference` contract is narrower: it requires an `outcome_node`, returns a selected `outcome_summary`, and keeps singular result-level `reasoning_mode`.
+
+`effect.query` remains a single-claim surface under the current contract and therefore keeps singular `reasoning_mode`.
 
 ## Level 3: Counterfact
 

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/verbs/intervene.do.response.json",
   "title": "intervene.do response",
-  "$comment": "Supports the long-form draft response shape and the current public adapter response shape. The main divergence is that the draft moved reasoning_mode to per-effect entries, while the current adapter still exposes it at result level.",
+  "$comment": "Supports the long-form draft response shape and the current public adapter response shape. The draft stays claim-scoped with singular reasoning_mode, while the current adapter narrows intervene.do to a selected outcome summary and singular result-level reasoning_mode.",
   "anyOf": [
     {
       "$ref": "#/$defs/draft_success_response"
@@ -189,22 +189,34 @@
           "type": "number"
         },
         "first_arrive_step": {
-          "type": "integer"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "last_arrive_step": {
-          "type": "integer"
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "event_count": {
-          "type": "integer",
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 0
+        },
+        "mechanism_coverage_complete": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       },
       "required": [
         "node_id",
-        "final_cumulative_effect",
-        "first_arrive_step",
-        "last_arrive_step",
-        "event_count"
+        "final_cumulative_effect"
       ],
       "unevaluatedProperties": false
     },
@@ -231,34 +243,18 @@
           "minimum": 1
         },
         "outcome_node": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string",
+          "minLength": 1
         },
         "outcome_summary": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/current_adapter_node_effect_summary"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/$defs/current_adapter_node_effect_summary"
         },
-        "node_summaries": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/current_adapter_node_effect_summary"
-          }
+        "reasoning_mode": {
+          "$ref": "../shared/enums.json#/$defs/reasoning_mode"
         },
         "total_events": {
           "type": "integer",
           "minimum": 0
-        },
-        "reasoning_mode": {
-          "type": "string",
-          "minLength": 1
         },
         "identification_status": {
           "type": "string",
@@ -270,22 +266,14 @@
             "type": "string",
             "minLength": 1
           }
-        },
-        "limitations": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
         }
       },
       "required": [
         "treatment_node",
         "treatment_value",
         "model",
-        "delta_unit",
-        "horizon_steps",
-        "total_events",
+        "outcome_node",
+        "outcome_summary",
         "reasoning_mode",
         "identification_status",
         "assumptions"

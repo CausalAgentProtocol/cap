@@ -21,6 +21,12 @@
       "source": "documentation/getting-started.md"
     },
     {
+      "route": "/docs/concepts/what-is-causality",
+      "section": "documentation",
+      "title": "What Is Causality?",
+      "source": "documentation/concepts/what-is-causality.md"
+    },
+    {
       "route": "/docs/quickstart-client",
       "section": "documentation",
       "title": "Quickstart for Clients",
@@ -115,12 +121,6 @@
       "section": "specification",
       "title": "Specification Changelog",
       "source": "specification/changelog.md"
-    },
-    {
-      "route": "/changelog",
-      "section": "repository",
-      "title": "Repository Changelog",
-      "source": "CHANGELOG.md"
     }
   ]
 }

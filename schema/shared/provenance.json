@@ -71,7 +71,7 @@
     },
     "current_adapter_provenance": {
       "type": "object",
-      "$comment": "The current public adapter uses the same base structure but may emit adapter-specific mechanism labels such as linear_scm and does not yet expose sample_size.",
+      "$comment": "The current public adapter uses the same base structure, now also permits optional sample_size, and may still emit open-world mechanism-family labels.",
       "properties": {
         "algorithm": {
           "type": "string",
@@ -88,6 +88,10 @@
           ]
         },
         "computation_time_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sample_size": {
           "type": "integer",
           "minimum": 0
         },

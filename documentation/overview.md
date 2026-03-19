@@ -2,9 +2,13 @@
 
 CAP is an open protocol for discovering, invoking, and interpreting causal reasoning services.
 
-It standardizes a small interoperable surface for capability disclosure, causal invocation, and semantically qualified responses. It does not standardize how a server learns graphs, fits models, or organizes its internal product surface.
+If you are already comfortable with causal reasoning, you can read this page as the plain-language boundary of the protocol. If you are not, start with [What Is Causality?](concepts/what-is-causality.md) and then come back here.
+
+CAP standardizes a small interoperable surface for capability disclosure, causal invocation, and semantically qualified responses. It does not standardize how a server learns graphs, fits models, or organizes its internal product surface.
 
 CAP exists because invocation interoperability is not enough for causal systems. A client also needs to know what kind of causal claim a result represents, which assumptions it depends on, and how far that result should be trusted.
+
+That is the main reading posture for the rest of the docs: not just "how do I call this server?" but also "what kind of answer is this server actually giving me?"
 
 ## What CAP Standardizes
 
@@ -51,6 +55,7 @@ CAP is therefore not a generic tool wrapper and not a replacement for MCP or A2A
 
 ## Where To Go Next
 
+- If you are new to causal reasoning, start with [What Is Causality?](concepts/what-is-causality.md).
 - Start with [Getting Started](getting-started.md) for the shortest path.
 - Use [Quickstart for Clients](quickstart-client.md) if you want to call a CAP server.
 - Use [Quickstart for Servers](quickstart-server.md) if you want to expose one.
