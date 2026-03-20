@@ -30,12 +30,21 @@ A CAP server MUST disclose enough information for a client to determine:
 
 At minimum, this includes these field groups:
 
+- `endpoint`
 - `conformance_level`
 - `supported_verbs`
 - `assumptions`
 - `reasoning_modes_supported`
 - `graph`
 - `authentication`
+
+## Endpoint Disclosure
+
+The capability card MUST disclose the invocation endpoint for the current public binding.
+
+For the current HTTP binding, `endpoint` SHOULD be the exact URL clients post CAP envelopes to, not just a higher-level API prefix or site root.
+
+In the current reference binding, that canonical invocation path is `POST /cap`.
 
 ## Canonical Naming Guidance
 

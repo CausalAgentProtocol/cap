@@ -4,7 +4,7 @@ This guide explains one practical way to expose a CAP server over HTTP.
 
 It is not the normative protocol definition. The normative contract lives in [the specification](../../specification/index.md). This guide focuses on implementation choices that preserve CAP semantics without mixing in implementation-specific product behavior.
 
-The current `cap-reference` implementation uses a single HTTP entrypoint with CAP envelopes, not one path per verb. In practice that means clients post to `/api/v1/cap` and the server dispatches by the request's `verb` field. The same app also serves `GET /`, `GET /.well-known/cap.json`, and `GET /api/v1/health` as discovery and operational metadata.
+The current `cap-reference` implementation uses a single HTTP entrypoint with CAP envelopes, not one path per verb. In practice that means clients post to `/cap` and the server dispatches by the request's `verb` field. The same app also serves `GET /`, `GET /.well-known/cap.json`, and `GET /health` as discovery and operational metadata.
 
 ## 1. Publish The Capability Card
 
@@ -20,7 +20,9 @@ If you also expose `meta.capabilities`, it should return the same capability inf
 
 The current reference binding is:
 
-- `POST /api/v1/cap`
+- `POST /cap`
+
+The capability card's `endpoint` field should point to that exact invocation URL.
 
 Example request:
 

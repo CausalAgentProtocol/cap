@@ -6,7 +6,7 @@ If you want the conceptual background first, read [What Is Causality?](concepts/
 
 Start by choosing the lowest conformance level your public interface actually satisfies. CAP rewards honest disclosure more than ambitious labeling. A narrower but truthful Level 1 or Level 2 surface is better than a richer surface that overstates semantics or capabilities.
 
-The examples below follow the current Python server shape from `cap-reference`: a FastAPI app factory, shared app state for the CAP service, one `POST /api/v1/cap` route, a protocol dispatch registry, and functional handlers that hand off to adapters.
+The examples below follow the current Python server shape from `cap-reference`: a FastAPI app factory, shared app state for the CAP service, one `POST /cap` route, a protocol dispatch registry, and functional handlers that hand off to adapters.
 
 ## 1. Choose The Lowest Honest Level
 
@@ -72,7 +72,7 @@ def build_capability_card(settings: Settings, *, public_base_url: str) -> Capabi
             name="Example Provider",
             url="https://example.com",
         ),
-        endpoint=f"{public_base_url.rstrip('/')}{settings.api_v1_prefix}",
+        endpoint=f"{public_base_url.rstrip('/')}/cap",
         conformance_level=2,
         supported_verbs=supported_verbs,
         causal_engine=CapabilityCausalEngine(
@@ -262,14 +262,14 @@ from fastapi import APIRouter, Request
 from abel_cap_server.cap.provenance import get_abel_provenance_context
 from cap_protocol.server import build_fastapi_cap_dispatcher
 
-router = APIRouter(prefix="/cap", tags=["cap"])
+router = APIRouter(tags=["cap"])
 CAP_DISPATCHER = build_fastapi_cap_dispatcher(
     registry=DISPATCH_REGISTRY,
     provenance_context_provider=get_abel_provenance_context,
 )
 
 
-@router.post("")
+@router.post("/cap")
 async def dispatch_cap(
     payload: dict[str, Any],
     request: Request,
@@ -277,16 +277,15 @@ async def dispatch_cap(
     return await CAP_DISPATCHER(payload, request)
 ```
 
-In `cap-reference`, that router is mounted under `/api/v1`, so clients post to `/api/v1/cap`.
+The capability card should advertise this same invocation URL through `endpoint`.
 
 ## 6. Assemble App State And Discovery Routes
 
-Keep CAP-specific state on the FastAPI app and mount discovery plus versioned API routers separately:
+Keep CAP-specific state on the FastAPI app and mount discovery, CAP, and health routes directly:
 
 ```python
 from fastapi import FastAPI
-from abel_cap_server.api.meta import router as meta_router
-from abel_cap_server.api.v1.router import api_router
+from abel_cap_server.api.router import api_router
 from abel_cap_server.cap.errors import register_cap_exception_handlers
 from abel_cap_server.cap.service import CapService
 from abel_cap_server.clients.abel_gateway_client import AbelGatewayClient
@@ -305,12 +304,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
 
     register_cap_exception_handlers(app)
-    app.include_router(meta_router)
-    app.include_router(api_router, prefix=active_settings.api_v1_prefix)
+    app.include_router(api_router)
     return app
 ```
 
-That keeps `GET /.well-known/cap.json`, `GET /`, `GET /api/v1/health`, and `POST /api/v1/cap` under one app without leaking product-specific routing into CAP semantics.
+That keeps `GET /`, `GET /.well-known/cap.json`, `GET /health`, and `POST /cap` under one app without leaking product-specific routing into CAP semantics.
 
 ## 7. Return Semantically Honest Responses
 
