@@ -10,7 +10,7 @@ CAP divides verbs into three categories:
 
 ## Core Verbs
 
-The active CAP core surface in `v0.2.x` is:
+The CAP core surface in `v0.2.x` is:
 
 - `meta.capabilities`
 - `observe.predict`
@@ -36,6 +36,14 @@ The CAP core request shape is intent-only:
 
 Servers MUST NOT require execution-profile hints such as model family selection on the CAP core request when those choices are fixed server defaults or implementation details.
 
+The `observe.predict` success result includes:
+
+- `result.target_node`
+- `result.prediction`
+- `result.drivers`
+
+Level 1 servers MAY add observational semantic disclosure when it materially improves honesty.
+
 ### `intervene.do`
 
 This verb returns one interventional claim for one treatment and one selected outcome.
@@ -48,6 +56,14 @@ The CAP core request shape is intervention intent only:
 - optional `context.graph_ref`
 
 If a server exposes rollout horizon, mechanism override, or richer intervention summaries, those controls belong in richer draft contracts or extension verbs unless they are standardized as CAP core.
+
+The `intervene.do` success result includes one disclosed interventional claim with:
+
+- `result.outcome_node`
+- `result.effect`
+- `result.reasoning_mode`
+- `result.identification_status`
+- `result.assumptions`
 
 ### `graph.neighbors`
 
@@ -78,13 +94,13 @@ Servers that expose Markov blanket membership SHOULD disclose:
 
 This verb returns causal paths between nodes.
 
-It is part of the CAP core boundary even when some lightweight current implementations still trail it publicly.
+It is part of the CAP core boundary.
 
 Requests SHOULD keep graph selection in shared request context rather than introducing verb-specific graph selectors.
 
 ## Convenience Surface
 
-Common convenience verbs in current source materials include:
+Common convenience verbs include:
 
 - `traverse.parents`
 - `traverse.children`
@@ -97,4 +113,4 @@ Additional helper verbs, preview counterfactual verbs, and implementation-specif
 
 Product-specific discovery surfaces, vendor workflow operations, and Abel-only topology should not be presented as CAP core.
 
-Older draft material also referenced `effect.query` as a combined observational and interventional surface. The current CAP repository preserves that history in legacy schemas where useful, but the active public core surface is split into `observe.predict` and `intervene.do`.
+Legacy `effect.query` schemas remain for compatibility review, and the core surface is split into `observe.predict` and `intervene.do`.

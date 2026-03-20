@@ -98,9 +98,11 @@ Those fields tell you what kind of claim the server is making and how comparable
 
 In the current `cap-reference` contract:
 
-- `observe.predict` exposes observational intent and may disclose `observational_prediction`
+- `observe.predict` returns a lightweight observational result with `target_node`, `prediction`, and `drivers`
+- clients should not assume observational responses include `intercept`, `reasoning_mode`, `identification_status`, or response-level `assumptions`
 - `graph.markov_blanket` is treated as structural semantics, not an identified causal effect
-- core `intervene.do` exposes one treatment-to-outcome claim and discloses fixed mechanism usage through provenance rather than request params
+- core `intervene.do` exposes one treatment-to-outcome claim as `outcome_node` plus `effect`, and discloses fixed mechanism usage through provenance rather than request params
+- richer rollout summaries such as `outcome_summary`, `node_summaries`, or `total_events` are not part of the active CAP core response contract
 
 ## 5. Keep The Draft Gap Explicit
 

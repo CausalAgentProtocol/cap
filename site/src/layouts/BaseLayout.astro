@@ -4,7 +4,7 @@ import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import { ClientRouter } from "astro:transitions";
-import type { SidebarGroup, TocHeading } from "../lib/site";
+import { getSearchIndex, type SidebarGroup, type TocHeading } from "../lib/site";
 
 interface Props {
   title: string;
@@ -16,6 +16,8 @@ interface Props {
 }
 
 const { title, currentRoute, currentSection, description, sidebar = [], toc = [] } = Astro.props;
+const routeClass = `route-${currentRoute.replace(/^\//, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "") || "home"}`;
+const searchIndexJson = JSON.stringify(await getSearchIndex()).replace(/</g, "\\u003c");
 
 const topNav = [
   {
@@ -39,6 +41,7 @@ const topNav = [
     <title>{title} | CAP</title>
     <link rel="icon" type="image/svg+xml" href="/icons/cap-logo-c-sharp-transparent.svg" />
     <ClientRouter />
+    <script id="site-search-index" type="application/json" set:html={searchIndexJson}></script>
     <script>
       const copySectionLink = async (trigger) => {
         const id = trigger.getAttribute("data-copy-id");
@@ -63,6 +66,263 @@ const topNav = [
 
         void copySectionLink(trigger);
       });
+
+      const normalizeSearchText = (value) =>
+        value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, " ")
+          .trim();
+
+      const escapeSearchHtml = (value) =>
+        value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+
+      const escapeSearchPattern = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+      const getSearchIndexData = () => {
+        const node = document.getElementById("site-search-index");
+
+        if (!(node instanceof HTMLScriptElement)) {
+          return [];
+        }
+
+        try {
+          return JSON.parse(node.textContent ?? "[]");
+        } catch {
+          return [];
+        }
+      };
+
+      const buildSearchSnippet = (body, terms) => {
+        const text = body.replace(/\s+/g, " ").trim();
+
+        if (!text) {
+          return "";
+        }
+
+        const lower = text.toLowerCase();
+        const matchIndex = terms
+          .map((term) => lower.indexOf(term))
+          .filter((index) => index >= 0)
+          .sort((left, right) => left - right)[0];
+
+        const start = Math.max(0, (matchIndex ?? 0) - 42);
+        const end = Math.min(text.length, start + 170);
+        const prefix = start > 0 ? "..." : "";
+        const suffix = end < text.length ? "..." : "";
+
+        return `${prefix}${text.slice(start, end).trim()}${suffix}`;
+      };
+
+      const searchDocuments = (query, searchIndex) => {
+        const normalizedQuery = normalizeSearchText(query);
+        const terms = normalizedQuery.split(/\s+/).filter(Boolean);
+
+        if (!terms.length) {
+          return [];
+        }
+
+        return searchIndex
+          .map((entry) => {
+            const title = normalizeSearchText(entry.title);
+            const route = normalizeSearchText(entry.route);
+            const body = normalizeSearchText(entry.body);
+            const combined = `${title} ${route} ${body}`;
+
+            if (!terms.every((term) => combined.includes(term))) {
+              return null;
+            }
+
+            let score = 0;
+
+            for (const term of terms) {
+              if (title === term) score += 50;
+              if (title.startsWith(term)) score += 18;
+              if (title.includes(term)) score += 10;
+              if (route.includes(term)) score += 5;
+              if (body.includes(term)) score += 2;
+            }
+
+            if (entry.section === "documentation") {
+              score += 1;
+            }
+
+            return {
+              ...entry,
+              score,
+              snippet: buildSearchSnippet(entry.body, terms)
+            };
+          })
+          .filter(Boolean)
+          .sort((left, right) => right.score - left.score || left.title.localeCompare(right.title))
+          .slice(0, 8);
+      };
+
+      const searchContextLabel = (entry) => {
+        if (entry.route.startsWith("/docs/quickstart")) return "Quickstart";
+        if (entry.route.startsWith("/docs/concepts/")) return "Concept";
+        if (entry.route.startsWith("/docs/guides/")) return "Guide";
+        if (entry.route.startsWith("/docs/rationale/")) return "Rationale";
+        if (entry.route === "/spec") return "Specification";
+        if (entry.route.startsWith("/spec/")) return "Spec";
+        return entry.section === "specification" ? "Spec" : "Docs";
+      };
+
+      const highlightSearchMatches = (value, terms) => {
+        let rendered = escapeSearchHtml(value);
+
+        for (const term of [...new Set(terms)].filter((candidate) => candidate.length > 1)) {
+          rendered = rendered.replace(
+            new RegExp(`(${escapeSearchPattern(term)})`, "gi"),
+            '<mark class="site-search-mark">$1</mark>'
+          );
+        }
+
+        return rendered;
+      };
+
+      const setSearchOpen = (root, isOpen) => {
+        root.dataset.open = isOpen ? "true" : "false";
+
+        const panel = root.querySelector("[data-search-panel]");
+
+        if (panel instanceof HTMLElement) {
+          panel.hidden = !isOpen;
+        }
+      };
+
+      const renderSearchResults = (root, query, matches) => {
+        const results = root.querySelector("[data-search-results]");
+        const empty = root.querySelector("[data-search-empty]");
+        const terms = normalizeSearchText(query).split(/\s+/).filter(Boolean);
+
+        if (!(results instanceof HTMLElement) || !(empty instanceof HTMLElement)) {
+          return;
+        }
+
+        if (!query.trim()) {
+          results.innerHTML = "";
+          empty.textContent = "Search by concept, verb, field name, or page title.";
+          setSearchOpen(root, true);
+          return;
+        }
+
+        if (!matches.length) {
+          results.innerHTML = "";
+          empty.textContent = `No pages mention "${query}".`;
+          setSearchOpen(root, true);
+          return;
+        }
+
+        empty.textContent = "";
+        results.innerHTML = matches
+          .map((entry) => {
+            const contextLabel = searchContextLabel(entry);
+
+            return `
+              <a class="site-search-result" href="${entry.route}" data-search-result>
+                <span class="site-search-meta">${contextLabel}</span>
+                <span class="site-search-title">${highlightSearchMatches(entry.title, terms)}</span>
+                <span class="site-search-snippet">${highlightSearchMatches(entry.snippet, terms)}</span>
+              </a>
+            `;
+          })
+          .join("");
+
+        setSearchOpen(root, true);
+      };
+
+      const attachSiteSearch = () => {
+        const searchIndex = getSearchIndexData();
+
+        document.querySelectorAll("[data-site-search]").forEach((root) => {
+          if (!(root instanceof HTMLElement) || root.dataset.searchBound === "true") {
+            return;
+          }
+
+          const input = root.querySelector("[data-search-input]");
+
+          if (!(input instanceof HTMLInputElement)) {
+            return;
+          }
+
+          root.dataset.searchBound = "true";
+
+          const updateResults = () => {
+            renderSearchResults(root, input.value, searchDocuments(input.value, searchIndex));
+          };
+
+          input.addEventListener("input", updateResults);
+          input.addEventListener("focus", updateResults);
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+              setSearchOpen(root, false);
+              input.blur();
+              return;
+            }
+
+            if (event.key === "ArrowDown") {
+              const firstResult = root.querySelector("[data-search-result]");
+
+              if (firstResult instanceof HTMLAnchorElement) {
+                event.preventDefault();
+                firstResult.focus();
+              }
+            }
+
+            if (event.key === "Enter") {
+              const firstResult = root.querySelector("[data-search-result]");
+
+              if (firstResult instanceof HTMLAnchorElement && input.value.trim()) {
+                event.preventDefault();
+                window.location.assign(firstResult.href);
+              }
+            }
+          });
+        });
+      };
+
+      if (!window.__capSiteSearchBound) {
+        window.__capSiteSearchBound = true;
+
+        document.addEventListener("click", (event) => {
+          document.querySelectorAll("[data-site-search][data-open='true']").forEach((root) => {
+            if (!(root instanceof HTMLElement) || root.contains(event.target)) {
+              return;
+            }
+
+            setSearchOpen(root, false);
+          });
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key !== "k" || (!event.metaKey && !event.ctrlKey)) {
+            return;
+          }
+
+          const active = document.activeElement;
+
+          if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
+            return;
+          }
+
+          const input = document.querySelector("[data-search-input]");
+
+          if (input instanceof HTMLInputElement) {
+            event.preventDefault();
+            input.focus();
+            input.select();
+          }
+        });
+
+        document.addEventListener("astro:page-load", attachSiteSearch);
+        document.addEventListener("DOMContentLoaded", attachSiteSearch);
+      }
+
+      attachSiteSearch();
     </script>
     <style>
       :root {
@@ -109,6 +369,9 @@ const topNav = [
         font-size: 16px;
         line-height: var(--line-height-body);
         scroll-padding-top: calc(var(--masthead-height) + 1rem);
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       body {
@@ -146,15 +409,15 @@ const topNav = [
       }
 
       .masthead-top {
-        display: flex;
-        gap: 1.5rem;
+        display: grid;
+        grid-template-columns: minmax(max-content, 1fr) minmax(19rem, 34rem) minmax(max-content, 1fr);
+        gap: 1.25rem;
         align-items: center;
-        justify-content: space-between;
         min-height: var(--masthead-height);
       }
 
       .brand {
-        flex: 0 0 auto;
+        justify-self: start;
         display: inline-flex;
         align-items: center;
         gap: 0.7rem;
@@ -178,7 +441,8 @@ const topNav = [
 
       .nav {
         display: flex;
-        flex: 1 1 auto;
+        justify-self: end;
+        flex: 0 0 auto;
         align-self: stretch;
         align-items: stretch;
         justify-content: flex-end;
@@ -211,6 +475,134 @@ const topNav = [
         color: var(--accent);
         border-bottom-color: var(--accent);
         font-weight: var(--font-weight-medium);
+      }
+
+      .site-search {
+        position: relative;
+        justify-self: center;
+        width: 100%;
+        max-width: 34rem;
+        min-width: 19rem;
+      }
+
+      .site-search-input {
+        width: 100%;
+        height: 2.65rem;
+        padding: 0 1rem;
+        border: 1px solid rgba(17, 17, 17, 0.12);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.96);
+        color: var(--ink);
+        font: inherit;
+        font-size: 0.96rem;
+        letter-spacing: -0.015em;
+        outline: none;
+        transition:
+          border-color 160ms ease,
+          box-shadow 160ms ease,
+          background-color 160ms ease;
+      }
+
+      .site-search-input::placeholder {
+        color: #7a7a7a;
+      }
+
+      .site-search[data-open="true"] .site-search-input,
+      .site-search-input:focus {
+        border-color: rgba(17, 17, 17, 0.22);
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.04);
+      }
+
+      .site-search-panel {
+        position: absolute;
+        top: calc(100% + 0.55rem);
+        left: 50%;
+        width: min(34rem, calc(100vw - 2rem));
+        max-height: min(26rem, calc(100vh - 6rem));
+        overflow-y: auto;
+        padding: 0.5rem;
+        border: 1px solid rgba(17, 17, 17, 0.1);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.985);
+        box-shadow: 0 30px 60px rgba(17, 17, 17, 0.12);
+        transform: translateX(-50%);
+      }
+
+      .site-search-empty {
+        padding: 0.85rem 0.95rem;
+        color: var(--muted);
+        font-size: 0.86rem;
+        letter-spacing: -0.01em;
+      }
+
+      .site-search-results {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      :global(.site-search-result) {
+        display: block;
+        padding: 0.82rem 0.95rem 0.88rem;
+        border: 1px solid rgba(17, 17, 17, 0.05);
+        border-radius: 16px;
+        background: #ffffff;
+        text-decoration: none;
+      }
+
+      :global(.site-search-result:hover),
+      :global(.site-search-result:focus-visible) {
+        border-color: rgba(17, 17, 17, 0.12);
+        background: #fbfbfb;
+        outline: none;
+        box-shadow: 0 10px 22px rgba(17, 17, 17, 0.06);
+      }
+
+      :global(.site-search-meta) {
+        display: block;
+        margin-bottom: 0.24rem;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: var(--font-weight-medium);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      :global(.site-search-title) {
+        display: block;
+        color: var(--ink);
+        font-size: 0.97rem;
+        font-weight: var(--font-weight-medium);
+        line-height: 1.35;
+        letter-spacing: -0.016em;
+      }
+
+      :global(.site-search-snippet) {
+        display: block;
+        margin-top: 0.28rem;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+        letter-spacing: -0.012em;
+      }
+
+      :global(.site-search-mark) {
+        padding: 0.02rem 0.22rem;
+        border-radius: 0.35rem;
+        background: rgba(17, 17, 17, 0.08);
+        color: inherit;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
 
       .masthead-copy {
@@ -335,7 +727,7 @@ const topNav = [
       }
 
       .prose {
-        max-width: 52rem;
+        max-width: 48rem;
       }
 
       :global(.prose :first-child) {
@@ -371,7 +763,13 @@ const topNav = [
         font-size: var(--font-size-body-strong);
         font-weight: var(--font-weight-regular);
         line-height: var(--line-height-body);
-        letter-spacing: -0.011em;
+        letter-spacing: -0.009em;
+      }
+
+      :global(.prose strong),
+      :global(.prose b) {
+        font-weight: var(--font-weight-semibold);
+        letter-spacing: -0.012em;
       }
 
       :global(.prose p),
@@ -420,6 +818,22 @@ const topNav = [
         color: var(--ink);
         text-decoration-thickness: 0.08em;
         text-underline-offset: 0.16em;
+      }
+
+      :global(.prose blockquote) {
+        margin: 1rem 0;
+        padding: 1rem 1.15rem;
+        border-left: 2px solid rgba(17, 17, 17, 0.16);
+        border-radius: 0 18px 18px 0;
+        background: linear-gradient(180deg, rgba(17, 17, 17, 0.025), rgba(17, 17, 17, 0.01));
+      }
+
+      :global(.prose blockquote p) {
+        margin: 0;
+        font-size: 1.03rem;
+        font-weight: var(--font-weight-medium);
+        line-height: 1.45;
+        letter-spacing: -0.014em;
       }
 
       :global(.prose .heading-anchor) {
@@ -480,6 +894,79 @@ const topNav = [
         transform: translateY(0);
       }
 
+      :global(body.route-docs-concepts-what-is-causality .prose h3) {
+        margin-top: 1.5rem;
+        margin-bottom: 0;
+        padding: 1.1rem 1.2rem 0.35rem;
+        border: 1px solid rgba(17, 17, 17, 0.1);
+        border-bottom: none;
+        border-radius: 22px 22px 0 0;
+        background: #ffffff;
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose h3 + p) {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 0 1.2rem 1rem;
+        border-left: 1px solid rgba(17, 17, 17, 0.1);
+        border-right: 1px solid rgba(17, 17, 17, 0.1);
+        background: #ffffff;
+        color: rgba(17, 17, 17, 0.84);
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose h3 + p + ul) {
+        margin-top: 0;
+        margin-bottom: 1.15rem;
+        padding: 0 1.2rem 1rem;
+        list-style: none;
+        border: 1px solid rgba(17, 17, 17, 0.1);
+        border-top: none;
+        border-radius: 0 0 22px 22px;
+        background: #ffffff;
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose h3 + p + ul > li) {
+        display: block;
+        margin: 0;
+        padding: 0.8rem 0;
+        border-top: 1px solid rgba(17, 17, 17, 0.08);
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose h3 + p + ul > li:first-child) {
+        padding-top: 0;
+        border-top: none;
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose h3 + p + ul > li:last-child) {
+        padding-bottom: 0;
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose h3 + p + ul > li > em:first-child) {
+        display: inline-block;
+        width: min(8rem, 100%);
+        margin-right: 0.95rem;
+        font-style: normal;
+        font-size: 0.82rem;
+        font-weight: var(--font-weight-medium);
+        line-height: 1.7;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        vertical-align: top;
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose h3 + p + ul code) {
+        white-space: nowrap;
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose ol) {
+        padding-left: 1.35rem;
+      }
+
+      :global(body.route-docs-concepts-what-is-causality .prose ol li + li) {
+        margin-top: 0.35rem;
+      }
+
       @media (max-width: 720px) {
         :root {
           --masthead-height: 6.6rem;
@@ -495,6 +982,7 @@ const topNav = [
         }
 
         .masthead-top {
+          display: flex;
           align-items: flex-start;
           justify-content: flex-start;
           flex-direction: column;
@@ -517,9 +1005,28 @@ const topNav = [
           margin-bottom: 0;
         }
 
+        .site-search {
+          width: 100%;
+          max-width: none;
+          min-width: 0;
+        }
+
+        .site-search-panel {
+          left: 0;
+          width: 100%;
+          transform: none;
+        }
+
         .content {
           grid-template-columns: 1fr;
           gap: 1rem;
+        }
+
+        :global(body.route-docs-concepts-what-is-causality .prose h3 + p + ul > li > em:first-child) {
+          display: block;
+          width: auto;
+          margin-right: 0;
+          margin-bottom: 0.35rem;
         }
 
         .sidebar {
@@ -541,7 +1048,7 @@ const topNav = [
       }
     </style>
   </head>
-  <body>
+  <body class={routeClass}>
     <div class="shell">
       <div class="frame">
         <header class="masthead">
@@ -550,6 +1057,24 @@ const topNav = [
               <img class="brand-mark" src="/icons/cap-logo-c-sharp.svg" alt="" aria-hidden="true" />
               <span class="brand-wordmark">Causal Agent Protocol</span>
             </a>
+            <div class="site-search" data-site-search data-open="false">
+              <label>
+                <span class="sr-only">Search docs and spec</span>
+                <input
+                  class="site-search-input"
+                  type="search"
+                  placeholder="Search docs and spec"
+                  aria-label="Search docs and spec"
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-search-input
+                />
+              </label>
+              <div class="site-search-panel" data-search-panel hidden>
+                <div class="site-search-empty" data-search-empty>Search by concept, verb, field name, or page title.</div>
+                <div class="site-search-results" data-search-results></div>
+              </div>
+            </div>
             <nav class="nav" aria-label="Primary">
               {
                 topNav.map((item) => (

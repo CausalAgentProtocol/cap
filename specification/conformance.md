@@ -28,9 +28,13 @@ A Level 1 server SHOULD implement these convenience verbs:
 
 Level 1 MUST NOT imply interventional support.
 
-Level 1 does not require `reasoning_mode`, `identification_status`, or response-level `assumptions` for ordinary observational prediction results.
+The Level 1 `observe.predict` result includes:
 
-Level 1 servers MAY still include those fields on observational or structural verbs when doing so improves semantic clarity.
+- `target_node`
+- `prediction`
+- `drivers`
+
+Level 1 servers MAY also include additional observational semantic disclosure when doing so improves semantic clarity.
 
 When a Level 1 server exposes `graph.markov_blanket`, it MUST NOT describe blanket membership as an identified interventional effect.
 
@@ -55,6 +59,14 @@ For every `intervene.*` response, the server MUST disclose:
 - `identification_status`
 - `assumptions`
 
+The Level 2 `intervene.do` result includes:
+
+- `outcome_node`
+- `effect`
+- `reasoning_mode`
+- `identification_status`
+- `assumptions`
+
 The CAP core `intervene.do` request is intent-only:
 
 - `treatment_node`
@@ -62,7 +74,7 @@ The CAP core `intervene.do` request is intent-only:
 - `outcome_node`
 - optional `context.graph_ref`
 
-Servers MUST NOT present fixed execution defaults such as one hardcoded mechanism family or one hardcoded rollout horizon as if they were generic user-controlled CAP core parameters.
+Servers MUST NOT present server-specific execution defaults, such as a fixed mechanism family or a fixed rollout horizon, as if they were generic CAP core parameters that clients are expected to supply or control.
 
 If a server needs richer intervention controls, it SHOULD expose them through an extension or another explicitly non-core surface until CAP standardizes those controls normatively.
 
@@ -70,7 +82,7 @@ If a server needs richer intervention controls, it SHOULD expose them through an
 
 Level 3 remains reserved in `v0.2.x`.
 
-Under the current contract:
+In `v0.2.x`:
 
 - servers MUST NOT declare `conformance_level: 3`
 - counterfactual technical readiness MAY be disclosed through richer capability metadata

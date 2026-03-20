@@ -28,6 +28,13 @@ export type TocHeading = {
   depth: number;
 };
 
+export type SearchEntry = {
+  route: string;
+  title: string;
+  section: string;
+  body: string;
+};
+
 const siteRoot = path.resolve(import.meta.dirname, "..", "..");
 const capRoot = path.resolve(siteRoot, "..");
 const siteMapPath = path.join(siteRoot, "content", "site-map.json");
@@ -42,11 +49,17 @@ type ExternalLinksConfig = {
 };
 
 let cachedSiteMap: SiteMap | null = null;
+let cachedSearchIndex: SearchEntry[] | null = null;
 let cachedCodeHighlighterPromise: Promise<ReturnType<typeof createHighlighter> extends Promise<infer T> ? T : never> | null = null;
 
 const SHIKI_THEME = "github-light";
 const SHIKI_LANGS = ["python", "json", "bash", "typescript", "javascript", "yaml", "markdown", "text"] as const;
 const externalLinks = JSON.parse(fsSync.readFileSync(externalLinksPath, "utf8")) as ExternalLinksConfig;
+const plainTextMarkdown = new MarkdownIt({
+  html: false,
+  linkify: false,
+  typographer: true
+});
 
 export async function getSiteMap(): Promise<SiteMap> {
   if (cachedSiteMap) {
@@ -61,6 +74,29 @@ export async function getSiteMap(): Promise<SiteMap> {
 export async function getRouteByPath(route: string): Promise<SiteRoute | undefined> {
   const siteMap = await getSiteMap();
   return siteMap.routes.find((entry) => entry.route === route);
+}
+
+export async function getSearchIndex(): Promise<SearchEntry[]> {
+  if (cachedSearchIndex) {
+    return cachedSearchIndex;
+  }
+
+  const siteMap = await getSiteMap();
+
+  cachedSearchIndex = await Promise.all(
+    siteMap.routes.map(async (entry) => {
+      const markdownSource = await fs.readFile(resolveSourcePath(entry.source), "utf8");
+
+      return {
+        route: entry.route,
+        title: entry.title,
+        section: entry.section,
+        body: markdownToPlainText(markdownSource)
+      };
+    })
+  );
+
+  return cachedSearchIndex;
 }
 
 export async function getRoutesByPrefix(prefix: string): Promise<SiteRoute[]> {
@@ -78,6 +114,33 @@ export function routeToSlug(route: string): string {
 
 export function resolveSourcePath(source: string): string {
   return path.join(capRoot, source);
+}
+
+function collapseWhitespace(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function decodeHtmlEntities(value: string): string {
+  return value
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#39;", "'")
+    .replaceAll("&amp;", "&")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">");
+}
+
+function markdownToPlainText(markdownSource: string): string {
+  const html = plainTextMarkdown.render(markdownSource);
+
+  return collapseWhitespace(
+    decodeHtmlEntities(
+      html
+        .replace(/<pre[\s\S]*?<\/pre>/g, " ")
+        .replace(/<code[^>]*>/g, " ")
+        .replace(/<\/code>/g, " ")
+        .replace(/<[^>]+>/g, " ")
+    )
+  );
 }
 
 function normalizePathForLookup(target: string): string {

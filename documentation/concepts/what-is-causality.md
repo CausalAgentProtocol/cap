@@ -1,137 +1,90 @@
 # What Is Causality?
 
-If you are new to CAP, this is the best place to start.
-
-Causality is not only about what moved together. It is about what would happen if something were changed.
+Causality is not about association. It is about intervention: what happens when we change something, and counterfactuals: what would have happened if we had changed it.
 
 ## Correlation Versus Causation
 
 Suppose ice cream sales rise on the same days that drowning incidents rise.
 
-Those variables are correlated. They move together.
+These variables are correlated. They move together. However, it would be a mistake to conclude that buying ice cream causes drowning. A more plausible explanation is that hot weather is a **confounder** affecting both:
 
-But it would be a mistake to conclude that buying ice cream causes drowning.
+* Hot days increase ice cream purchases.
+* Hot days increase swimming activity.
 
-A more plausible explanation is that hot weather affects both:
+This is the core problem causal reasoning attempts to solve. When two variables move together in your data, you still need to ask *why*, and whether manually changing one would actually change the other.
 
-- hot days increase ice cream purchases
-- hot days also increase swimming activity
+## The Question Causality Tries to Answer
 
-That is the core problem causal reasoning tries to handle. When two things move together, you still need to ask why, and whether changing one of them would really change the other.
+At its heart, a causal question has a specific shape:
+> **If I change `X`, what happens to `Y`?**
 
-## The Question Causality Tries To Answer
+This is fundamentally different from the standard statistical question:
+> **When `X` changes in the data, what tends to happen near `Y`?**
 
-A causal question usually has this shape:
+The first question is about **intervention**. The second is about **association**. While many modern software systems and machine learning models are exceptional at answering the second question, far fewer can honestly support the first.
 
-- if I change `X`, what happens to `Y`?
+## Three Kinds of Causal Questions
 
-That is different from:
+It helps to separate causal queries into three distinct tiers. As you move down this list, the claims become stronger, but the assumptions required to prove them become heavier.
 
-- when `X` changes in the data, what tends to happen near `Y`?
+### 1. Observational (Association)
+These ask what patterns naturally appear in observed data.
+* *Examples:* Which nodes are connected to this node? Which variables tend to move together? Which predictors are associated with the target?
+* *The Takeaway:* This is often the right place to start, but it does not represent what would happen under active intervention.
 
-The first is about intervention.
-The second is about association.
+### 2. Interventional (Action)
+These ask what would happen if a system were deliberately changed.
+* *Examples:* If we increase the price, what happens to demand? If we suppress node `X`, what happens downstream? If policy `A` is applied, how does outcome `Y` change?
+* *The Takeaway:* These are strong claims. They require strict assumptions and clear disclosure about the model's structure.
 
-Many software systems are good at the second question. Far fewer can support the first honestly.
-
-## Three Common Kinds Of Causal Questions
-
-It helps to separate three question types.
-
-### 1. Observational Questions
-
-These ask what patterns appear in observed data.
-
-Examples:
-
-- which nodes are connected to this node?
-- which variables tend to move together?
-- which predictors are associated with the target?
-
-This can still be useful. It is often the right place to start. But it is not yet a claim about what would happen under intervention.
-
-### 2. Interventional Questions
-
-These ask what would happen if something were deliberately changed.
-
-Examples:
-
-- if we increase price, what happens to demand?
-- if we suppress node `X`, what happens downstream?
-- if policy `A` is applied, how does outcome `Y` change?
-
-These are stronger claims, which means they need stronger assumptions and clearer disclosure.
-
-### 3. Counterfactual Questions
-
-These ask what would have happened differently in a specific case.
-
-Examples:
-
-- given what happened to this customer, what would have happened if treatment had not been applied?
-- for this market move, what would the outcome have been under a different intervention?
-
-These are usually the strongest and most assumption-sensitive claims, and they are also the easiest to overstate.
+### 3. Counterfactual (Imagining)
+These ask what *would have happened* differently in a specific, historical case.
+* *Examples:* Given what happened to this specific customer, what would their outcome be if the treatment had not been applied? For this past market move, what would the outcome have been under a different intervention?
+* *The Takeaway:* These are the strongest, most assumption-sensitive claims a model can make—and the easiest to overstate.
 
 ## Why Assumptions Matter
 
-Causal answers do not come from data alone.
+Causal answers do not come from data alone. They are inextricably linked to the assumptions you make about the world, such as:
 
-They also depend on assumptions such as:
+* Are any important confounding variables missing from the data?
+* Is the underlying graph structure credible?
+* Does the model actually represent the intended intervention?
+* Is the target effect mathematically identifiable from the available information?
+* Is the current case inside the model's valid scope?
 
-- whether important confounders are missing
-- whether the graph structure is credible
-- whether the intervention is actually represented by the model
-- whether the target effect is identifiable from the available information
-- whether the current case is inside the model's valid scope
+Because of these dependencies, two systems might return a response to "what causes `Y`" that looks identical in product copy or UI, but means wildly different things under the hood.
 
-That is why two systems can both return something that looks like an answer to "what causes Y" while meaning very different things.
+Depending on the system, you might be looking at a graph neighborhood, a propagation score, a standard forecast, an identified causal effect, or a simulation from a structural causal model. **These are not interchangeable.**
 
-One system may be returning:
+## Why This Matters for CAP
 
-- a graph neighborhood
-- a propagation score
-- a forecast
-- an identified causal effect
-- a simulation from a structural causal model
+CAP exists because ordinary invocation interoperability (like REST or gRPC) is not enough for causal systems.
 
-Those are not interchangeable, even if they sound similar in product copy or UI labels.
+A client needs more than just a URL and a JSON schema. It needs to understand the semantic weight of the response:
+* What kind of causal question is the server actually equipped to answer?
+* How mathematically strong are those answers?
+* What assumptions shape them?
 
-## Why This Matters For CAP
-
-CAP exists because ordinary invocation interoperability is not enough for causal systems.
-
-A client needs more than a URL and a JSON schema. It also needs to know:
-
-- what kind of causal question the server can answer
-- how strong those answers are
-- what assumptions shape them
-- what semantic meaning the response actually carries
-
-That is why CAP focuses on disclosure as much as invocation. The point is not to make every causal system identical. The point is to make their differences visible.
+**CAP focuses on disclosure as much as invocation.** The goal of the protocol is not to force every causal system to behave identically; the goal is to make their underlying differences visible and machine-readable.
 
 ## The Practical CAP Mental Model
 
-When you read a CAP response, do not ask only:
+When you parse a CAP response, do not just ask, *"What is the result?"*
 
-- what is the result?
+You must also ask:
 
-Also ask:
+1. **What kind of claim is this?** (Observation, Intervention, or Counterfactual?)
+2. **What assumptions is it relying on?**
+3. **How should I interpret this conservatively?**
 
-- what kind of claim is this?
-- what assumptions is it relying on?
-- how should I interpret it conservatively?
+In CAP, these vital distinctions are exposed directly in the protocol through fields such as:
+* `supported_verbs`
+* `reasoning_mode`
+* `identification_status`
+* `assumptions`
+* `provenance`
 
-In CAP, those distinctions show up through fields such as:
-
-- `supported_verbs`
-- `reasoning_mode`
-- `identification_status`
-- `assumptions`
-- `provenance`
-
-The protocol does not decide the science for you.
-It makes the scientific posture of the server visible enough to inspect before you trust the answer too much.
+The protocol does not decide the science for you. Instead, it makes the scientific posture of the server visible enough to inspect *before* you decide to trust the answer.
 
 ## Where To Go Next
 

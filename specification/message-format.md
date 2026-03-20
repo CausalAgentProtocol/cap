@@ -57,6 +57,6 @@ These two surfaces MUST be semantically equivalent.
 
 ## Version Note
 
-Current source materials still record a draft-versus-adapter mismatch around the exact `cap_version` wire value.
+CAP `v0.2.2` uses `cap_version = "0.2.2"`.
 
-That mismatch should remain explicit until the repo decides the final normative wire value for `v0.2.2`.
+Long-form draft examples that still show `0.2` are historical and are not the normative envelope contract.

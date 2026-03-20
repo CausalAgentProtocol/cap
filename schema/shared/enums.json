@@ -6,11 +6,8 @@
   "$defs": {
     "cap_version": {
       "type": "string",
-      "enum": [
-        "0.2",
-        "0.2.2"
-      ],
-      "$comment": "The long-form draft examples use 0.2 in envelopes, while the current public adapter emits 0.2.2. This catalog accepts both until the prose and machine contracts are fully tightened."
+      "const": "0.2.2",
+      "$comment": "The active CAP v0.2.2 wire contract uses 0.2.2. Older draft examples that still show 0.2 are archival and are not the current normative envelope value."
     },
     "cap_spec_version": {
       "type": "string",

@@ -21,37 +21,7 @@
         "prediction": {
           "type": "number"
         },
-        "intercept": {
-          "type": "number"
-        },
         "drivers": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "reasoning_mode": {
-          "anyOf": [
-            {
-              "$ref": "../shared/enums.json#/$defs/reasoning_mode"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "identification_status": {
-          "anyOf": [
-            {
-              "$ref": "../shared/enums.json#/$defs/identification_status"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "assumptions": {
           "type": "array",
           "items": {
             "type": "string",
@@ -62,9 +32,7 @@
       "required": [
         "target_node",
         "prediction",
-        "intercept",
-        "drivers",
-        "assumptions"
+        "drivers"
       ],
       "unevaluatedProperties": false
     },

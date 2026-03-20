@@ -322,6 +322,11 @@ For interventional responses, include:
 - `identification_status`
 - `assumptions`
 
+In the current `cap-reference` adapter, the public core result shapes are intentionally small:
+
+- `observe.predict` returns `target_node`, `prediction`, and `drivers`
+- `intervene.do` returns `outcome_node`, `effect`, `reasoning_mode`, `identification_status`, and `assumptions`
+
 Keep CAP core focused on intent. If your runtime always uses one fixed mechanism family or one fixed rollout horizon, disclose that in capability metadata or provenance instead of pretending it is a generic user-controlled core parameter.
 
 If you need richer rollout controls, time-lag summaries, or preview semantics, expose them as explicitly non-core extensions.
