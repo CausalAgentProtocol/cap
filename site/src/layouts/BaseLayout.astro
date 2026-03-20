@@ -43,6 +43,14 @@ const topNav = [
     <ClientRouter />
     <script id="site-search-index" type="application/json" set:html={searchIndexJson}></script>
     <script>
+      import {
+        createSearchEngine,
+        getSearchContextLabel,
+        highlightSearchMatches,
+        normalizeSearchText,
+        searchDocuments
+      } from "../lib/search-client";
+
       const copySectionLink = async (trigger) => {
         const id = trigger.getAttribute("data-copy-id");
 
@@ -67,20 +75,12 @@ const topNav = [
         void copySectionLink(trigger);
       });
 
-      const normalizeSearchText = (value) =>
-        value
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, " ")
-          .trim();
-
       const escapeSearchHtml = (value) =>
         value
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;");
-
-      const escapeSearchPattern = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
       const getSearchIndexData = () => {
         const node = document.getElementById("site-search-index");
@@ -94,94 +94,6 @@ const topNav = [
         } catch {
           return [];
         }
-      };
-
-      const buildSearchSnippet = (body, terms) => {
-        const text = body.replace(/\s+/g, " ").trim();
-
-        if (!text) {
-          return "";
-        }
-
-        const lower = text.toLowerCase();
-        const matchIndex = terms
-          .map((term) => lower.indexOf(term))
-          .filter((index) => index >= 0)
-          .sort((left, right) => left - right)[0];
-
-        const start = Math.max(0, (matchIndex ?? 0) - 42);
-        const end = Math.min(text.length, start + 170);
-        const prefix = start > 0 ? "..." : "";
-        const suffix = end < text.length ? "..." : "";
-
-        return `${prefix}${text.slice(start, end).trim()}${suffix}`;
-      };
-
-      const searchDocuments = (query, searchIndex) => {
-        const normalizedQuery = normalizeSearchText(query);
-        const terms = normalizedQuery.split(/\s+/).filter(Boolean);
-
-        if (!terms.length) {
-          return [];
-        }
-
-        return searchIndex
-          .map((entry) => {
-            const title = normalizeSearchText(entry.title);
-            const route = normalizeSearchText(entry.route);
-            const body = normalizeSearchText(entry.body);
-            const combined = `${title} ${route} ${body}`;
-
-            if (!terms.every((term) => combined.includes(term))) {
-              return null;
-            }
-
-            let score = 0;
-
-            for (const term of terms) {
-              if (title === term) score += 50;
-              if (title.startsWith(term)) score += 18;
-              if (title.includes(term)) score += 10;
-              if (route.includes(term)) score += 5;
-              if (body.includes(term)) score += 2;
-            }
-
-            if (entry.section === "documentation") {
-              score += 1;
-            }
-
-            return {
-              ...entry,
-              score,
-              snippet: buildSearchSnippet(entry.body, terms)
-            };
-          })
-          .filter(Boolean)
-          .sort((left, right) => right.score - left.score || left.title.localeCompare(right.title))
-          .slice(0, 8);
-      };
-
-      const searchContextLabel = (entry) => {
-        if (entry.route.startsWith("/docs/quickstart")) return "Quickstart";
-        if (entry.route.startsWith("/docs/concepts/")) return "Concept";
-        if (entry.route.startsWith("/docs/guides/")) return "Guide";
-        if (entry.route.startsWith("/docs/rationale/")) return "Rationale";
-        if (entry.route === "/spec") return "Specification";
-        if (entry.route.startsWith("/spec/")) return "Spec";
-        return entry.section === "specification" ? "Spec" : "Docs";
-      };
-
-      const highlightSearchMatches = (value, terms) => {
-        let rendered = escapeSearchHtml(value);
-
-        for (const term of [...new Set(terms)].filter((candidate) => candidate.length > 1)) {
-          rendered = rendered.replace(
-            new RegExp(`(${escapeSearchPattern(term)})`, "gi"),
-            '<mark class="site-search-mark">$1</mark>'
-          );
-        }
-
-        return rendered;
       };
 
       const setSearchOpen = (root, isOpen) => {
@@ -220,12 +132,16 @@ const topNav = [
         empty.textContent = "";
         results.innerHTML = matches
           .map((entry) => {
-            const contextLabel = searchContextLabel(entry);
+            const contextLabel = getSearchContextLabel(entry);
+            const sectionLabel =
+              entry.sectionTitle !== entry.pageTitle
+                ? ` · ${escapeSearchHtml(entry.sectionTitle)}`
+                : "";
 
             return `
-              <a class="site-search-result" href="${entry.route}" data-search-result>
-                <span class="site-search-meta">${contextLabel}</span>
-                <span class="site-search-title">${highlightSearchMatches(entry.title, terms)}</span>
+              <a class="site-search-result" href="${entry.url}" data-search-result>
+                <span class="site-search-meta">${escapeSearchHtml(contextLabel)}${sectionLabel}</span>
+                <span class="site-search-title">${highlightSearchMatches(entry.pageTitle, terms)}</span>
                 <span class="site-search-snippet">${highlightSearchMatches(entry.snippet, terms)}</span>
               </a>
             `;
@@ -236,7 +152,7 @@ const topNav = [
       };
 
       const attachSiteSearch = () => {
-        const searchIndex = getSearchIndexData();
+        const searchEngine = createSearchEngine(getSearchIndexData());
 
         document.querySelectorAll("[data-site-search]").forEach((root) => {
           if (!(root instanceof HTMLElement) || root.dataset.searchBound === "true") {
@@ -252,7 +168,7 @@ const topNav = [
           root.dataset.searchBound = "true";
 
           const updateResults = () => {
-            renderSearchResults(root, input.value, searchDocuments(input.value, searchIndex));
+            renderSearchResults(root, input.value, searchDocuments(input.value, searchEngine));
           };
 
           input.addEventListener("input", updateResults);
