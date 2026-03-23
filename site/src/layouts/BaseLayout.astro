@@ -59,6 +59,72 @@ const pageSectionLabel = activeSidebarGroup?.title;
         } catch {}
       };
 
+      const copyTextWithFallback = async (value) => {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(value);
+          return;
+        }
+
+        const textarea = document.createElement("textarea");
+        textarea.value = value;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        textarea.style.pointerEvents = "none";
+        document.body.append(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      };
+
+      const codeCopyIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+          <path d="M6 15V6a2 2 0 0 1 2-2h9"></path>
+        </svg>
+      `;
+
+      const attachCodeCopyButtons = () => {
+        document.querySelectorAll(".prose pre").forEach((pre) => {
+          if (!(pre instanceof HTMLElement) || pre.dataset.codeCopyBound === "true") {
+            return;
+          }
+
+          pre.dataset.codeCopyBound = "true";
+
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "code-copy-button";
+          button.innerHTML = codeCopyIcon;
+          button.setAttribute("aria-label", "Copy code");
+          button.setAttribute("title", "Copy code");
+
+          button.addEventListener("click", async () => {
+            const code = pre.querySelector("code");
+            const source = code instanceof HTMLElement ? code.textContent ?? "" : pre.textContent ?? "";
+
+            try {
+              await copyTextWithFallback(source.trimEnd());
+              button.dataset.state = "copied";
+              button.setAttribute("aria-label", "Copied");
+              button.setAttribute("title", "Copied");
+            } catch {
+              button.dataset.state = "failed";
+              button.setAttribute("aria-label", "Copy failed");
+              button.setAttribute("title", "Copy failed");
+            }
+
+            window.setTimeout(() => {
+              button.dataset.state = "idle";
+              button.setAttribute("aria-label", "Copy code");
+              button.setAttribute("title", "Copy code");
+            }, 1200);
+          });
+
+          pre.append(button);
+        });
+      };
+
       document.addEventListener("click", (event) => {
         const trigger = event.target instanceof Element ? event.target.closest("[data-copy-link]") : null;
 
@@ -229,9 +295,12 @@ const pageSectionLabel = activeSidebarGroup?.title;
 
         document.addEventListener("astro:page-load", attachSiteSearch);
         document.addEventListener("DOMContentLoaded", attachSiteSearch);
+        document.addEventListener("astro:page-load", attachCodeCopyButtons);
+        document.addEventListener("DOMContentLoaded", attachCodeCopyButtons);
       }
 
       attachSiteSearch();
+      attachCodeCopyButtons();
     </script>
     <style>
       :root {
@@ -820,6 +889,7 @@ const pageSectionLabel = activeSidebarGroup?.title;
       }
 
       :global(.prose pre) {
+        position: relative;
         padding: 1rem;
         overflow-x: auto;
         border: 1px solid rgba(17, 17, 17, 0.14);
@@ -834,6 +904,38 @@ const pageSectionLabel = activeSidebarGroup?.title;
         padding: 0;
         color: inherit;
         font-weight: var(--font-weight-regular);
+      }
+
+      :global(.prose .code-copy-button) {
+        position: absolute;
+        top: 0.7rem;
+        right: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        border: 1px solid rgba(17, 17, 17, 0.1);
+        border-radius: 999px;
+        background: #ffffff;
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      :global(.prose .code-copy-button:hover),
+      :global(.prose .code-copy-button:focus-visible) {
+        border-color: rgba(17, 17, 17, 0.16);
+        outline: none;
+      }
+
+      :global(.prose .code-copy-button svg) {
+        width: 0.95rem;
+        height: 0.95rem;
+      }
+
+      :global(.prose .code-copy-button[data-state="copied"]) {
+        background: rgba(17, 17, 17, 0.05);
       }
 
       :global(.prose a) {
