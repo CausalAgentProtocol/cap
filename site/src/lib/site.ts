@@ -106,6 +106,23 @@ export function resolveSourcePath(source: string): string {
   return path.join(capRoot, source);
 }
 
+export async function getRawMarkdownByRoute(route: string) {
+  const entry = await getRouteByPath(route);
+
+  if (!entry) {
+    throw new Error(`Unknown site route: ${route}`);
+  }
+
+  const absoluteSourcePath = resolveSourcePath(entry.source);
+  const markdown = await fs.readFile(absoluteSourcePath, "utf8");
+
+  return {
+    entry,
+    markdown,
+    sourcePath: path.relative(capRoot, absoluteSourcePath).replaceAll(path.sep, "/")
+  };
+}
+
 function collapseWhitespace(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
@@ -616,23 +633,37 @@ export async function getSidebarGroups(currentRoute: string): Promise<SidebarGro
 
 export async function renderRoute(route: string) {
   const siteMap = await getSiteMap();
-  const entry = await getRouteByPath(route);
-
-  if (!entry) {
-    throw new Error(`Unknown site route: ${route}`);
-  }
-
-  const absoluteSourcePath = resolveSourcePath(entry.source);
-  const markdownSource = await fs.readFile(absoluteSourcePath, "utf8");
+  const { entry, markdown: markdownSource, sourcePath } = await getRawMarkdownByRoute(route);
   const markdown = createMarkdownRenderer(entry.source, siteMap);
   const env = { toc: [] as TocHeading[] };
   const tokens = markdown.parse(markdownSource, env);
+  let pageTitle = entry.title;
+
+  for (let index = 0; index < tokens.length - 2; index += 1) {
+    const open = tokens[index];
+    const inline = tokens[index + 1];
+    const close = tokens[index + 2];
+
+    if (
+      open?.type === "heading_open" &&
+      open.tag === "h1" &&
+      inline?.type === "inline" &&
+      close?.type === "heading_close" &&
+      close.tag === "h1"
+    ) {
+      pageTitle = collapseWhitespace(inline.content) || entry.title;
+      tokens.splice(index, 3);
+      break;
+    }
+  }
+
   await highlightFenceTokens(tokens);
 
   return {
     entry,
+    pageTitle,
     html: markdown.renderer.render(tokens, markdown.options, env),
     toc: env.toc,
-    sourcePath: path.relative(capRoot, absoluteSourcePath).replaceAll(path.sep, "/")
+    sourcePath
   };
 }

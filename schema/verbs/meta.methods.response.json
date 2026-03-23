@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/meta.methods.response.json",
+  "title": "meta.methods response",
+  "$comment": "Discovery response for machine-readable method metadata across the active CAP surface. Compact responses keep only decision-critical field metadata; full responses may include additional constraints, and examples are optional.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/success_response"
+    },
+    {
+      "$ref": "#/$defs/error_response"
+    }
+  ],
+  "$defs": {
+    "field_descriptor": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "value_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "items_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "enum": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "default": {},
+        "min_length": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "max_length": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "minimum": {
+          "type": [
+            "integer",
+            "number",
+            "null"
+          ]
+        },
+        "maximum": {
+          "type": [
+            "integer",
+            "number",
+            "null"
+          ]
+        },
+        "examples": {
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "required"
+      ],
+      "unevaluatedProperties": false
+    },
+    "method_descriptor": {
+      "type": "object",
+      "properties": {
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "surface": {
+          "type": "string",
+          "enum": [
+            "core",
+            "convenience",
+            "extension"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "arguments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/field_descriptor"
+          }
+        },
+        "result_fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/field_descriptor"
+          }
+        }
+      },
+      "required": [
+        "verb",
+        "surface",
+        "arguments",
+        "result_fields"
+      ],
+      "unevaluatedProperties": false
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "methods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/method_descriptor"
+          }
+        }
+      },
+      "required": [
+        "methods"
+      ],
+      "unevaluatedProperties": false
+    },
+    "success_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "meta.methods"
+            },
+            "result": {
+              "$ref": "#/$defs/result"
+            }
+          },
+          "required": [
+            "verb",
+            "result"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "error_response": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/error_response_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "meta.methods"
+            }
+          },
+          "required": [
+            "verb"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

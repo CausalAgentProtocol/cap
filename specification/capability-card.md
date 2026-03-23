@@ -17,6 +17,8 @@ The capability card exists so a client can determine, before invocation:
 - graph scope or availability
 - authentication requirements
 
+Method-level invocation metadata MAY be discovered separately through `meta.methods`.
+
 ## Minimum Required Disclosure
 
 A CAP server MUST disclose enough information for a client to determine:

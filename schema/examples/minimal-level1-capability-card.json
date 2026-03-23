@@ -13,6 +13,7 @@
   "supported_verbs": {
     "core": [
       "meta.capabilities",
+      "meta.methods",
       "graph.neighbors",
       "graph.markov_blanket",
       "observe.predict"

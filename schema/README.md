@@ -13,7 +13,7 @@ This directory contains:
 Draft notes:
 
 - where older draft-era contracts and the current public adapter diverge, the schema files record both shapes explicitly instead of silently collapsing to one
-- the active public core surface is now centered on `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`
+- the active public core surface includes `meta.capabilities`, `meta.methods`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`
 - older `effect.query` artifacts are retained as legacy compatibility records rather than as the active public core surface
 - unresolved protocol gaps are marked with `$comment` in the relevant schema file
 

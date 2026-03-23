@@ -1,0 +1,523 @@
+---
+interface Props {
+  markdownUrl: string;
+}
+
+const { markdownUrl } = Astro.props;
+const menuId = `page-actions-menu-${markdownUrl.replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "") || "root"}`;
+---
+
+<div class="page-actions" data-page-actions data-open="false" data-state="idle" data-markdown-url={markdownUrl}>
+  <div class="page-actions-shell">
+    <button class="page-actions-primary" type="button" data-page-copy aria-label="Copy page as Markdown">
+      <span class="page-actions-primary-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+          <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
+        </svg>
+      </span>
+      <span class="page-actions-primary-label" data-page-copy-label>Copy page</span>
+    </button>
+    <button
+      class="page-actions-toggle"
+      type="button"
+      data-page-actions-toggle
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-controls={menuId}
+      aria-label="Open page actions"
+    >
+      <svg
+        class="page-actions-toggle-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.55"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m7 10 5 5 5-5"></path>
+      </svg>
+    </button>
+  </div>
+  <div class="page-actions-menu" id={menuId} role="menu" hidden data-page-actions-menu>
+    <button class="page-actions-item" type="button" role="menuitem" data-page-copy>
+      <span class="page-actions-item-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+          <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
+        </svg>
+      </span>
+      <span class="page-actions-item-copy">
+        <span class="page-actions-item-title">Copy page</span>
+        <span class="page-actions-item-description">Copy page as Markdown for LLMs</span>
+      </span>
+    </button>
+    <a class="page-actions-item" href={markdownUrl} role="menuitem" data-page-actions-link>
+      <span class="page-actions-item-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 4h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path>
+          <path d="M14 4v5h5"></path>
+          <path d="M8.5 13h7"></path>
+          <path d="M8.5 17h4.5"></path>
+        </svg>
+      </span>
+      <span class="page-actions-item-copy">
+        <span class="page-actions-item-title">View as Markdown</span>
+        <span class="page-actions-item-description">View this page as plain text</span>
+      </span>
+      <span class="page-actions-item-trailing" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17 17 7"></path>
+          <path d="M9 7h8v8"></path>
+        </svg>
+      </span>
+    </a>
+  </div>
+</div>
+
+<script>
+  const PAGE_ACTIONS_BOUND = "__capPageActionsBound";
+  const COPY_RESET_TIMEOUT_MS = 1400;
+
+  const markdownCache = new Map();
+  const copyResetTimers = new WeakMap();
+
+  const setMenuOpen = (root, isOpen) => {
+    root.dataset.open = isOpen ? "true" : "false";
+
+    const toggle = root.querySelector("[data-page-actions-toggle]");
+    const menu = root.querySelector("[data-page-actions-menu]");
+
+    if (toggle instanceof HTMLButtonElement) {
+      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+
+    if (menu instanceof HTMLElement) {
+      menu.hidden = !isOpen;
+    }
+  };
+
+  const closeOtherMenus = (activeRoot) => {
+    document.querySelectorAll("[data-page-actions]").forEach((node) => {
+      if (!(node instanceof HTMLElement) || node === activeRoot) {
+        return;
+      }
+
+      setMenuOpen(node, false);
+    });
+  };
+
+  const updateCopiedState = (root, isCopied) => {
+    const existingTimer = copyResetTimers.get(root);
+
+    if (existingTimer) {
+      window.clearTimeout(existingTimer);
+      copyResetTimers.delete(root);
+    }
+
+    root.dataset.state = isCopied ? "copied" : "idle";
+
+    root.querySelectorAll("[data-page-copy-label]").forEach((node) => {
+      node.textContent = isCopied ? "Copied" : "Copy page";
+    });
+
+    if (isCopied) {
+      const timer = window.setTimeout(() => {
+        root.dataset.state = "idle";
+        root.querySelectorAll("[data-page-copy-label]").forEach((node) => {
+          node.textContent = "Copy page";
+        });
+        copyResetTimers.delete(root);
+      }, COPY_RESET_TIMEOUT_MS);
+
+      copyResetTimers.set(root, timer);
+    }
+  };
+
+  const copyWithFallback = async (value) => {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(value);
+      return;
+    }
+
+    const textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    textarea.style.pointerEvents = "none";
+    document.body.append(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+  };
+
+  const fetchMarkdown = async (root) => {
+    const markdownUrl = root.dataset.markdownUrl;
+
+    if (!markdownUrl) {
+      throw new Error("Missing markdown URL");
+    }
+
+    if (markdownCache.has(markdownUrl)) {
+      return markdownCache.get(markdownUrl);
+    }
+
+    const response = await fetch(markdownUrl);
+
+    if (!response.ok) {
+      throw new Error(`Failed to load markdown from ${markdownUrl}`);
+    }
+
+    const markdown = await response.text();
+    markdownCache.set(markdownUrl, markdown);
+    return markdown;
+  };
+
+  const copyPageMarkdown = async (root) => {
+    root.dataset.state = "copying";
+
+    try {
+      const markdown = await fetchMarkdown(root);
+      await copyWithFallback(markdown);
+      updateCopiedState(root, true);
+    } catch {
+      updateCopiedState(root, false);
+    }
+  };
+
+  const syncInlineLayout = (root) => {
+    const main = root.closest(".main");
+    const heading = main?.querySelector("[data-page-title]");
+
+    if (!(heading instanceof HTMLElement)) {
+      root.dataset.inline = "false";
+      return;
+    }
+
+    if (window.innerWidth <= 720) {
+      root.dataset.inline = "false";
+      return;
+    }
+
+    const headingStyle = window.getComputedStyle(heading);
+    const lineHeight = Number.parseFloat(headingStyle.lineHeight) || heading.getBoundingClientRect().height;
+    const headingHeight = heading.getBoundingClientRect().height;
+    const isMultiLine = headingHeight > lineHeight * 1.35;
+
+    root.dataset.inline = isMultiLine ? "false" : "true";
+  };
+
+  const attachPageActions = () => {
+    document.querySelectorAll("[data-page-actions]").forEach((root) => {
+      if (!(root instanceof HTMLElement) || root.dataset.pageActionsBound === "true") {
+        return;
+      }
+
+      root.dataset.pageActionsBound = "true";
+      syncInlineLayout(root);
+
+      root.querySelectorAll("[data-page-copy]").forEach((trigger) => {
+        trigger.addEventListener("click", async () => {
+          await copyPageMarkdown(root);
+          setMenuOpen(root, false);
+        });
+      });
+
+      const toggle = root.querySelector("[data-page-actions-toggle]");
+
+      if (toggle instanceof HTMLButtonElement) {
+        toggle.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const isOpen = root.dataset.open === "true";
+          closeOtherMenus(root);
+          setMenuOpen(root, !isOpen);
+        });
+      }
+
+      root.querySelectorAll("[data-page-actions-link]").forEach((link) => {
+        link.addEventListener("click", () => {
+          setMenuOpen(root, false);
+        });
+      });
+    });
+  };
+
+  if (!window[PAGE_ACTIONS_BOUND]) {
+    window[PAGE_ACTIONS_BOUND] = true;
+
+    document.addEventListener("click", (event) => {
+      document.querySelectorAll("[data-page-actions][data-open='true']").forEach((root) => {
+        if (!(root instanceof HTMLElement) || root.contains(event.target)) {
+          return;
+        }
+
+        setMenuOpen(root, false);
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      document.querySelectorAll("[data-page-actions][data-open='true']").forEach((root) => {
+        if (root instanceof HTMLElement) {
+          setMenuOpen(root, false);
+        }
+      });
+    });
+
+    window.addEventListener("resize", () => {
+      document.querySelectorAll("[data-page-actions]").forEach((root) => {
+        if (root instanceof HTMLElement) {
+          syncInlineLayout(root);
+        }
+      });
+    });
+
+    document.addEventListener("astro:page-load", attachPageActions);
+    document.addEventListener("DOMContentLoaded", attachPageActions);
+  }
+
+  attachPageActions();
+</script>
+
+<style>
+  .page-actions {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 0.75rem;
+  }
+
+  .page-actions[data-inline="true"] {
+    float: right;
+    clear: right;
+    margin: 0 0 0.75rem 1rem;
+  }
+
+  .page-actions[data-inline="false"] {
+    float: none;
+    clear: both;
+  }
+
+  .page-actions-shell {
+    display: inline-flex;
+    align-items: stretch;
+    min-width: min(100%, 13.5rem);
+    border: 1px solid rgba(17, 17, 17, 0.1);
+    border-radius: 0.95rem;
+    background: #fff;
+  }
+
+  .page-actions-primary,
+  .page-actions-toggle,
+  .page-actions-item {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+  }
+
+  .page-actions-primary,
+  .page-actions-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    transition:
+      color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .page-actions-primary {
+    flex: 1 1 auto;
+    gap: 0.55rem;
+    padding: 0 0.95rem 0 0.9rem;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .page-actions-toggle {
+    flex: 0 0 2.6rem;
+    border-left: 1px solid rgba(17, 17, 17, 0.08);
+    cursor: pointer;
+  }
+
+  .page-actions-primary:hover,
+  .page-actions-primary:focus-visible,
+  .page-actions-toggle:hover,
+  .page-actions-toggle:focus-visible {
+    outline: none;
+  }
+
+  .page-actions-primary:active,
+  .page-actions-toggle:active {
+    transform: scale(0.995);
+  }
+
+  .page-actions-primary-icon,
+  .page-actions-item-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(17, 17, 17, 0.72);
+  }
+
+  .page-actions-primary-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .page-actions-primary-icon svg,
+  .page-actions-toggle svg,
+  .page-actions-item-icon svg,
+  .page-actions-item-trailing svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .page-actions-primary-label {
+    font-size: 0.94rem;
+    font-weight: 500;
+    letter-spacing: -0.022em;
+  }
+
+  .page-actions-toggle-icon {
+    width: 0.8rem;
+    height: 0.8rem;
+    color: rgba(17, 17, 17, 0.82);
+    transition: transform 180ms ease;
+  }
+
+  .page-actions[data-open="true"] .page-actions-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .page-actions-menu {
+    position: absolute;
+    top: calc(100% + 0.45rem);
+    right: 0;
+    z-index: 12;
+    display: grid;
+    gap: 0.15rem;
+    width: min(20rem, calc(100vw - 2rem));
+    padding: 0.35rem;
+    border: 1px solid rgba(17, 17, 17, 0.1);
+    border-radius: 0.95rem;
+    background: #fff;
+  }
+
+  .page-actions-menu[hidden] {
+    display: none;
+  }
+
+  .page-actions-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.5rem 0.55rem;
+    border-radius: 0.9rem;
+    text-decoration: none;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      transform 180ms ease;
+  }
+
+  .page-actions-item:hover,
+  .page-actions-item:focus-visible {
+    outline: none;
+  }
+
+  .page-actions-item:active {
+    transform: scale(0.996);
+  }
+
+  .page-actions-item-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: rgba(17, 17, 17, 0.74);
+  }
+
+  .page-actions-item-copy {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .page-actions-item-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+  }
+
+  .page-actions-item-description {
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+  }
+
+  .page-actions-item-trailing {
+    width: 0.82rem;
+    height: 0.82rem;
+    color: rgba(17, 17, 17, 0.66);
+  }
+
+  .page-actions[data-state="copying"] .page-actions-primary-label {
+    color: rgba(17, 17, 17, 0.68);
+  }
+
+  .page-actions[data-state="copied"] .page-actions-primary {
+    background: rgba(17, 17, 17, 0.04);
+  }
+
+  .page-actions[data-state="copied"] .page-actions-primary-label,
+  .page-actions[data-state="copied"] .page-actions-primary-icon {
+    color: rgba(17, 17, 17, 0.78);
+  }
+
+  @media (max-width: 720px) {
+    .page-actions {
+      float: none;
+      margin: 0 0 0.75rem;
+    }
+
+    .page-actions[data-inline="true"],
+    .page-actions[data-inline="false"] {
+      float: none;
+      clear: both;
+      margin: 0 0 0.75rem;
+    }
+
+    .page-actions-shell {
+      min-width: 100%;
+    }
+
+    .page-actions-primary,
+    .page-actions-toggle {
+      min-height: 2.75rem;
+    }
+
+    .page-actions-primary {
+      padding-left: 0.95rem;
+      padding-right: 0.95rem;
+    }
+
+    .page-actions-toggle {
+      flex-basis: 2.6rem;
+    }
+
+    .page-actions-menu {
+      width: min(100%, 20rem);
+    }
+  }
+</style>

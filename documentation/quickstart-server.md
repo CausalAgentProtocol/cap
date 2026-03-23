@@ -6,7 +6,7 @@ If you want the conceptual background first, read [What Is Causality?](concepts/
 
 Start by choosing the lowest conformance level your public interface actually satisfies. CAP rewards honest disclosure more than ambitious labeling. A narrower but truthful Level 1 or Level 2 surface is better than a richer surface that overstates semantics or capabilities.
 
-The examples below follow the current Python server shape from `cap-reference`: a FastAPI app factory, shared app state for the CAP service, one `POST /cap` route, a protocol dispatch registry, and functional handlers that hand off to adapters.
+The examples below follow the current Python SDK shape from `python-sdk` and the public server patterns used in `cap-reference`: a FastAPI app factory, shared app state for the CAP service, one `POST /cap` route, a protocol dispatch registry, and functional handlers that hand off to adapters.
 
 ## 1. Choose The Lowest Honest Level
 
@@ -14,6 +14,7 @@ Choose Level 1 when your public interface can support:
 
 - capability disclosure
 - `meta.capabilities`
+- `meta.methods`
 - `observe.predict`
 - `graph.neighbors`
 - `graph.markov_blanket`
@@ -42,7 +43,7 @@ from abel_cap_server.cap.catalog import (
 )
 from abel_cap_server.cap.disclosure import DEFAULT_ASSUMPTIONS, FORBIDDEN_FIELDS
 from abel_cap_server.core.config import Settings
-from cap_protocol.core import (
+from cap.core import (
     CAPABILITY_CARD_SCHEMA_URL,
     CapabilityAccessTier,
     CapabilityAuthentication,
@@ -142,19 +143,22 @@ def build_capability_card(settings: Settings, *, public_base_url: str) -> Capabi
 
 Use the typed `CapabilityCard` models directly. The important part is that your card should derive its public verbs from the same mounted registry, not from a second handwritten list.
 
+That same mounted registry should also drive `meta.methods`, so capability discovery and method discovery cannot drift apart.
+
 ## 3. Register A Small Public Surface
 
 For a quickstart, keep registration explicit and register handler functions directly. In the current Python server helpers, the registry mounts functions that accept a typed payload plus the FastAPI request.
 
 ```python
 from abel_cap_server.cap import handlers
-from cap_protocol.server import (
+from cap.server import (
     CAPVerbRegistry,
     GRAPH_MARKOV_BLANKET_CONTRACT,
     GRAPH_NEIGHBORS_CONTRACT,
     GRAPH_PATHS_CONTRACT,
     INTERVENE_DO_CONTRACT,
     META_CAPABILITIES_CONTRACT,
+    META_METHODS_CONTRACT,
     OBSERVE_PREDICT_CONTRACT,
     TRAVERSE_CHILDREN_CONTRACT,
     TRAVERSE_PARENTS_CONTRACT,
@@ -162,6 +166,7 @@ from cap_protocol.server import (
 
 DISPATCH_REGISTRY = CAPVerbRegistry()
 DISPATCH_REGISTRY.core(META_CAPABILITIES_CONTRACT)(handlers.meta_capabilities)
+DISPATCH_REGISTRY.core(META_METHODS_CONTRACT)(handlers.meta_methods)
 DISPATCH_REGISTRY.core(OBSERVE_PREDICT_CONTRACT)(handlers.observe_predict)
 DISPATCH_REGISTRY.core(INTERVENE_DO_CONTRACT)(handlers.intervene_do)
 DISPATCH_REGISTRY.core(GRAPH_NEIGHBORS_CONTRACT)(handlers.graph_neighbors)
@@ -183,7 +188,7 @@ DISPATCH_REGISTRY.extension(
 
 The `ExampleValidateConnectivity*` models in that snippet are placeholders for your own extension request and response types.
 
-If you add convenience verbs or extensions, register them in the same place. Keep the mounted surface small, mark convenience verbs explicitly, and let the capability card derive both `supported_verbs` and `extensions` from that registry.
+If you add convenience verbs or extensions, register them in the same place. Keep the mounted surface small, mark convenience verbs explicitly, and let both the capability card and `meta.methods` derive from that registry.
 
 ## 4. Write Thin Protocol Handlers
 
@@ -193,6 +198,7 @@ In `cap-reference`, the protocol boundary lives in ordinary functions under `cap
 from typing import cast
 
 from fastapi import Request
+from cap.core import GraphPathsRequest, MetaCapabilitiesRequest, MetaMethodsRequest
 
 
 def get_cap_service_from_request(request: Request) -> CapService:
@@ -207,6 +213,14 @@ def meta_capabilities(payload: MetaCapabilitiesRequest, request: Request) -> dic
     )
 
 
+def meta_methods(payload: MetaMethodsRequest, request: Request) -> dict:
+    service = get_cap_service_from_request(request)
+    return service.build_methods_envelope(payload.request_id).model_dump(
+        exclude_none=True,
+        by_alias=True,
+    )
+
+
 async def graph_paths(payload: GraphPathsRequest, request: Request) -> dict:
     return await get_cap_service_from_request(request).graph_paths(payload)
 ```
@@ -214,12 +228,12 @@ async def graph_paths(payload: GraphPathsRequest, request: Request) -> dict:
 Behind that boundary, keep your causal logic in ordinary async functions or adapters. For example, the current `graph_paths` adapter calls the upstream primitive, maps it into a typed CAP result, and returns a `CAPHandlerSuccessSpec`. The dispatcher then validates the response model and attaches shared provenance context.
 
 ```python
-from cap_protocol.core import (
+from cap.core import (
     ALGORITHM_PCMCI,
     IDENTIFICATION_STATUS_NOT_APPLICABLE,
     REASONING_MODE_STRUCTURAL_SEMANTICS,
 )
-from cap_protocol.server import CAPHandlerSuccessSpec, CAPProvenanceHint
+from cap.server import CAPHandlerSuccessSpec, CAPProvenanceHint
 
 
 async def graph_paths(
@@ -260,7 +274,7 @@ from typing import Any
 
 from fastapi import APIRouter, Request
 from abel_cap_server.cap.provenance import get_abel_provenance_context
-from cap_protocol.server import build_fastapi_cap_dispatcher
+from cap.server import build_fastapi_cap_dispatcher
 
 router = APIRouter(tags=["cap"])
 CAP_DISPATCHER = build_fastapi_cap_dispatcher(
@@ -278,6 +292,8 @@ async def dispatch_cap(
 ```
 
 The capability card should advertise this same invocation URL through `endpoint`.
+
+Discovery verbs such as `meta.capabilities` and `meta.methods` may omit `params`, but they still use the same CAP envelope and endpoint.
 
 ## 6. Assemble App State And Discovery Routes
 

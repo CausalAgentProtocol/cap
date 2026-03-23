@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/meta.methods.request.json",
+  "title": "meta.methods request",
+  "$comment": "Discovery request for machine-readable method metadata across the active CAP surface. Clients may omit params to allow the server to return every supported method using compact metadata.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/request_without_params"
+    },
+    {
+      "$ref": "#/$defs/request_with_params"
+    }
+  ],
+  "$defs": {
+    "params": {
+      "type": "object",
+      "properties": {
+        "verbs": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "detail": {
+          "type": "string",
+          "enum": [
+            "compact",
+            "full"
+          ]
+        },
+        "include_examples": {
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "request_without_params": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "meta.methods"
+            }
+          },
+          "required": [
+            "verb"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "request_with_params": {
+      "allOf": [
+        {
+          "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "verb": {
+              "const": "meta.methods"
+            },
+            "params": {
+              "$ref": "#/$defs/params"
+            }
+          },
+          "required": [
+            "verb",
+            "params"
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

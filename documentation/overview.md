@@ -4,7 +4,7 @@ CAP is an open protocol for discovering, invoking, and interpreting causal reaso
 
 If you are already comfortable with causal reasoning, you can read this page as the plain-language boundary of the protocol. If you are not, start with [What Is Causality?](concepts/what-is-causality.md) and then come back here.
 
-CAP standardizes a small interoperable surface for capability disclosure, causal invocation, and semantically qualified responses. It does not standardize how a server learns graphs, fits models, or organizes its internal product surface.
+CAP standardizes a small interoperable surface for capability disclosure, causal invocation, and semantically qualified responses. 
 
 CAP exists because invocation interoperability is not enough for causal systems. A client also needs to know what kind of causal claim a result represents, which assumptions it depends on, and how far that result should be trusted.
 
@@ -15,6 +15,7 @@ That is the main reading posture for the rest of the docs: not just "how do I ca
 CAP standardizes:
 
 - a machine-readable capability card
+- machine-readable method discovery through `meta.methods`
 - a small causal verb surface
 - a common request and response envelope
 - semantic disclosure for stronger causal claims
