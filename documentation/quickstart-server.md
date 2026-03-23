@@ -227,14 +227,6 @@ def meta_methods(payload: MetaMethodsRequest, request: Request) -> dict:
     ).model_dump(exclude_none=True, by_alias=True)
 
 
-def meta_methods(payload: MetaMethodsRequest, request: Request) -> dict:
-    service = get_cap_service_from_request(request)
-    return service.build_methods_envelope(payload.request_id).model_dump(
-        exclude_none=True,
-        by_alias=True,
-    )
-
-
 async def graph_paths(payload: GraphPathsRequest, request: Request) -> dict:
     service = get_cap_service_from_request(request)
     return await service.graph_paths(payload, headers=request.headers)
