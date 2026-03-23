@@ -16,6 +16,8 @@ This is the primary discovery path for clients.
 
 If you also expose `meta.capabilities`, it should return the same capability information through the CAP envelope.
 
+If you expose `meta.methods`, it should describe the same mounted public surface the server actually dispatches.
+
 ## 2. Use A Single CAP Entrypoint
 
 The current reference binding is:
@@ -46,6 +48,8 @@ Example request:
 ```
 
 This is JSON-RPC-like in shape, but the semantic contract is still CAP: the envelope carries `verb`, CAP params, CAP errors, and CAP provenance. FastAPI routing is only the binding layer.
+
+Discovery verbs such as `meta.capabilities` and `meta.methods` may omit `params` entirely.
 
 Route-style aliases such as `intervene/do` or `extensions/your_service/custom_operation` may still exist in SDKs as convenience input. In `cap-reference`, those aliases are resolved client-side back to canonical CAP verbs before dispatch.
 

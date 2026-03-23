@@ -13,6 +13,7 @@ CAP divides verbs into three categories:
 The CAP core surface in `v0.2.x` is:
 
 - `meta.capabilities`
+- `meta.methods`
 - `observe.predict`
 - `intervene.do`
 - `graph.neighbors`
@@ -24,6 +25,40 @@ The CAP core surface in `v0.2.x` is:
 This verb returns the same capability information served at `/.well-known/cap.json`, but through the CAP envelope.
 
 The returned disclosure MUST be semantically equivalent to the well-known document.
+
+### `meta.methods`
+
+This verb returns machine-readable, LLM-oriented method metadata for the CAP verbs supported by the current endpoint.
+
+The success response shape is `result.methods`, where each entry describes one currently mounted CAP verb.
+
+The response MUST be derived from the server's active public dispatch surface rather than from a stale hand-maintained list.
+
+A server MUST NOT advertise hidden, unmounted, or future verbs through `meta.methods`.
+
+Each returned method descriptor SHOULD disclose:
+
+- `verb`
+- `surface`
+- `description` when the server can provide one honestly
+- `arguments`
+- `result_fields`
+
+If `surface` is disclosed, it MUST use one of these values:
+
+- `core`
+- `convenience`
+- `extension`
+
+`arguments` SHOULD summarize the public request payload under `params`.
+
+`result_fields` SHOULD summarize the success payload under `result`.
+
+Envelope-level fields such as `cap_version`, `request_id`, `status`, `error`, and `provenance` do not belong in `result_fields`.
+
+Verbs with no public request parameters SHOULD return `arguments: []`.
+
+This discovery surface supplements `meta.capabilities`. It does not replace the capability card.
 
 ### `observe.predict`
 

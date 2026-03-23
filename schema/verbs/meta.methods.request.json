@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/verbs/meta.methods.request.json",
+  "title": "meta.methods request",
+  "$comment": "Discovery request for machine-readable method metadata across the active CAP surface.",
+  "allOf": [
+    {
+      "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "verb": {
+          "const": "meta.methods"
+        }
+      },
+      "required": [
+        "verb"
+      ]
+    }
+  ],
+  "unevaluatedProperties": false
+}

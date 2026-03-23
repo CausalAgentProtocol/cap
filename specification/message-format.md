@@ -8,13 +8,17 @@ A CAP request envelope MUST include:
 
 - `cap_version`
 - `verb`
-- `params`
 
 It MAY include:
 
 - `request_id`
 - `context`
 - `options`
+- `params`
+
+When a verb defines request parameters, the request MUST include `params`.
+
+Discovery verbs such as `meta.capabilities` and `meta.methods` MAY omit `params`.
 
 If `context` is present, it MAY include shared cross-verb request state such as:
 
@@ -54,6 +58,10 @@ There are two protocol-valid ways to access capability information:
 - `meta.capabilities` through the CAP envelope
 
 These two surfaces MUST be semantically equivalent.
+
+CAP method-discovery information is exposed through `meta.methods` in the CAP envelope.
+
+`meta.methods` describes the public request `params` and success `result` fields for the verbs currently mounted on that endpoint. It does not replace the capability card.
 
 ## Version Note
 

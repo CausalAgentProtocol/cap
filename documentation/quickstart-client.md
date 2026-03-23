@@ -4,13 +4,17 @@ This is the shortest safe path for calling a CAP server.
 
 If you want a conceptual on-ramp before the protocol details, read [What Is Causality?](concepts/what-is-causality.md) first. This page assumes you are ready to inspect a server conservatively rather than start from first principles.
 
-The examples below follow the current Python client shape from `cap-reference`. They use the Python SDK today; TypeScript examples can be added later when that SDK lands.
+The examples below follow the current Python SDK shape from `python-sdk` and the public server behavior in `cap-reference`. TypeScript examples can be added later when that SDK lands.
 
 ## 1. Discover The Server
 
 Fetch `/.well-known/cap.json`.
 
 If the server also exposes `meta.capabilities`, treat it as the same capability disclosure through the CAP envelope.
+
+If the server exposes `meta.methods`, use it when you need machine-readable verb schemas before invocation.
+
+In the current Python SDK, `meta_methods()` returns one entry per mounted verb, including its `surface`, request `arguments`, and success `result_fields`.
 
 ## 2. Read The Minimum Fields First
 
@@ -39,8 +43,8 @@ With the current Python client:
 ```python
 import asyncio
 
-from cap_protocol.client import AsyncCAPClient
-from cap_protocol.core import CAPGraphRef
+from cap.client import AsyncCAPClient
+from cap.core import CAPGraphRef
 
 
 async def main() -> None:
@@ -48,6 +52,7 @@ async def main() -> None:
     try:
         graph_ref = CAPGraphRef(graph_id="abel-main", graph_version="CausalNodeV2")
         capabilities = await client.meta_capabilities()
+        methods = await client.meta_methods()
         neighbors = await client.graph_neighbors(
             node_id="<node-id>",
             scope="parents",
@@ -59,6 +64,7 @@ async def main() -> None:
             graph_ref=graph_ref,
         )
         print(capabilities.model_dump(mode="json", exclude_none=True))
+        print([item.verb for item in methods.result.methods])
         print(neighbors.model_dump(mode="json", exclude_none=True))
         print(prediction.model_dump(mode="json", exclude_none=True))
     finally:
@@ -69,6 +75,8 @@ asyncio.run(main())
 ```
 
 Under the hood, the SDK posts a CAP envelope to the single HTTP entrypoint and sets `verb` for you. Route-style aliases can also be accepted by the SDK, but they are normalized client-side before the request is sent.
+
+Discovery verbs such as `meta.capabilities` and `meta.methods` do not require public `params`.
 
 The current Python client passes graph selection as shared request context rather than duplicating graph selectors per verb:
 

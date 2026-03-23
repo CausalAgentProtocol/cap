@@ -672,6 +672,11 @@
                       },
                       {
                         "contains": {
+                          "const": "meta.methods"
+                        }
+                      },
+                      {
+                        "contains": {
                           "const": "observe.predict"
                         }
                       },
@@ -712,6 +717,11 @@
                       {
                         "contains": {
                           "const": "meta.capabilities"
+                        }
+                      },
+                      {
+                        "contains": {
+                          "const": "meta.methods"
                         }
                       },
                       {

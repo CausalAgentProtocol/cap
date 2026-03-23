@@ -27,10 +27,11 @@ CAP does not standardize:
 ## Protocol Flow
 
 1. A client discovers the server's capability card.
-2. The client evaluates conformance level, supported verbs, assumptions, and invocation requirements.
-3. The client invokes a CAP verb through a transport binding.
-4. The server returns a CAP response envelope.
-5. The client interprets the result using the disclosed semantics and provenance.
+2. The client MAY fetch `meta.methods` when it needs machine-readable invocation metadata for the currently mounted CAP surface.
+3. The client evaluates conformance level, supported verbs, assumptions, method metadata, and invocation requirements.
+4. The client invokes a CAP verb through a transport binding.
+5. The server returns a CAP response envelope.
+6. The client interprets the result using the disclosed semantics and provenance.
 
 ## State Model
 

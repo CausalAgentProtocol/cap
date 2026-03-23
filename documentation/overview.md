@@ -15,6 +15,7 @@ That is the main reading posture for the rest of the docs: not just "how do I ca
 CAP standardizes:
 
 - a machine-readable capability card
+- machine-readable method discovery through `meta.methods`
 - a small causal verb surface
 - a common request and response envelope
 - semantic disclosure for stronger causal claims

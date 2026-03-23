@@ -17,6 +17,7 @@ Level 1 is the minimum viable CAP server.
 A Level 1 server MUST implement these core verbs:
 
 - `meta.capabilities`
+- `meta.methods`
 - `observe.predict`
 - `graph.neighbors`
 - `graph.markov_blanket`
