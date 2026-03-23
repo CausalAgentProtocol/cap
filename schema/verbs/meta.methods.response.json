@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/verbs/meta.methods.response.json",
   "title": "meta.methods response",
-  "$comment": "Discovery response for machine-readable method metadata across the active CAP surface.",
+  "$comment": "Discovery response for machine-readable method metadata across the active CAP surface. Compact responses keep only decision-critical field metadata; full responses may include additional constraints, and examples are optional.",
   "anyOf": [
     {
       "$ref": "#/$defs/success_response"

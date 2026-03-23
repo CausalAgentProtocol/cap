@@ -36,6 +36,16 @@ The response MUST be derived from the server's active public dispatch surface ra
 
 A server MUST NOT advertise hidden, unmounted, or future verbs through `meta.methods`.
 
+The request MAY include:
+
+- `params.verbs`
+- `params.detail = "compact" | "full"`
+- `params.include_examples`
+
+If `params.verbs` is omitted or empty, the server MAY return every supported method.
+
+Clients and LLM-oriented integrations that have already read `meta.capabilities.supported_verbs` SHOULD prefer targeted `params.verbs` queries over full-surface discovery requests.
+
 Each returned method descriptor SHOULD disclose:
 
 - `verb`
@@ -53,6 +63,8 @@ If `surface` is disclosed, it MUST use one of these values:
 `arguments` SHOULD summarize the public request payload under `params`.
 
 `result_fields` SHOULD summarize the success payload under `result`.
+
+`params.detail = "compact"` SHOULD be the default response profile and SHOULD favor invocation-critical metadata over exhaustive schema reproduction.
 
 Envelope-level fields such as `cap_version`, `request_id`, `status`, `error`, and `provenance` do not belong in `result_fields`.
 

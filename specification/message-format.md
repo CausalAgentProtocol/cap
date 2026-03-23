@@ -63,6 +63,8 @@ CAP method-discovery information is exposed through `meta.methods` in the CAP en
 
 `meta.methods` describes the public request `params` and success `result` fields for the verbs currently mounted on that endpoint. It does not replace the capability card.
 
+When a client already has a verb inventory from `meta.capabilities`, it SHOULD prefer targeted `meta.methods` requests over whole-surface method dumps.
+
 ## Version Note
 
 CAP `v0.2.2` uses `cap_version = "0.2.2"`.
