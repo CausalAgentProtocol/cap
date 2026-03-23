@@ -4,7 +4,9 @@ import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import { ClientRouter } from "astro:transitions";
+import PageActions from "../components/PageActions.astro";
 import { getSearchIndex, type SidebarGroup, type TocHeading } from "../lib/site";
+import { buildMarkdownRoute, getTopNav, siteShell } from "../lib/site-shell";
 
 interface Props {
   title: string;
@@ -18,19 +20,10 @@ interface Props {
 const { title, currentRoute, currentSection, description, sidebar = [], toc = [] } = Astro.props;
 const routeClass = `route-${currentRoute.replace(/^\//, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "") || "home"}`;
 const searchIndexJson = JSON.stringify(await getSearchIndex()).replace(/</g, "\\u003c");
-
-const topNav = [
-  {
-    href: "/docs/overview",
-    label: "Docs",
-    active: currentSection === "documentation" || currentRoute === "/docs" || currentRoute.startsWith("/docs/")
-  },
-  {
-    href: "/spec",
-    label: "Spec",
-    active: currentSection === "specification" || currentRoute === "/spec" || currentRoute.startsWith("/spec/")
-  }
-];
+const topNav = getTopNav(currentRoute, currentSection);
+const markdownUrl = buildMarkdownRoute(currentRoute);
+const activeSidebarGroup = sidebar.find((group) => group.links.some((link) => link.route === currentRoute));
+const pageSectionLabel = activeSidebarGroup?.title;
 ---
 
 <!doctype html>
@@ -38,7 +31,7 @@ const topNav = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | CAP</title>
+    <title>{title} | {siteShell.titleSuffix}</title>
     <link rel="icon" type="image/svg+xml" href="/icons/cap-logo-c-sharp-transparent.svg" />
     <ClientRouter />
     <script id="site-search-index" type="application/json" set:html={searchIndexJson}></script>
@@ -647,11 +640,11 @@ const topNav = [
 
       .sidebar-group h2 {
         margin: 0 0 0.45rem;
-        color: var(--muted);
+        color: var(--ink);
         font-size: var(--font-size-label);
-        font-weight: var(--font-weight-semibold);
-        letter-spacing: var(--tracking-label);
-        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: -0.015em;
+        text-transform: none;
       }
 
       .sidebar-group a {
@@ -674,6 +667,47 @@ const topNav = [
 
       .main {
         min-width: 0;
+      }
+
+      .page-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.35rem;
+        margin: 0 0 1.05rem;
+      }
+
+      .page-header-meta {
+        display: block;
+        color: rgba(17, 17, 17, 0.48);
+        font-size: 0.8rem;
+        font-weight: 600;
+        line-height: 1.25;
+        letter-spacing: -0.012em;
+      }
+
+      .page-header-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .page-header-heading {
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .page-header-copy {
+        flex: 0 0 auto;
+      }
+
+      .page-header-title {
+        margin: 0;
+        font-size: clamp(1.9rem, 3.3vw, 2.65rem);
+        line-height: 1.05;
+        font-weight: 600;
+        letter-spacing: -0.04em;
+        text-wrap: balance;
       }
 
       .toc {
@@ -1012,6 +1046,16 @@ const topNav = [
           gap: 1rem;
         }
 
+        .page-header {
+          margin-bottom: 0.95rem;
+        }
+
+        .page-header-top {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.7rem;
+        }
+
         :global(body.route-docs-concepts-what-is-causality .prose h3 + p + ul > li > em:first-child) {
           display: block;
           width: auto;
@@ -1044,9 +1088,9 @@ const topNav = [
         <header class="masthead">
           <div class="masthead-top">
             <div class="masthead-primary">
-              <a class="brand" href="/docs/overview" aria-label="Causal Agent Protocol">
-                <img class="brand-mark" src="/icons/cap-logo-c-sharp.svg" alt="" aria-hidden="true" />
-                <span class="brand-wordmark">Causal Agent Protocol</span>
+              <a class="brand" href={siteShell.brandHref} aria-label={siteShell.brandWordmark}>
+                <img class="brand-mark" src={siteShell.brandIconPath} alt="" aria-hidden="true" />
+                <span class="brand-wordmark">{siteShell.brandWordmark}</span>
               </a>
               <nav class="nav" aria-label="Primary">
                 {
@@ -1061,7 +1105,7 @@ const topNav = [
             <div class="masthead-utility">
               <div class="site-search" data-site-search data-open="false">
                 <label>
-                  <span class="sr-only">Search docs and spec</span>
+                  <span class="sr-only">{siteShell.searchLabel}</span>
                   <svg
                     class="site-search-icon"
                     xmlns="http://www.w3.org/2000/svg"
@@ -1079,8 +1123,8 @@ const topNav = [
                   <input
                     class="site-search-input"
                     type="search"
-                    placeholder="Search docs and spec"
-                    aria-label="Search docs and spec"
+                    placeholder={siteShell.searchPlaceholder}
+                    aria-label={siteShell.searchLabel}
                     autocomplete="off"
                     spellcheck="false"
                     data-search-input
@@ -1093,7 +1137,7 @@ const topNav = [
               </div>
               <a
                 class="github-link"
-                href="https://github.com/CausalAgentProtocol"
+                href={siteShell.githubHref}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
@@ -1111,8 +1155,8 @@ const topNav = [
             </div>
           </div>
           <div class="masthead-copy">
-            <h1>Causal Agent Protocol</h1>
-            <p>{description ?? "Capability disclosure, invocation, and provenance for causal reasoning systems."}</p>
+            <h1>{siteShell.brandWordmark}</h1>
+            <p>{description ?? siteShell.defaultDescription}</p>
           </div>
         </header>
         <main class="content" data-left={sidebar.length > 0} data-right={toc.length > 0}>
@@ -1135,6 +1179,17 @@ const topNav = [
             )
           }
           <div class="main">
+            <div class="page-header">
+              {pageSectionLabel && <span class="page-header-meta">{pageSectionLabel}</span>}
+              <div class="page-header-top">
+                <div class="page-header-heading">
+                  <h1 class="page-header-title" data-page-title>{title}</h1>
+                </div>
+                <div class="page-header-copy">
+                  <PageActions markdownUrl={markdownUrl} />
+                </div>
+              </div>
+            </div>
             <div class="prose">
               <slot />
             </div>

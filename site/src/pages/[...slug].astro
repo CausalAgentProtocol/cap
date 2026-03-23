@@ -26,10 +26,9 @@ const sidebar = await getSidebarGroups(route);
 ---
 
 <BaseLayout
-  title={rendered.entry.title}
+  title={rendered.pageTitle}
   currentRoute={rendered.entry.route}
   currentSection={rendered.entry.section}
-  sourcePath={rendered.sourcePath}
   sidebar={sidebar}
   toc={rendered.toc}
   description="Repository markdown rendered through the CAP site route map."

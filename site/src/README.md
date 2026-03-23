@@ -14,3 +14,5 @@ Current implementation:
 - Astro routes are generated from the site-map manifest
 - markdown is read from repository source files at build time
 - site-only landing pages remain under [`../content/`](../content/)
+- shared site chrome and brand config should live under [`./lib/site-shell.ts`](./lib/site-shell.ts) so another docs property can reuse the framework without forking layout logic
+- page-level actions such as markdown export should be implemented as reusable UI components under [`./components/`](./components/)
