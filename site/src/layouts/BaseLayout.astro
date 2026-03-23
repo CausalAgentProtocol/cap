@@ -642,7 +642,7 @@ const pageSectionLabel = activeSidebarGroup?.title;
         margin: 0 0 0.45rem;
         color: var(--ink);
         font-size: var(--font-size-label);
-        font-weight: 700;
+        font-weight: 550;
         letter-spacing: -0.015em;
         text-transform: none;
       }
@@ -711,9 +711,16 @@ const pageSectionLabel = activeSidebarGroup?.title;
       }
 
       .toc {
-        position: sticky;
+        position: fixed;
         top: calc(var(--masthead-height) + 1rem);
-        align-self: start;
+        right: max(
+          calc(50vw - (var(--frame-max-width) / 2) + var(--content-inline-padding)),
+          calc(var(--frame-gutter) + var(--content-inline-padding))
+        );
+        width: 220px;
+        max-height: calc(100vh - var(--masthead-height) - 1.5rem);
+        overflow-y: auto;
+        overscroll-behavior: contain;
         padding-top: 1rem;
       }
 
@@ -721,7 +728,7 @@ const pageSectionLabel = activeSidebarGroup?.title;
         margin: 0 0 0.5rem;
         color: rgba(17, 17, 17, 0.78);
         font-size: var(--font-size-label);
-        font-weight: 700;
+        font-weight: 550;
         letter-spacing: -0.015em;
         text-transform: none;
       }
