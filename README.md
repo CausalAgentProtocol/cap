@@ -26,6 +26,7 @@ This repository contains the CAP normative specification, supporting schemas, re
 - [Getting Started](documentation/getting-started.md)
 - [Quickstart for Clients](documentation/quickstart-client.md)
 - [Quickstart for Servers](documentation/quickstart-server.md)
+- [Official Example Server (`cap-example`)](https://github.com/CausalAgentProtocol/cap-example)
 - [Normative Specification](specification/index.md)
 - [Schemas](schema/README.md)
 - [Contributing](CONTRIBUTING.md)
@@ -47,5 +48,7 @@ This repository contains the CAP normative specification, supporting schemas, re
 ## Examples And Notes
 
 - minimal capability-card examples live in [`schema/examples/`](schema/examples/)
+- the official minimal example server lives in [`cap-example`](https://github.com/CausalAgentProtocol/cap-example)
+- the draft scaffold that seeded that repository still lives in [`examples/cap-example/`](examples/cap-example/)
 - example implementations and adapters are useful references, but they are not the CAP standard itself
 - the site should source content from this repo rather than becoming a second content fork

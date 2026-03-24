@@ -12,7 +12,7 @@ The normative semantic fields are:
 - `identification_status`
 - `assumptions`
 
-The machine-readable enum catalog for this repository lives in [`schema/shared/enums.json`](../schema/shared/enums.json). It is aligned to the long-form draft where possible and extended where the current `cap-reference` canonical catalog has already stabilized names in code.
+The machine-readable enum catalog for this repository lives in [`schema/shared/enums.json`](../schema/shared/enums.json). It is aligned to the long-form draft where possible and extended where earlier public CAP implementations have already stabilized names in code.
 
 ## Reasoning Mode
 
@@ -92,7 +92,7 @@ Canonical assumption values in the v0.2.2 draft include:
 
 That base catalog remains the preferred unprefixed assumption vocabulary.
 
-When a server needs narrower implementation-specific assumptions, it MAY add custom strings. Those custom strings SHOULD be namespaced to avoid colliding with protocol-level canonical names. The current reference implementation uses labels such as `abel_hidden_field_policy` for that reason.
+When a server needs narrower implementation-specific assumptions, it MAY add custom strings. Those custom strings SHOULD be namespaced to avoid colliding with protocol-level canonical names. Earlier implementation-specific adapters used labels such as `abel_hidden_field_policy` for that reason.
 
 ## Provenance Naming
 
@@ -136,7 +136,7 @@ That boundary is the protocol's semantic honesty layer.
 
 Some richer CAP payloads may eventually use a shared `default_reasoning_mode` plus per-claim override.
 
-The current `cap-reference` contract is narrower: core `intervene.do` carries one treatment and one selected `outcome_node`, and exposes a singular result-level `reasoning_mode` for that one interventional claim.
+One earlier public adapter contract was narrower: core `intervene.do` carried one treatment and one selected `outcome_node`, and exposed a singular result-level `reasoning_mode` for that one interventional claim.
 
 Structural verbs need the same semantic honesty discipline. In particular:
 
@@ -144,8 +144,8 @@ Structural verbs need the same semantic honesty discipline. In particular:
 - Markov blanket membership SHOULD use `identification_status = "not_applicable"`
 - servers SHOULD avoid framing Markov blanket membership as an identified causal effect unless they are actually returning a different effect-bearing relation
 
-## Current Reference Note
+## Historical Adapter Note
 
-The current public `cap-reference` implementation already uses several of the extended canonical names above, including `observational_prediction`, `structural_semantics`, and `validation_gate`.
+The earlier public `cap-reference` implementation already used several of the extended canonical names above, including `observational_prediction`, `structural_semantics`, and `validation_gate`.
 
 That means repository prose, schemas, examples, and conformance notes should treat those strings as part of the active CAP naming catalog rather than as ad hoc adapter-only labels.

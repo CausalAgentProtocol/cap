@@ -8,7 +8,7 @@
       "$ref": "#/$defs/draft_request"
     },
     {
-      "$ref": "#/$defs/current_adapter_request"
+      "$ref": "#/$defs/legacy_public_request"
     }
   ],
   "$defs": {
@@ -82,9 +82,9 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_params": {
+    "legacy_public_params": {
       "type": "object",
-      "$comment": "Current public adapter model from cap_protocol.core.contracts.EffectQueryParams.",
+      "$comment": "Legacy public compatibility model derived from cap_protocol.core.contracts.EffectQueryParams.",
       "properties": {
         "query_type": {
           "$ref": "../shared/enums.json#/$defs/query_type"
@@ -184,7 +184,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_request": {
+    "legacy_public_request": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/request_envelope"
@@ -196,7 +196,7 @@
               "const": "effect.query"
             },
             "params": {
-              "$ref": "#/$defs/current_adapter_params"
+              "$ref": "#/$defs/legacy_public_params"
             }
           },
           "required": [

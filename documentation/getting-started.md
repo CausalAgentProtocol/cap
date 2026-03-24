@@ -14,6 +14,7 @@ Choose the path that matches your role:
 - If you are new to causal reasoning itself, start with [What Is Causality?](concepts/what-is-causality.md).
 - If you want to call a CAP server, start with [Quickstart for Clients](quickstart-client.md).
 - If you want to expose a CAP server, start with [Quickstart for Servers](quickstart-server.md).
+- If you want a concrete minimal implementation to inspect, use [`cap-example`](https://github.com/CausalAgentProtocol/cap-example).
 - If you need the protocol contract itself, go to the [Specification](../specification/index.md).
 
 ## One-Minute Intro
