@@ -2,7 +2,13 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Not Found" currentRoute={Astro.url.pathname} currentSection="page">
+<BaseLayout
+  title="Not Found"
+  currentRoute={Astro.url.pathname}
+  currentSection="page"
+  description="The requested CAP documentation page could not be found."
+  noindex={true}
+>
   <p>The requested page was not found in the CAP site route map.</p>
   <p>
     Try <a href="/docs/overview">Docs</a> or <a href="/spec">Spec</a>.

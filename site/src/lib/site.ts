@@ -127,6 +127,17 @@ function collapseWhitespace(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
 
+function truncateDescription(value: string, maxLength = 160): string {
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  const slice = value.slice(0, maxLength + 1);
+  const lastSpace = slice.lastIndexOf(" ");
+  const cutoff = lastSpace > Math.floor(maxLength * 0.6) ? lastSpace : maxLength;
+  return `${slice.slice(0, cutoff).trimEnd()}...`;
+}
+
 function decodeHtmlEntities(value: string): string {
   return value
     .replaceAll("&quot;", '"')
@@ -148,6 +159,15 @@ function markdownToPlainText(markdownSource: string): string {
         .replace(/<[^>]+>/g, " ")
     )
   );
+}
+
+function buildPageDescription(markdownSource: string, fallbackTitle: string): string {
+  const plainText = markdownToPlainText(markdownSource);
+  const withoutTitle = plainText.startsWith(fallbackTitle)
+    ? plainText.slice(fallbackTitle.length).trim()
+    : plainText;
+  const candidate = withoutTitle || plainText || fallbackTitle;
+  return truncateDescription(candidate);
 }
 
 type SearchSection = {
@@ -662,6 +682,7 @@ export async function renderRoute(route: string) {
   return {
     entry,
     pageTitle,
+    description: buildPageDescription(markdownSource, pageTitle),
     html: markdown.renderer.render(tokens, markdown.options, env),
     toc: env.toc,
     sourcePath
