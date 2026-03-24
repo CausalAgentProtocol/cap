@@ -92,7 +92,7 @@ Canonical assumption values in the v0.2.2 draft include:
 
 That base catalog remains the preferred unprefixed assumption vocabulary.
 
-When a server needs narrower implementation-specific assumptions, it MAY add custom strings. Those custom strings SHOULD be namespaced to avoid colliding with protocol-level canonical names. Earlier implementation-specific adapters used labels such as `abel_hidden_field_policy` for that reason.
+When a server needs narrower implementation-specific assumptions, it MAY add custom strings. Those custom strings SHOULD be namespaced to avoid colliding with protocol-level canonical names.
 
 ## Provenance Naming
 
