@@ -13,17 +13,37 @@ interface Props {
   currentRoute: string;
   currentSection?: string;
   description?: string;
+  noindex?: boolean;
   sidebar?: SidebarGroup[];
   toc?: TocHeading[];
 }
 
-const { title, currentRoute, currentSection, description, sidebar = [], toc = [] } = Astro.props;
+const { title, currentRoute, currentSection, description, noindex = false, sidebar = [], toc = [] } = Astro.props;
 const routeClass = `route-${currentRoute.replace(/^\//, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "") || "home"}`;
 const searchIndexJson = JSON.stringify(await getSearchIndex()).replace(/</g, "\\u003c");
 const topNav = getTopNav(currentRoute, currentSection);
 const markdownUrl = buildMarkdownRoute(currentRoute);
 const activeSidebarGroup = sidebar.find((group) => group.links.some((link) => link.route === currentRoute));
 const pageSectionLabel = activeSidebarGroup?.title;
+const siteOrigin = Astro.site ?? new URL(siteShell.siteUrl);
+const pageTitle = `${title} | ${siteShell.titleSuffix}`;
+const pageDescription = description ?? siteShell.defaultDescription;
+const canonicalUrl = new URL(currentRoute, siteOrigin).toString();
+const socialImageUrl = new URL(siteShell.brandIconPath, siteOrigin).toString();
+const robotsContent = noindex ? "noindex, nofollow" : "index, follow";
+const openGraphType = currentSection === "documentation" || currentSection === "specification" ? "article" : "website";
+const structuredData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  isPartOf: {
+    "@type": "WebSite",
+    name: siteShell.brandWordmark,
+    url: siteOrigin.toString()
+  }
+}).replace(/</g, "\\u003c");
 ---
 
 <!doctype html>
@@ -31,8 +51,23 @@ const pageSectionLabel = activeSidebarGroup?.title;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | {siteShell.titleSuffix}</title>
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="robots" content={robotsContent} />
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/icons/cap-logo-c-sharp-transparent.svg" />
+    <meta property="og:site_name" content={siteShell.brandWordmark} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content={openGraphType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={socialImageUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={socialImageUrl} />
+    <script type="application/ld+json" set:html={structuredData}></script>
     <ClientRouter />
     <script id="site-search-index" type="application/json" set:html={searchIndexJson}></script>
     <script>

@@ -8,6 +8,7 @@ export type SiteShellNavItem = {
 
 export const siteShell = {
   titleSuffix: "CAP",
+  siteUrl: externalLinks.docsBaseUrl,
   brandHref: "/docs/overview",
   brandIconPath: "/icons/cap-logo-c-sharp.svg",
   brandWordmark: "Causal Agent Protocol",

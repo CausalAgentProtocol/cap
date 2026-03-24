@@ -31,7 +31,7 @@ const sidebar = await getSidebarGroups(route);
   currentSection={rendered.entry.section}
   sidebar={sidebar}
   toc={rendered.toc}
-  description="Repository markdown rendered through the CAP site route map."
+  description={rendered.description}
 >
   <Fragment set:html={rendered.html} />
 </BaseLayout>
