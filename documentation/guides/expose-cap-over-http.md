@@ -4,7 +4,7 @@ This guide explains one practical way to expose a CAP server over HTTP.
 
 It is not the normative protocol definition. The normative contract lives in [the specification](../../specification/index.md). This guide focuses on implementation choices that preserve CAP semantics without mixing in implementation-specific product behavior.
 
-The current `cap-reference` implementation uses a single HTTP entrypoint with CAP envelopes, not one path per verb. In practice that means clients post to `/cap` and the server dispatches by the request's `verb` field. The same app also serves `GET /`, `GET /.well-known/cap.json`, and `GET /health` as discovery and operational metadata.
+The official [`cap-example`](https://github.com/CausalAgentProtocol/cap-example) server uses a single HTTP entrypoint with CAP envelopes, not one path per verb. In practice that means clients post to `/cap` and the server dispatches by the request's `verb` field. The same app also serves `GET /`, `GET /.well-known/cap.json`, and `GET /health` as discovery and operational metadata.
 
 ## 1. Publish The Capability Card
 
@@ -33,14 +33,8 @@ Example request:
   "cap_version": "0.2.2",
   "request_id": "req-neighbors-1",
   "verb": "graph.neighbors",
-  "context": {
-    "graph_ref": {
-      "graph_id": "abel-main",
-      "graph_version": "CausalNodeV2"
-    }
-  },
   "params": {
-    "node_id": "<node-id>",
+    "node_id": "revenue",
     "scope": "parents",
     "max_neighbors": 5
   }
@@ -51,7 +45,7 @@ This is JSON-RPC-like in shape, but the semantic contract is still CAP: the enve
 
 Discovery verbs such as `meta.capabilities` and `meta.methods` may omit `params` entirely.
 
-Route-style aliases such as `intervene/do` or `extensions/your_service/custom_operation` may still exist in SDKs as convenience input. In `cap-reference`, those aliases are resolved client-side back to canonical CAP verbs before dispatch.
+Route-style aliases such as `intervene/do` or `extensions/your_service/custom_operation` may still exist in SDKs as convenience input. In the current Python SDK client, those aliases are resolved client-side back to canonical CAP verbs before dispatch.
 
 Handler registries MAY still distinguish between core verbs, convenience verbs, and extension verbs internally, but the HTTP binding should keep one semantic CAP envelope surface.
 
@@ -87,3 +81,4 @@ A2A can help with discovery or delegation, but it does not redefine CAP request 
 
 - [Protocol Specification](../../specification/protocol.md)
 - [Message Format Specification](../../specification/message-format.md)
+- [Official Example Server (`cap-example`)](https://github.com/CausalAgentProtocol/cap-example)

@@ -4,6 +4,6 @@
   "repositories": {
     "cap": "cap",
     "pythonSdk": "python-sdk",
-    "reference": "cap-reference"
+    "example": "cap-example"
   }
 }

@@ -4,7 +4,7 @@ This is the shortest safe path for calling a CAP server.
 
 If you want a conceptual on-ramp before the protocol details, read [What Is Causality?](concepts/what-is-causality.md) first. This page assumes you are ready to inspect a server conservatively rather than start from first principles.
 
-The examples below follow the current Python SDK shape from `python-sdk` and the public server behavior in `cap-reference`. TypeScript examples can be added later when that SDK lands.
+The examples below follow the current Python SDK shape from `python-sdk` and the official minimal server behavior in [`cap-example`](https://github.com/CausalAgentProtocol/cap-example). TypeScript examples can be added later when that SDK lands.
 
 ## 1. Discover The Server
 
@@ -44,29 +44,31 @@ With the current Python client:
 import asyncio
 
 from cap.client import AsyncCAPClient
-from cap.core import CAPGraphRef
 
 
 async def main() -> None:
     client = AsyncCAPClient("http://127.0.0.1:8000")
     try:
-        graph_ref = CAPGraphRef(graph_id="abel-main", graph_version="CausalNodeV2")
         capabilities = await client.meta_capabilities()
         methods = await client.meta_methods()
         neighbors = await client.graph_neighbors(
-            node_id="<node-id>",
+            node_id="revenue",
             scope="parents",
             max_neighbors=5,
-            graph_ref=graph_ref,
         )
         prediction = await client.observe_predict(
-            target_node="<target-node-id>",
-            graph_ref=graph_ref,
+            target_node="revenue",
         )
         print(capabilities.model_dump(mode="json", exclude_none=True))
         print([item.verb for item in methods.result.methods])
         print(neighbors.model_dump(mode="json", exclude_none=True))
+        intervention = await client.intervene_do(
+            treatment_node="marketing_spend",
+            treatment_value=2.0,
+            outcome_node="revenue",
+        )
         print(prediction.model_dump(mode="json", exclude_none=True))
+        print(intervention.model_dump(mode="json", exclude_none=True))
     finally:
         await client.aclose()
 
@@ -78,16 +80,7 @@ Under the hood, the SDK posts a CAP envelope to the single HTTP entrypoint and s
 
 Discovery verbs such as `meta.capabilities` and `meta.methods` do not require public `params`.
 
-The current Python client passes graph selection as shared request context rather than duplicating graph selectors per verb:
-
-```python
-response = await client.intervene_do(
-    treatment_node="<treatment-node-id>",
-    treatment_value=1.0,
-    outcome_node="<outcome-node-id>",
-    graph_ref=CAPGraphRef(graph_id="abel-main", graph_version="CausalNodeV2"),
-)
-```
+Some servers may require shared request context such as `context.graph_ref`. Treat those selectors as server-specific invocation requirements disclosed through capability metadata and method documentation rather than as mandatory CAP core inputs for every deployment.
 
 Treat fixed server-side execution choices such as mechanism family or rollout horizon as server disclosure, not as mandatory client-supplied CAP core input.
 
@@ -104,7 +97,7 @@ Inspect:
 
 Those fields tell you what kind of claim the server is making and how comparable it is to answers from other systems. In causal systems, that context is part of the answer.
 
-In the current `cap-reference` contract:
+In the current `cap-example` contract:
 
 - `observe.predict` returns a lightweight observational result with `target_node`, `prediction`, and `drivers`
 - clients should not assume observational responses include `intercept`, `reasoning_mode`, `identification_status`, or response-level `assumptions`
@@ -120,7 +113,7 @@ Practical rule:
 
 - treat the minimum card fields and core verb contract as the stable base
 - treat richer draft fields as protocol direction when the server exposes them
-- treat adapter-specific narrowing as a compatibility detail, not as a semantic rewrite
+- treat example-server narrowing as a compatibility detail, not as a semantic rewrite
 - treat older `effect.query` examples as archival draft material rather than the current public CAP core surface
 
 ## Read Next
@@ -128,3 +121,4 @@ Practical rule:
 - [Write an Honest Capability Card](guides/write-an-honest-capability-card.md)
 - [Capability Card Specification](../specification/capability-card.md)
 - [Causal Semantics Specification](../specification/causal-semantics.md)
+- [Official Example Server (`cap-example`)](https://github.com/CausalAgentProtocol/cap-example)
