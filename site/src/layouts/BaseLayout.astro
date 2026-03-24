@@ -13,12 +13,13 @@ interface Props {
   currentRoute: string;
   currentSection?: string;
   description?: string;
+  seoDescription?: string;
   noindex?: boolean;
   sidebar?: SidebarGroup[];
   toc?: TocHeading[];
 }
 
-const { title, currentRoute, currentSection, description, noindex = false, sidebar = [], toc = [] } = Astro.props;
+const { title, currentRoute, currentSection, description, seoDescription, noindex = false, sidebar = [], toc = [] } = Astro.props;
 const routeClass = `route-${currentRoute.replace(/^\//, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "") || "home"}`;
 const searchIndexJson = JSON.stringify(await getSearchIndex()).replace(/</g, "\\u003c");
 const topNav = getTopNav(currentRoute, currentSection);
@@ -27,7 +28,7 @@ const activeSidebarGroup = sidebar.find((group) => group.links.some((link) => li
 const pageSectionLabel = activeSidebarGroup?.title;
 const siteOrigin = Astro.site ?? new URL(siteShell.siteUrl);
 const pageTitle = `${title} | ${siteShell.titleSuffix}`;
-const pageDescription = description ?? siteShell.defaultDescription;
+const pageDescription = seoDescription ?? description ?? siteShell.defaultDescription;
 const canonicalUrl = new URL(currentRoute, siteOrigin).toString();
 const socialImageUrl = new URL(siteShell.brandIconPath, siteOrigin).toString();
 const robotsContent = noindex ? "noindex, nofollow" : "index, follow";

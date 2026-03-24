@@ -31,7 +31,7 @@ const sidebar = await getSidebarGroups(route);
   currentSection={rendered.entry.section}
   sidebar={sidebar}
   toc={rendered.toc}
-  description={rendered.description}
+  seoDescription={rendered.description}
 >
   <Fragment set:html={rendered.html} />
 </BaseLayout>
