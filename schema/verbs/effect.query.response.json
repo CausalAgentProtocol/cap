@@ -8,7 +8,7 @@
       "$ref": "#/$defs/draft_success_response"
     },
     {
-      "$ref": "#/$defs/current_adapter_success_response"
+      "$ref": "#/$defs/legacy_public_success_response"
     },
     {
       "$ref": "#/$defs/error_response"
@@ -120,7 +120,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_estimate": {
+    "legacy_public_estimate": {
       "type": "object",
       "properties": {
         "target_node": {
@@ -161,9 +161,9 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_result": {
+    "legacy_public_result": {
       "type": "object",
-      "$comment": "Current public adapter result model from cap_protocol.core.contracts.EffectQueryResult and its server adapters.",
+      "$comment": "Legacy public compatibility result model derived from cap_protocol.core.contracts.EffectQueryResult and related server adapters.",
       "properties": {
         "query_type": {
           "$ref": "../shared/enums.json#/$defs/query_type"
@@ -191,7 +191,7 @@
           "minLength": 1
         },
         "estimate": {
-          "$ref": "#/$defs/current_adapter_estimate"
+          "$ref": "#/$defs/legacy_public_estimate"
         },
         "drivers": {
           "type": "array",
@@ -287,7 +287,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_success_response": {
+    "legacy_public_success_response": {
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
@@ -299,7 +299,7 @@
               "const": "effect.query"
             },
             "result": {
-              "$ref": "#/$defs/current_adapter_result"
+              "$ref": "#/$defs/legacy_public_result"
             }
           },
           "required": [

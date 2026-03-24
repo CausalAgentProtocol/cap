@@ -2,13 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/shared/provenance.json",
   "title": "CAP Provenance",
-  "$comment": "Shared provenance object extracted from the CAP v0.2.2 long-form draft and the narrower current public adapter contracts.",
+  "$comment": "Shared provenance object extracted from the CAP v0.2.2 long-form draft and legacy narrower public compatibility contracts.",
   "anyOf": [
     {
       "$ref": "#/$defs/draft_provenance"
     },
     {
-      "$ref": "#/$defs/current_adapter_provenance"
+      "$ref": "#/$defs/legacy_public_provenance"
     }
   ],
   "$defs": {
@@ -69,9 +69,9 @@
       ],
       "unevaluatedProperties": false
     },
-    "current_adapter_provenance": {
+    "legacy_public_provenance": {
       "type": "object",
-      "$comment": "The current public adapter uses the same base structure, now also permits optional sample_size, and may still emit open-world mechanism-family labels.",
+      "$comment": "Legacy public compatibility branch using the same base structure, also permitting optional sample_size and open-world mechanism-family labels.",
       "properties": {
         "algorithm": {
           "type": "string",
