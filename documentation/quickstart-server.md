@@ -1,10 +1,10 @@
 # Quickstart for Servers
 
-This is the smallest honest path for exposing a causal engine through CAP.
+This is the shortest practical path to a CAP server that a new implementer can actually understand.
 
-If you want the conceptual background first, read [What Is Causality?](concepts/what-is-causality.md). This page assumes you already know the kind of causal claims your server can and cannot support.
+If you want the fastest route, start from [`cap-example`](https://github.com/CausalAgentProtocol/cap-example). It is the official teaching server for CAP: small, synthetic, and intentionally honest about what is protocol behavior versus toy runtime behavior.
 
-Start by choosing the lowest conformance level your public interface actually satisfies. CAP rewards honest disclosure more than ambitious labeling. A narrower but truthful Level 1 or Level 2 surface is better than a richer surface that overstates semantics or capabilities.
+If you want conceptual background first, read [What Is Causality?](concepts/what-is-causality.md). This page assumes you mainly want to get a server running and then understand the moving parts.
 
 The examples below follow the current public Python SDK shape from `python-sdk`: a `CAPVerbRegistry`, a single `POST /cap` route, typed request and response models, and thin FastAPI handlers over your own runtime.
 
@@ -14,28 +14,92 @@ If you want to use the FastAPI server helpers shown here, install the optional s
 pip install "cap-protocol[server]"
 ```
 
-## 1. Choose The Lowest Honest Level
+## The Mental Model
 
-Choose Level 1 when your public interface can support:
+A CAP server only needs four things:
 
-- capability disclosure
+- a capability card at `GET /.well-known/cap.json`
+- one `POST /cap` endpoint
+- a registry that maps verbs to handlers
+- handlers that call your causal runtime and return semantically honest results
+
+That is the core. Everything else is implementation detail.
+
+Two CAP ideas are worth taking seriously from the first day:
+
+- the capability card tells clients what your server really supports before they call it
+- semantic honesty tells clients how strongly they should interpret the answers after they call it
+
+If you get those two parts right, the rest of the server shape is much easier to reason about.
+
+## 1. Run The Example First
+
+Before designing your own server, run the example once.
+
+Prerequisites:
+
+- Python 3.11+
+- `uv`
+
+Inside the `cap-example` repository, start the server:
+
+```bash
+uv sync --extra dev
+uv run uvicorn example_cap_server.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Then inspect:
+
+- `http://127.0.0.1:8000/.well-known/cap.json`
+- `http://127.0.0.1:8000/docs`
+- `http://127.0.0.1:8000/health`
+
+Finally, send one CAP request:
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/cap \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "cap_version": "0.2.2",
+    "request_id": "req-capabilities-1",
+    "verb": "meta.capabilities"
+  }' | jq
+```
+
+If that flow makes sense, you already understand the public surface you need to reproduce.
+
+## 2. Learn The Four Moving Parts
+
+In `cap-example`, the important pieces are easy to find:
+
+- `example_cap_server/main.py`: FastAPI app, capability card, verb registry, and handlers
+- `example_cap_server/toy_graph.py`: synthetic causal runtime
+- `/.well-known/cap.json`: discovery document generated from the capability card
+- `POST /cap`: single protocol entrypoint
+
+For a first implementation, copy this shape before you try to optimize it.
+
+## 3. Start With A Small Honest Surface
+
+Do not begin by implementing every CAP verb.
+
+Start with the smallest surface you can support honestly. A very good first version is:
+
 - `meta.capabilities`
 - `meta.methods`
 - `observe.predict`
 - `graph.neighbors`
 - `graph.markov_blanket`
 
-Choose Level 2 only when your public interface can also support:
+That first surface is usually enough for a truthful Level 1 server.
 
-- `intervene.do`
-- `graph.paths`
-- structured semantic disclosure for interventional responses
+Add `intervene.do` and `graph.paths` only when your underlying system can support those semantics truthfully and you are ready to claim the stronger surface that comes with Level 2.
 
-If the answer is uncertain, choose the lower level.
+If you are unsure what conformance level to claim, choose the lower one. CAP rewards honest disclosure more than ambitious labeling.
 
-That single choice will shape the rest of the implementation more than any routing or SDK detail.
+## 4. Build The Capability Card From The Real Mounted Surface
 
-## 2. Build The Capability Card From The Mounted Surface
+Do not treat the capability card as documentation you will fill in later.
 
 Build the capability card from the same registry you actually dispatch. That keeps `supported_verbs`, convenience verbs, and extension namespaces aligned with the public surface.
 
@@ -152,11 +216,15 @@ def build_capability_card(
     )
 ```
 
-Use the typed `CapabilityCard` models directly. The important part is that your card should derive its public verbs from the same mounted registry, not from a second handwritten list.
+That matters because:
 
-That same mounted registry should also drive `meta.methods`, so capability discovery and method discovery cannot drift apart.
+- `meta.capabilities` stays aligned with the verbs you really expose
+- `meta.methods` can describe the same mounted surface
+- you do not end up maintaining one handwritten list for docs and another for code
 
-## 3. Register A Small Public Surface
+Use the typed `CapabilityCard` models directly, and make sure the `endpoint` field points at your real `POST /cap` URL.
+
+## 5. Register Verbs Explicitly
 
 For a quickstart, keep registration explicit and mount handler functions directly. In the current Python server helpers, the registry mounts functions that accept a typed payload plus the FastAPI request.
 
@@ -196,7 +264,7 @@ If you add convenience verbs or extensions, register them in the same place. Kee
 
 One detail is easy to miss: the Python SDK can derive `meta.methods` descriptors from the mounted registry, because `CAPVerbRegistry.list_methods(...)` introspects the registered request and response models. But it does not auto-publish the `meta.methods` verb for you. You still need to register `META_METHODS_CONTRACT` in your public surface and route that request to a handler that returns the registry-derived method metadata.
 
-## 4. Write Thin Protocol Handlers
+## 6. Keep Handlers Thin
 
 Keep the protocol boundary small. A common pattern is for request handlers to resolve an app-owned service from `request.app.state`, then delegate runtime work there.
 
@@ -279,9 +347,9 @@ async def graph_paths_adapter(
     )
 ```
 
-Keep protocol wiring thin, keep business logic behind ordinary functions, and let those functions construct the CAP-shaped result.
+That is the right split for a first server. Your causal logic should stay in ordinary functions or services, not inside your HTTP routing layer.
 
-## 5. Mount The Single HTTP Entrypoint
+## 7. Mount One HTTP Entrypoint
 
 The HTTP route stays minimal:
 
@@ -318,7 +386,7 @@ The capability card should advertise this same invocation URL through `endpoint`
 
 Discovery verbs such as `meta.capabilities` and `meta.methods` may omit `params`, but they still use the same CAP envelope and endpoint.
 
-## 6. Assemble App State And Discovery Routes
+## 8. Assemble App State And Discovery Routes
 
 Keep CAP-specific state on the FastAPI app and mount discovery, CAP, and health routes directly:
 
@@ -385,11 +453,24 @@ def create_app(settings, causal_runtime) -> FastAPI:
 
 That keeps `GET /`, `GET /.well-known/cap.json`, `GET /health`, and `POST /cap` under one app without leaking product-specific routing into CAP semantics.
 
-## 7. Return Semantically Honest Responses
+## 9. Replace The Toy Runtime With Your Real One
 
-If you return stronger causal claims, disclose them clearly.
+Once the example shape is running, replace the synthetic parts in this order:
 
-For interventional responses, include:
+1. Swap the toy graph or toy service for your real causal runtime.
+2. Update the capability card so it describes your real engine, assumptions, and disclosure policy.
+3. Remove example-only extensions and add your own only if they are genuinely non-core.
+4. Re-check that your advertised verbs still match what the server actually supports.
+
+This is the point where `cap-reference` becomes useful. `cap-example` teaches the protocol boundary. `cap-reference` shows a fuller server structure with app state, adapters, provenance helpers, and a more production-like layout.
+
+## 10. Return Semantically Honest Results
+
+Semantic honesty is not polish. It is part of the protocol contract.
+
+The easiest CAP mistake is returning answers that sound stronger than your system can justify.
+
+If you expose stronger causal claims, disclose the semantics clearly. Interventional or graph-structural responses should include:
 
 - `reasoning_mode`
 - `identification_status`
@@ -403,10 +484,28 @@ At the CAP core boundary, keep request payloads focused on user intent:
 
 If you need richer rollout controls, time-lag summaries, or preview semantics, expose them as explicitly non-core extensions.
 
-If you cannot support the requested semantics, return a protocol error instead of a stronger-looking answer.
+If your runtime cannot support the requested semantics, return a protocol error or expose a narrower verb surface. Do not make the response look more authoritative than it is.
+
+## When To Reach For `cap-reference`
+
+Use `cap-example` when you are:
+
+- learning the protocol boundary
+- building your first server
+- teaching the CAP request and response shape to teammates
+
+Use `cap-reference` when you are:
+
+- adding app configuration and settings
+- separating protocol handlers from backend adapters
+- hardening discovery, provenance, and service wiring
+- moving toward a production deployment pattern
+
+Start simple. You can always grow from the example into the reference shape later.
 
 ## Read Next
 
+- [Quickstart for Clients](quickstart-client.md)
 - [Expose CAP Over HTTP](guides/expose-cap-over-http.md)
 - [Write an Honest Capability Card](guides/write-an-honest-capability-card.md)
 - [Conformance Specification](../specification/conformance.md)
