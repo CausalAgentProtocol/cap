@@ -158,6 +158,6 @@ These verbs are useful thin wrappers over the graph-inspection surface, but they
 
 Additional helper verbs, preview counterfactual verbs, and implementation-specific workflow verbs belong in convenience or extension surfaces unless and until CAP standardizes them explicitly.
 
-Product-specific discovery surfaces, vendor workflow operations, and Abel-only topology should not be presented as CAP core.
+Product-specific discovery surfaces, vendor workflow operations, and implementation-specific topology should not be presented as CAP core.
 
 Legacy `effect.query` schemas remain for compatibility review, and the core surface is split into `observe.predict` and `intervene.do`.

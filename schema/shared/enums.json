@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/shared/enums.json",
   "title": "CAP Canonical Enums",
-  "$comment": "Canonical enum catalog aligned to the CAP v0.2.2 long-form draft plus the current reference implementation's cap_protocol.core.canonical module. Several envelope and disclosure enums are included here because sibling schemas reuse them.",
+  "$comment": "Canonical enum catalog aligned to the CAP v0.2.2 long-form draft plus the cap_protocol.core.canonical module. Several envelope and disclosure enums are included here because sibling schemas reuse them.",
   "$defs": {
     "cap_version": {
       "type": "string",
@@ -34,7 +34,7 @@
         "observational_prediction",
         "validation_gate"
       ],
-      "$comment": "The first six names come from the long-form draft Appendix C baseline. The latter three are now also part of the repository canonical catalog because cap-reference has stabilized them in code."
+      "$comment": "The first six names come from the long-form draft Appendix C baseline. The latter three are now also part of the repository canonical catalog because earlier public adapters stabilized them in code."
     },
     "identification_status": {
       "type": "string",
