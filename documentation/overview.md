@@ -54,6 +54,15 @@ That means:
 
 CAP is therefore not a generic tool wrapper and not a replacement for MCP or A2A. It is the causal protocol layer that can coexist with them.
 
+## HTTP At A Glance
+
+If you are trying to find the concrete HTTP surface quickly, start with:
+
+- `GET /.well-known/cap.json` for capability discovery
+- `POST {service-prefix}/cap` for CAP request envelopes
+
+Many deployments mount the entrypoint directly at `/cap`. Others may expose it under a prefix such as `/api/v1/cap`. The capability card `endpoint` field is the source of truth for the exact invocation URL.
+
 ## Where To Go Next
 
 - If you are new to causal reasoning, start with [What Is Causality?](concepts/what-is-causality.md).

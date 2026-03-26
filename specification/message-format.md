@@ -65,6 +65,25 @@ CAP method-discovery information is exposed through `meta.methods` in the CAP en
 
 When a client already has a verb inventory from `meta.capabilities`, it SHOULD prefer targeted `meta.methods` requests over whole-surface method dumps.
 
+## Current HTTP Binding
+
+HTTP is the primary current public binding for CAP.
+
+In the current HTTP binding, a CAP server SHOULD expose:
+
+- `GET /.well-known/cap.json`
+- `POST {service-prefix}/cap`
+
+The discovery path is fixed at `/.well-known/cap.json`.
+
+The invocation path is a single CAP-envelope entrypoint whose path convention ends in `/cap`.
+
+That entrypoint MAY be mounted directly at `/cap` or under a service prefix such as `/api/v1/cap`.
+
+Clients MUST treat the capability card's `endpoint` field as the source of truth for the exact invocation URL.
+
+Servers SHOULD NOT expose one HTTP path per CAP verb as if those paths were the normative protocol surface.
+
 ## Version Note
 
 CAP `v0.2.2` uses `cap_version = "0.2.2"`.

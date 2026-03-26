@@ -13,7 +13,7 @@ Examples of extension-worthy content include:
 - domain-specific node or metadata schemas
 - domain-specific parameters beyond CAP core
 - implementation-specific helper verbs
-- preview capabilities that are not yet stable enough for CAP core
+- capabilities that are not yet stable enough for CAP core
 
 ## Registration Principle
 

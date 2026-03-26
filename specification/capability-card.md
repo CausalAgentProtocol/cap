@@ -46,7 +46,11 @@ The capability card MUST disclose the invocation endpoint for the current public
 
 For the current HTTP binding, `endpoint` SHOULD be the exact URL clients post CAP envelopes to, not just a higher-level API prefix or site root.
 
-In the current reference binding, that canonical invocation path is `POST /cap`.
+In the current HTTP binding, the single-entry invocation path convention ends in `/cap`.
+
+The current reference binding mounts that entrypoint at `POST /cap`, but deployments MAY expose an equivalent entrypoint under a service prefix such as `POST /api/v1/cap`.
+
+Clients SHOULD treat the capability card `endpoint` field as the canonical invocation URL for that server.
 
 ## Canonical Naming Guidance
 

@@ -156,7 +156,7 @@ These verbs are useful thin wrappers over the graph-inspection surface, but they
 
 ## Deferred And Extension Surface
 
-Additional helper verbs, preview counterfactual verbs, and implementation-specific workflow verbs belong in convenience or extension surfaces unless and until CAP standardizes them explicitly.
+Additional helper verbs, counterfactual verbs outside the current CAP core, and implementation-specific workflow verbs belong in convenience or extension surfaces unless and until CAP standardizes them explicitly.
 
 Product-specific discovery surfaces, vendor workflow operations, and implementation-specific topology should not be presented as CAP core.
 

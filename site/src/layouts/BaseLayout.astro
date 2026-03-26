@@ -353,6 +353,7 @@ const structuredData = JSON.stringify({
         --frame-gutter: 1rem;
         --content-inline-padding: 1.5rem;
         --sidebar-width: 240px;
+        --prose-width: 48rem;
         --font-size-caption: 0.75rem;
         --font-size-label: 0.8125rem;
         --font-size-nav: 0.875rem;
@@ -778,6 +779,7 @@ const structuredData = JSON.stringify({
         display: grid;
         grid-template-columns: minmax(0, 1fr);
         gap: 0.35rem;
+        max-width: var(--prose-width);
         margin: 0 0 1.05rem;
       }
 
@@ -854,7 +856,7 @@ const structuredData = JSON.stringify({
       }
 
       .prose {
-        max-width: 48rem;
+        max-width: var(--prose-width);
       }
 
       :global(.prose :first-child) {
