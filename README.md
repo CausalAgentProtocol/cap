@@ -4,8 +4,6 @@ CAP is an open protocol for capability disclosure, invocation, and provenance in
 
 This repository contains the CAP normative specification, supporting schemas, reader documentation, and the source for `causalagentprotocol.io`.
 
-CAP is developed as an open protocol and welcomes collaboration across research and engineering communities. Collaborating institutions include CMU, UCSD, and UVA.
-
 ## What CAP Standardizes
 
 - capability discovery
@@ -33,6 +31,12 @@ CAP is developed as an open protocol and welcomes collaboration across research 
 - [Schemas](schema/README.md)
 - [Contributing](CONTRIBUTING.md)
 - [Governance](GOVERNANCE.md)
+
+## Community
+
+CAP is developed as an open protocol and welcomes collaboration across research and engineering communities.
+
+Collaborating institutions include CMU, UCSD, and UVA.
 
 ## Repository Layout
 
