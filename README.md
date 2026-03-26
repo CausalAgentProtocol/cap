@@ -36,7 +36,7 @@ This repository contains the CAP normative specification, supporting schemas, re
 
 CAP is developed as an open protocol and welcomes collaboration across research and engineering communities.
 
-Collaborating institutions include CMU, UCSD, and UVA.
+Collaborating institutions and organizations include CMU, UCSD, UVA, and Abel AI.
 
 ## Repository Layout
 
