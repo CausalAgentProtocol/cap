@@ -10,15 +10,6 @@ export type SiteShellNavItem = {
   active: boolean;
 };
 
-export const specVersionOptions = [
-  { version: "v0.2.2", label: "v0.2.2", status: "active" },
-  { version: "v0.3.0-draft", label: "v0.3.0 draft", status: "internal-draft" }
-] as const satisfies ReadonlyArray<{
-  version: SpecVersion;
-  label: string;
-  status: SiteRouteStatus;
-}>;
-
 export const siteShell = {
   titleSuffix: "CAP",
   siteUrl: externalLinks.docsBaseUrl,
