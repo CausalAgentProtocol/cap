@@ -66,55 +66,109 @@
       "route": "/spec",
       "section": "specification",
       "title": "Specification",
-      "source": "site/content/specification/index.md"
+      "source": "site/content/specification/index.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-index",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2",
+      "section": "specification",
+      "title": "Specification v0.2.2",
+      "source": "site/content/specification/index.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-index",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.3.0-draft",
+      "section": "specification",
+      "title": "Specification v0.3.0 Draft",
+      "source": "specification/drafts/v0.3.0/index.md",
+      "version": "v0.3.0-draft",
+      "routeGroup": "spec-index",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0-draft/changes-from-v0.2.2",
+      "section": "specification",
+      "title": "Changes From v0.2.2",
+      "source": "specification/drafts/v0.3.0/changes-from-v0.2.2.md",
+      "version": "v0.3.0-draft",
+      "routeGroup": "spec-changes-from-v0.2.2",
+      "status": "internal-draft"
     },
     {
       "route": "/spec/protocol",
       "section": "specification",
       "title": "Protocol",
-      "source": "specification/protocol.md"
+      "source": "specification/protocol.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-protocol",
+      "status": "active"
     },
     {
       "route": "/spec/capability-card",
       "section": "specification",
       "title": "Capability Card",
-      "source": "specification/capability-card.md"
+      "source": "specification/capability-card.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-capability-card",
+      "status": "active"
     },
     {
       "route": "/spec/causal-semantics",
       "section": "specification",
       "title": "Causal Semantics",
-      "source": "specification/causal-semantics.md"
+      "source": "specification/causal-semantics.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-causal-semantics",
+      "status": "active"
     },
     {
       "route": "/spec/verbs",
       "section": "specification",
       "title": "Verbs",
-      "source": "specification/verbs.md"
+      "source": "specification/verbs.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-verbs",
+      "status": "active"
     },
     {
       "route": "/spec/message-format",
       "section": "specification",
       "title": "Message Format",
-      "source": "specification/message-format.md"
+      "source": "specification/message-format.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-message-format",
+      "status": "active"
     },
     {
       "route": "/spec/conformance",
       "section": "specification",
       "title": "Conformance",
-      "source": "specification/conformance.md"
+      "source": "specification/conformance.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-conformance",
+      "status": "active"
     },
     {
       "route": "/spec/extensions",
       "section": "specification",
       "title": "Extensions",
-      "source": "specification/extensions.md"
+      "source": "specification/extensions.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-extensions",
+      "status": "active"
     },
     {
       "route": "/spec/changelog",
       "section": "specification",
       "title": "Specification Changelog",
-      "source": "specification/changelog.md"
+      "source": "specification/changelog.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-changelog",
+      "status": "active"
     }
   ]
 }

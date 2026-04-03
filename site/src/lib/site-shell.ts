@@ -1,10 +1,23 @@
 import externalLinks from "../../../config/external-links.json" with { type: "json" };
 
+export type SpecVersion = "v0.2.2" | "v0.3.0-draft";
+
+export type SiteRouteStatus = "active" | "internal-draft";
+
 export type SiteShellNavItem = {
   href: string;
   label: string;
   active: boolean;
 };
+
+export const specVersionOptions = [
+  { version: "v0.2.2", label: "v0.2.2", status: "active" },
+  { version: "v0.3.0-draft", label: "v0.3.0 draft", status: "internal-draft" }
+] as const satisfies ReadonlyArray<{
+  version: SpecVersion;
+  label: string;
+  status: SiteRouteStatus;
+}>;
 
 export const siteShell = {
   titleSuffix: "CAP",

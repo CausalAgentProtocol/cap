@@ -5,7 +5,7 @@ import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import { ClientRouter } from "astro:transitions";
 import PageActions from "../components/PageActions.astro";
-import { getSearchIndex, type SidebarGroup, type TocHeading } from "../lib/site";
+import { getSearchIndex, type SidebarGroup, type SpecVersionSwitcher, type TocHeading } from "../lib/site";
 import { buildMarkdownRoute, getTopNav, siteShell } from "../lib/site-shell";
 
 interface Props {
@@ -17,9 +17,20 @@ interface Props {
   noindex?: boolean;
   sidebar?: SidebarGroup[];
   toc?: TocHeading[];
+  specVersionSwitcher?: SpecVersionSwitcher;
 }
 
-const { title, currentRoute, currentSection, description, seoDescription, noindex = false, sidebar = [], toc = [] } = Astro.props;
+const {
+  title,
+  currentRoute,
+  currentSection,
+  description,
+  seoDescription,
+  noindex = false,
+  sidebar = [],
+  toc = [],
+  specVersionSwitcher
+} = Astro.props;
 const routeClass = `route-${currentRoute.replace(/^\//, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "") || "home"}`;
 const searchIndexJson = JSON.stringify(await getSearchIndex()).replace(/</g, "\\u003c");
 const topNav = getTopNav(currentRoute, currentSection);
@@ -778,7 +789,7 @@ const structuredData = JSON.stringify({
       .page-header {
         display: grid;
         grid-template-columns: minmax(0, 1fr);
-        gap: 0.35rem;
+        gap: 0.55rem;
         max-width: var(--prose-width);
         margin: 0 0 1.05rem;
       }
@@ -815,6 +826,57 @@ const structuredData = JSON.stringify({
         font-weight: 600;
         letter-spacing: -0.04em;
         text-wrap: balance;
+      }
+
+      .spec-version-switcher {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.55rem;
+      }
+
+      .spec-version-switcher a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.75rem;
+        border: 1px solid rgba(17, 17, 17, 0.1);
+        border-radius: 999px;
+        background: #ffffff;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+        text-decoration: none;
+        transition:
+          border-color 160ms ease,
+          background-color 160ms ease,
+          color 160ms ease;
+      }
+
+      .spec-version-switcher a[data-active-version="true"] {
+        border-color: rgba(17, 17, 17, 0.16);
+        background: rgba(17, 17, 17, 0.05);
+        color: var(--ink);
+      }
+
+      .spec-version-switcher a:hover,
+      .spec-version-switcher a:focus-visible {
+        border-color: rgba(17, 17, 17, 0.2);
+        color: var(--ink);
+        outline: none;
+      }
+
+      .spec-version-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.14rem 0.4rem;
+        border-radius: 999px;
+        background: rgba(17, 17, 17, 0.06);
+        color: rgba(17, 17, 17, 0.72);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
       }
 
       .toc {
@@ -1328,6 +1390,18 @@ const structuredData = JSON.stringify({
           <div class="main">
             <div class="page-header">
               {pageSectionLabel && <span class="page-header-meta">{pageSectionLabel}</span>}
+              {
+                specVersionSwitcher && (
+                  <nav class="spec-version-switcher" aria-label="Specification version">
+                    {specVersionSwitcher.links.map((link) => (
+                      <a href={link.href} data-active-version={link.active ? "true" : undefined}>
+                        <span>{link.label}</span>
+                        <span class="spec-version-status">{link.status === "active" ? "Active" : "Internal draft"}</span>
+                      </a>
+                    ))}
+                  </nav>
+                )
+              }
               <div class="page-header-top">
                 <div class="page-header-heading">
                   <h1 class="page-header-title" data-page-title>{title}</h1>

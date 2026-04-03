@@ -17,13 +17,13 @@ export const GET: APIRoute = async ({ props }) => {
     return new Response("Not found", { status: 404 });
   }
 
-  const { markdown } = await getRawMarkdownByRoute(route);
+  const { entry, markdown } = await getRawMarkdownByRoute(route);
 
   return new Response(markdown, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
       "Cache-Control": "public, max-age=0, must-revalidate",
-      "X-Robots-Tag": "noindex"
+      "X-Robots-Tag": entry.status === "internal-draft" ? "noindex, nofollow" : "noindex"
     }
   });
 };

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getSidebarGroups, getSiteMap, renderRoute, routeToSlug } from "../lib/site";
+import { getSidebarGroups, getSiteMap, getSpecVersionSwitcher, renderRoute, routeToSlug } from "../lib/site";
 
 export async function getStaticPaths() {
   const siteMap = await getSiteMap();
@@ -23,6 +23,7 @@ export async function getStaticPaths() {
 const { route } = Astro.props;
 const rendered = await renderRoute(route);
 const sidebar = await getSidebarGroups(route);
+const specVersionSwitcher = await getSpecVersionSwitcher(route);
 ---
 
 <BaseLayout
@@ -32,6 +33,8 @@ const sidebar = await getSidebarGroups(route);
   sidebar={sidebar}
   toc={rendered.toc}
   seoDescription={rendered.description}
+  noindex={rendered.entry.status === "internal-draft"}
+  specVersionSwitcher={specVersionSwitcher}
 >
   <Fragment set:html={rendered.html} />
 </BaseLayout>

@@ -4,12 +4,16 @@ import path from "node:path";
 import MarkdownIt from "markdown-it";
 import { createHighlighter } from "shiki";
 import type { SearchEntry } from "./search-client";
+import { specVersionOptions, type SiteRouteStatus, type SpecVersion } from "./site-shell";
 
 export type SiteRoute = {
   route: string;
   section: string;
   title: string;
   source: string;
+  version?: SpecVersion;
+  routeGroup?: string;
+  status?: SiteRouteStatus;
 };
 
 type SiteMap = {
@@ -27,6 +31,19 @@ export type TocHeading = {
   id: string;
   text: string;
   depth: number;
+};
+
+export type SpecVersionLink = {
+  version: SpecVersion;
+  label: string;
+  href: string;
+  active: boolean;
+  status: SiteRouteStatus;
+};
+
+export type SpecVersionSwitcher = {
+  currentVersion: SpecVersion;
+  links: SpecVersionLink[];
 };
 
 const siteRoot = path.resolve(import.meta.dirname, "..", "..");
@@ -68,6 +85,48 @@ export async function getSiteMap(): Promise<SiteMap> {
 export async function getRouteByPath(route: string): Promise<SiteRoute | undefined> {
   const siteMap = await getSiteMap();
   return siteMap.routes.find((entry) => entry.route === route);
+}
+
+export async function getAlternateVersionRoute(route: string, version: SpecVersion): Promise<SiteRoute | undefined> {
+  const siteMap = await getSiteMap();
+  const current = siteMap.routes.find((entry) => entry.route === route);
+
+  if (!current?.routeGroup) {
+    return undefined;
+  }
+
+  const candidates = siteMap.routes.filter((entry) => entry.routeGroup === current.routeGroup && entry.version === version);
+
+  if (candidates.length === 0) {
+    return undefined;
+  }
+
+  return candidates.sort((left, right) => scoreVersionCandidate(right, version, route) - scoreVersionCandidate(left, version, route))[0];
+}
+
+export async function getSpecVersionSwitcher(route: string): Promise<SpecVersionSwitcher | undefined> {
+  const entry = await getRouteByPath(route);
+
+  if (!entry || entry.section !== "specification" || !entry.version) {
+    return undefined;
+  }
+
+  return {
+    currentVersion: entry.version,
+    links: await Promise.all(
+      specVersionOptions.map(async (option) => {
+        const alternate = await getAlternateVersionRoute(route, option.version);
+
+        return {
+          version: option.version,
+          label: option.label,
+          href: alternate?.route ?? getSpecVersionLandingRoute(option.version),
+          active: entry.version === option.version,
+          status: option.status
+        };
+      })
+    )
+  };
 }
 
 export async function getSearchIndex(): Promise<SearchEntry[]> {
@@ -549,7 +608,13 @@ async function highlightFenceTokens(tokens: ReturnType<MarkdownIt["parse"]>): Pr
 }
 
 function buildSourceToRoute(siteMap: SiteMap): Map<string, string> {
-  const map = new Map(siteMap.routes.map((entry) => [entry.source, entry.route]));
+  const map = new Map<string, string>();
+
+  for (const entry of siteMap.routes) {
+    if (!map.has(entry.source)) {
+      map.set(entry.source, entry.route);
+    }
+  }
 
   // Allow repository markdown to link to the normative specification index
   // even though the site uses a custom landing page for `/spec`.
@@ -611,19 +676,77 @@ function slugify(value: string): string {
     .replace(/-+/g, "-");
 }
 
+function scoreVersionCandidate(entry: SiteRoute, version: SpecVersion, currentRoute: string): number {
+  let score = 0;
+
+  if (entry.route === currentRoute) {
+    score += 4;
+  }
+
+  if (entry.route === getSpecVersionLandingRoute(version)) {
+    score += 3;
+  }
+
+  if (entry.route.includes(`/${version}`)) {
+    score += 2;
+  }
+
+  return score;
+}
+
+function getSpecVersionLandingRoute(version: SpecVersion): string {
+  return version === "v0.2.2" ? "/spec/v0.2.2" : "/spec/v0.3.0-draft";
+}
+
 export async function getSidebarGroups(currentRoute: string): Promise<SidebarGroup[]> {
   const siteMap = await getSiteMap();
   const byPrefix = (prefix: string) =>
     siteMap.routes.filter((entry) => entry.route === prefix || entry.route.startsWith(`${prefix}/`));
+  const activeSpecificationLinks = [
+    siteMap.routes.find((entry) => entry.route === "/spec"),
+    ...siteMap.routes.filter(
+      (entry) =>
+        entry.section === "specification" &&
+        entry.route.startsWith("/spec/") &&
+        !entry.route.startsWith("/spec/v0.2.2") &&
+        !entry.route.startsWith("/spec/v0.3.0-draft")
+    )
+  ].filter(Boolean) as SiteRoute[];
+  const draftSpecificationLinks = byPrefix("/spec/v0.3.0-draft");
+
+  if (currentRoute.startsWith("/spec/v0.3.0-draft")) {
+    return [
+      {
+        title: "Specification Draft",
+        links: draftSpecificationLinks
+      }
+    ];
+  }
+
+  if (currentRoute === "/spec/v0.2.2") {
+    return [
+      {
+        title: "Specification",
+        links: [siteMap.routes.find((entry) => entry.route === "/spec/v0.2.2"), ...activeSpecificationLinks.slice(1)].filter(
+          Boolean
+        ) as SiteRoute[]
+      },
+      ...(draftSpecificationLinks.length > 0
+        ? [
+            {
+              title: "Draft",
+              links: draftSpecificationLinks
+            }
+          ]
+        : [])
+    ];
+  }
 
   if (currentRoute.startsWith("/spec")) {
     return [
       {
         title: "Specification",
-        links: [
-          siteMap.routes.find((entry) => entry.route === "/spec"),
-          ...byPrefix("/spec").filter((entry) => entry.route !== "/spec")
-        ].filter(Boolean) as SiteRoute[]
+        links: activeSpecificationLinks
       }
     ];
   }
