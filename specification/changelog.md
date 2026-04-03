@@ -1,5 +1,11 @@
 # Specification Changelog
 
+## v0.2.2
+
+- clarified that CAP `v0.2.2` is the active normative protocol version for the public specification pages
+- aligned the documented public verb surface on `meta.capabilities`, `meta.methods`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`
+- demoted retained draft-era and schema-layer compatibility artifacts from implied primary contract status unless restated normatively in the specification
+
 ## v0.2.2 Draft
 
 This repository presents CAP `v0.2.2` as a split source of truth:

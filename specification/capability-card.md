@@ -6,6 +6,8 @@ Every CAP server MUST publish a machine-readable capability card at `/.well-know
 
 If a server also exposes `meta.capabilities`, that verb MUST return capability information that is semantically equivalent to the well-known document.
 
+In CAP `v0.2.2`, the capability card is normative for the active public surface actually mounted by the server.
+
 ## Purpose
 
 The capability card exists so a client can determine, before invocation:
@@ -18,6 +20,8 @@ The capability card exists so a client can determine, before invocation:
 - authentication requirements
 
 Method-level invocation metadata MAY be discovered separately through `meta.methods`.
+
+The active CAP core surface in `v0.2.2` is `meta.capabilities`, `meta.methods`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`.
 
 ## Minimum Required Disclosure
 
@@ -62,9 +66,11 @@ In practice:
 - `assumptions` SHOULD use canonical assumption names where they fit, and namespaced custom strings where they do not
 - `causal_engine.algorithm` MAY stay open-world, but servers SHOULD prefer the repository's recommended spellings for common algorithms such as `PCMCI`, `PC`, `GES`, `FCI`, `NOTEARS`, `LiNGAM`, and `VAR-Granger`
 
-## Additional Draft-Era Disclosure
+## Additional Non-Core Disclosure
 
-The long-form draft also defines richer fields such as:
+Compatibility artifacts retained in the schema layer are non-normative unless this specification restates them explicitly.
+
+The repository still retains richer draft-era or compatibility-oriented fields such as:
 
 - `causal_engine`
 - `structural_mechanisms`
@@ -75,7 +81,7 @@ The long-form draft also defines richer fields such as:
 - `bindings`
 - `extensions`
 
-These remain part of CAP protocol direction even when a current implementation does not yet expose all of them publicly.
+Servers MAY disclose these richer fields when they can do so honestly, but they are not required for CAP `v0.2.2` conformance unless another section of this specification says otherwise.
 
 ## Authentication And Access Disclosure
 
@@ -94,8 +100,10 @@ The capability card MUST distinguish between:
 
 A server MUST NOT overstate causal semantics, reasoning modes, or verb support because richer detail is hidden, summarized, or redacted.
 
-## Draft Gap Rule
+## Mounted Surface Rule
 
-Current adapters may trail richer draft-era disclosure.
+The capability card MUST describe the server's mounted public surface truthfully.
 
-That gap does not shrink CAP core by itself. It means implementations should either expose the richer fields or label their narrower public surface explicitly.
+Convenience verbs and extension verbs MAY appear in discovery metadata, but they MUST be identified as non-core surfaces.
+
+Servers MUST NOT imply that draft-era or compatibility-only artifacts are part of the active CAP `v0.2.2` contract unless this specification restates them normatively.

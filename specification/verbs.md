@@ -10,7 +10,7 @@ CAP divides verbs into three categories:
 
 ## Core Verbs
 
-The CAP core surface in `v0.2.x` is:
+The active CAP core surface in `v0.2.2` is:
 
 - `meta.capabilities`
 - `meta.methods`
@@ -154,10 +154,14 @@ Common convenience verbs include:
 
 These verbs are useful thin wrappers over the graph-inspection surface, but they are not conformance-defining core verbs.
 
+Convenience verbs improve ergonomics for common workflows. They do not change the required CAP `v0.2.2` conformance surface.
+
 ## Deferred And Extension Surface
 
 Additional helper verbs, counterfactual verbs outside the current CAP core, and implementation-specific workflow verbs belong in convenience or extension surfaces unless and until CAP standardizes them explicitly.
 
 Product-specific discovery surfaces, vendor workflow operations, and implementation-specific topology should not be presented as CAP core.
 
-Legacy `effect.query` schemas remain for compatibility review, and the core surface is split into `observe.predict` and `intervene.do`.
+Compatibility artifacts retained in the schema layer are non-normative unless this specification restates them explicitly.
+
+Legacy `effect.query` schemas remain for compatibility review, and the active CAP `v0.2.2` core surface is split into `observe.predict` and `intervene.do`.

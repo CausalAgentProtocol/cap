@@ -8,6 +8,12 @@ CAP uses a progressive conformance model:
 - Level 2: Intervene
 - Level 3: Counterfact, reserved in `v0.2.x`
 
+Active normative version: CAP `v0.2.2` is the active normative protocol version.
+
+The active CAP core surface in `v0.2.2` is `meta.capabilities`, `meta.methods`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`.
+
+Compatibility artifacts retained in the schema layer are non-normative unless this specification restates them explicitly.
+
 The capability card declares `conformance_level`, but clients SHOULD treat that level as a coarse signal and still inspect detailed capability metadata.
 
 ## Level 1: Observe
@@ -28,6 +34,8 @@ A Level 1 server SHOULD implement these convenience verbs:
 - `traverse.children`
 
 Level 1 MUST NOT imply interventional support.
+
+Convenience verbs are optional ergonomic wrappers. They are not extension verbs, and they do not alter the Level 1 core requirement set.
 
 The Level 1 `observe.predict` result includes:
 
@@ -78,6 +86,8 @@ The CAP core `intervene.do` request is intent-only:
 Servers MUST NOT present server-specific execution defaults, such as a fixed mechanism family or a fixed rollout horizon, as if they were generic CAP core parameters that clients are expected to supply or control.
 
 If a server needs richer intervention controls, it SHOULD expose them through an extension or another explicitly non-core surface until CAP standardizes those controls normatively.
+
+Extension verbs remain outside CAP conformance unless this specification explicitly promotes them into the core or convenience surface.
 
 ## Level 3: Counterfact
 
