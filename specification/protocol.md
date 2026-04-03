@@ -4,7 +4,7 @@
 
 CAP defines the semantic protocol layer for discovering, invoking, and interpreting causal reasoning capabilities.
 
-CAP `v0.2.2` standardizes the current public surface used by the active public binding, not every schema or draft artifact retained in the repository.
+CAP `v0.2.2` standardizes the current public surface used by the active public binding. Compatibility artifacts retained elsewhere in the repository are non-normative unless this specification restates them explicitly.
 
 CAP standardizes:
 
@@ -39,10 +39,6 @@ CAP does not standardize:
 
 CAP `v0.2.x` is stateless.
 
-The active CAP core surface in `v0.2.2` is `meta.capabilities`, `meta.methods`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`.
-
-Compatibility artifacts retained in the schema layer are non-normative unless this specification restates them explicitly.
-
 Rules:
 
 - each request MUST be self-contained
@@ -60,7 +56,11 @@ HTTP is the primary current public binding.
 
 Other integration surfaces such as MCP or A2A MAY carry or expose CAP behavior, but they do not redefine CAP semantics.
 
-Convenience verbs and extension verbs MAY be exposed alongside the core surface, but they do not expand CAP conformance unless this specification promotes them into the active normative contract.
+Convenience verbs and extension verbs MAY be exposed alongside the core surface.
+
+Convenience verbs remain non-conformance-defining helpers.
+
+Extension verbs remain outside CAP conformance unless this specification explicitly promotes them into CAP core.
 
 If the same capability is exposed through multiple bindings, the server MUST preserve the same:
 

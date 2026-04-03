@@ -154,14 +154,12 @@ Common convenience verbs include:
 
 These verbs are useful thin wrappers over the graph-inspection surface, but they are not conformance-defining core verbs.
 
-Convenience verbs improve ergonomics for common workflows. They do not change the required CAP `v0.2.2` conformance surface.
+Convenience verbs improve ergonomics for common workflows. Supporting them does not change a server's declared conformance level.
 
 ## Deferred And Extension Surface
 
 Additional helper verbs, counterfactual verbs outside the current CAP core, and implementation-specific workflow verbs belong in convenience or extension surfaces unless and until CAP standardizes them explicitly.
 
 Product-specific discovery surfaces, vendor workflow operations, and implementation-specific topology should not be presented as CAP core.
-
-Compatibility artifacts retained in the schema layer are non-normative unless this specification restates them explicitly.
 
 Legacy `effect.query` schemas remain for compatibility review, and the active CAP `v0.2.2` core surface is split into `observe.predict` and `intervene.do`.

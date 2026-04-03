@@ -8,12 +8,6 @@ CAP uses a progressive conformance model:
 - Level 2: Intervene
 - Level 3: Counterfact, reserved in `v0.2.x`
 
-Active normative version: CAP `v0.2.2` is the active normative protocol version.
-
-The active CAP core surface in `v0.2.2` is `meta.capabilities`, `meta.methods`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`.
-
-Compatibility artifacts retained in the schema layer are non-normative unless this specification restates them explicitly.
-
 The capability card declares `conformance_level`, but clients SHOULD treat that level as a coarse signal and still inspect detailed capability metadata.
 
 ## Level 1: Observe
@@ -35,7 +29,7 @@ A Level 1 server SHOULD implement these convenience verbs:
 
 Level 1 MUST NOT imply interventional support.
 
-Convenience verbs are optional ergonomic wrappers. They are not extension verbs, and they do not alter the Level 1 core requirement set.
+Convenience verbs are optional ergonomic wrappers. Supporting them does not change the Level 1 core requirement set or justify a higher declared level.
 
 The Level 1 `observe.predict` result includes:
 
@@ -87,7 +81,7 @@ Servers MUST NOT present server-specific execution defaults, such as a fixed mec
 
 If a server needs richer intervention controls, it SHOULD expose them through an extension or another explicitly non-core surface until CAP standardizes those controls normatively.
 
-Extension verbs remain outside CAP conformance unless this specification explicitly promotes them into the core or convenience surface.
+Extension verbs remain outside CAP conformance unless this specification explicitly promotes them into CAP core.
 
 ## Level 3: Counterfact
 
@@ -108,6 +102,8 @@ A server's declared level MUST align with:
 - its semantic disclosure behavior
 
 A server MUST NOT declare a higher level merely because it has a related internal algorithm.
+
+A server MUST NOT declare a higher level merely because it exposes convenience verbs or extension verbs beyond the required CAP core surface.
 
 ## Capability Metadata Versus Levels
 

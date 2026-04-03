@@ -6,7 +6,9 @@ Every CAP server MUST publish a machine-readable capability card at `/.well-know
 
 If a server also exposes `meta.capabilities`, that verb MUST return capability information that is semantically equivalent to the well-known document.
 
-In CAP `v0.2.2`, the capability card is normative for the active public surface actually mounted by the server.
+The capability card is a truthful machine-readable disclosure surface for the server's mounted public CAP behavior.
+
+The normative source of truth for CAP requirements remains the specification pages in this directory.
 
 ## Purpose
 
@@ -20,8 +22,6 @@ The capability card exists so a client can determine, before invocation:
 - authentication requirements
 
 Method-level invocation metadata MAY be discovered separately through `meta.methods`.
-
-The active CAP core surface in `v0.2.2` is `meta.capabilities`, `meta.methods`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`.
 
 ## Minimum Required Disclosure
 
@@ -68,8 +68,6 @@ In practice:
 
 ## Additional Non-Core Disclosure
 
-Compatibility artifacts retained in the schema layer are non-normative unless this specification restates them explicitly.
-
 The repository still retains richer draft-era or compatibility-oriented fields such as:
 
 - `causal_engine`
@@ -106,4 +104,4 @@ The capability card MUST describe the server's mounted public surface truthfully
 
 Convenience verbs and extension verbs MAY appear in discovery metadata, but they MUST be identified as non-core surfaces.
 
-Servers MUST NOT imply that draft-era or compatibility-only artifacts are part of the active CAP `v0.2.2` contract unless this specification restates them normatively.
+Servers MUST NOT imply that draft-era or compatibility-only artifacts are part of the active CAP `v0.2.2` contract unless the specification pages restate them normatively.
