@@ -2,12 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/shared/enums.json",
   "title": "CAP Canonical Enums",
-  "$comment": "Canonical enum catalog aligned to the CAP v0.2.2 long-form draft plus the cap_protocol.core.canonical module. Several envelope and disclosure enums are included here because sibling schemas reuse them.",
+  "$comment": "Canonical enum catalog for the active public CAP v0.2.2 contract, cross-checked against the long-form draft and the cap_protocol.core.canonical module. Several envelope and disclosure enums are included here because sibling schemas reuse them.",
   "$defs": {
     "cap_version": {
       "type": "string",
       "const": "0.2.2",
-      "$comment": "The active CAP v0.2.2 wire contract uses 0.2.2. Older draft examples that still show 0.2 are archival and are not the current normative envelope value."
+      "$comment": "The active public CAP v0.2.2 wire contract uses 0.2.2. Older draft-era values such as 0.2 are archival only and are not valid for the current public envelope."
     },
     "cap_spec_version": {
       "type": "string",
@@ -19,7 +19,7 @@
         1,
         2
       ],
-      "$comment": "Level 3 remains protocol-reserved in v0.2.2 and must not be declared."
+      "$comment": "The active public v0.2.2 conformance model allows Level 1 and Level 2 only. Level 3 remains reserved in v0.2.2 and must not be declared."
     },
     "reasoning_mode": {
       "type": "string",

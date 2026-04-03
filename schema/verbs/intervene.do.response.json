@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/verbs/intervene.do.response.json",
   "title": "intervene.do response",
-  "$comment": "Supports the current public single-claim CAP response shape plus the older richer draft shape kept for compatibility review.",
+  "$comment": "This schema models the active public v0.2.2 contract first. The current single-claim response is the active public branch. The older richer draft branch remains machine-visible for compatibility review and migration, but it is not the default reader contract.",
   "anyOf": [
     {
       "$ref": "#/$defs/current_success_response"
@@ -212,6 +212,7 @@
       "unevaluatedProperties": false
     },
     "current_success_response": {
+      "$comment": "Active public branch for the v0.2.2 single-claim intervene.do success response.",
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"
@@ -235,6 +236,7 @@
       "unevaluatedProperties": false
     },
     "legacy_success_response": {
+      "$comment": "Secondary legacy compatibility branch for the older richer draft intervene.do success response.",
       "allOf": [
         {
           "$ref": "../envelopes/v0.2.2.json#/$defs/success_response_envelope"

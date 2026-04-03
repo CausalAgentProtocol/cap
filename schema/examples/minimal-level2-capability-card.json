@@ -1,7 +1,7 @@
 {
   "$schema": "https://causalagentprotocol.org/schema/capability-card/v0.2.2.json",
-  "name": "Example CAP Intervene Server",
-  "description": "Minimal Level 2 capability card aligned to the current CAP public intervention surface.",
+  "name": "Example CAP Level 2 Server",
+  "description": "Minimal Level 2 capability card for the active public CAP v0.2.2 intervention surface.",
   "version": "0.1.0",
   "cap_spec_version": "0.2.2",
   "provider": {
@@ -38,7 +38,7 @@
       "families": [
         "linear_scm"
       ],
-      "nodes_with_fitted_mechanisms": 24,
+      "nodes_with_fitted_mechanisms": 10,
       "residuals_computable": true,
       "residual_semantics": "additive",
       "mechanism_override_supported": false,
@@ -46,7 +46,7 @@
     }
   },
   "detailed_capabilities": {
-    "graph_discovery": true,
+    "graph_discovery": false,
     "graph_traversal": true,
     "temporal_multi_lag": true,
     "effect_estimation": true,
@@ -69,10 +69,10 @@
   ],
   "graph": {
     "domains": [
-      "operations"
+      "warehouse-operations"
     ],
-    "node_count": 24,
-    "edge_count": 60,
+    "node_count": 10,
+    "edge_count": 18,
     "node_types": [
       "metric"
     ],
@@ -80,9 +80,9 @@
       "directed_lagged"
     ],
     "graph_representation": "time_lagged_dag",
-    "update_frequency": "PT6H",
+    "update_frequency": "PT24H",
     "temporal_resolution": "PT1H",
-    "coverage_description": "Minimal example coverage for an operational SCM."
+    "coverage_description": "Small operational SCM used for a Level 2 example."
   },
   "authentication": {
     "type": "none",
