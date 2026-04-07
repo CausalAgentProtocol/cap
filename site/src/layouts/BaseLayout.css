@@ -722,35 +722,38 @@ a {
 }
 
 :global(.prose .code-copy-button) {
+  appearance: none;
+  -webkit-appearance: none;
   position: absolute;
   top: 0.7rem;
   right: 0.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
   padding: 0;
   border: 1px solid rgba(17, 17, 17, 0.1);
   border-radius: 999px;
   background: #ffffff;
   color: var(--ink);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 :global(.prose .code-copy-button:hover),
 :global(.prose .code-copy-button:focus-visible) {
   border-color: rgba(17, 17, 17, 0.16);
+  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.04);
   outline: none;
 }
 
 :global(.prose .code-copy-button svg) {
-  width: 0.95rem;
-  height: 0.95rem;
-}
-
-:global(.prose .code-copy-button[data-state="copied"]) {
-  background: rgba(17, 17, 17, 0.05);
+  width: 0.88rem;
+  height: 0.88rem;
 }
 
 :global(.prose a) {
