@@ -1,18 +1,30 @@
-# CAP `v0.3.0` Draft
+# CAP `v0.3.0`
 
-Status: internal draft, not the active normative protocol version.
+Status: internal draft. This is not the active normative CAP version.
 
-Use active `v0.2.2` for implementation unless you are explicitly reviewing
-future protocol evolution.
+CAP `v0.3.0` is a coherent draft snapshot of the next protocol version. It is
+published so reviewers can inspect the full proposed contract as one versioned
+document set rather than reconstructing it from `v0.2.2` plus scattered draft
+notes.
 
-This draft track exists to show the current direction of travel without
-displacing the active `v0.2.2` contract.
+The active public normative version remains CAP `v0.2.2`.
 
-Current draft focus:
+## Draft Focus
 
-- planned L0 and L0.5 conformance tiers
-- planned `narrate` surface
-- planned capability-card disclosure expansion
+This draft introduces four main shifts:
 
-For a concise summary of planned differences, see
-[Changes From `v0.2.2`](./changes-from-v0.2.2.md).
+- L0 and L0.5 conformance tiers
+- the `narrate` verb for causal-form narrative claims
+- richer capability-card disclosure for weaker or hybrid systems
+- a clearer distinction between CAP core semantics and extension-scoped workflow behavior
+
+## Reading Guidance
+
+Use this draft when reviewing future protocol direction, especially:
+
+- what L0 and L0.5 are allowed to claim
+- what they must disclose
+- how CAP should admit hybrid systems without weakening L1 or L2 semantics
+- where implementation-specific workflow remains outside CAP core
+
+For a concise version delta, see [Changes From `v0.2.2`](./changes-from-v0.2.2.md).

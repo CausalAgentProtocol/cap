@@ -66,6 +66,38 @@ test("site-navigation treats draft as status rather than part of the version key
   assert.equal(switcher?.links[1]?.status, "internal-draft");
 });
 
+test("version switcher resolves matching specification pages across versions", async () => {
+  const switcher = await getSpecVersionSwitcher("/spec/v0.3.0/protocol");
+  const markdown = await getRawMarkdownByRoute("/spec/v0.3.0/protocol");
+
+  assert.equal(switcher?.currentVersion, "v0.3.0");
+  assert.equal(switcher?.links[0]?.href, "/spec/protocol");
+  assert.equal(switcher?.links[1]?.href, "/spec/v0.3.0/protocol");
+  assert.equal(markdown.sourcePath, "specification/drafts/v0.3.0/protocol.md");
+});
+
+test("draft specification sidebar includes all versioned pages for the current version", async () => {
+  const sidebar = await getSidebarGroups("/spec/v0.3.0");
+
+  assert.equal(sidebar[0]?.title, "Specification Draft");
+  assert.deepEqual(
+    sidebar[0]?.links.map((link) => link.route),
+    [
+      "/spec/v0.3.0",
+      "/spec/v0.3.0/changes-from-v0.2.2",
+      "/spec/v0.3.0/protocol",
+      "/spec/v0.3.0/capability-card",
+      "/spec/v0.3.0/causal-semantics",
+      "/spec/v0.3.0/verbs",
+      "/spec/v0.3.0/message-format",
+      "/spec/v0.3.0/conformance",
+      "/spec/v0.3.0/extensions",
+      "/spec/v0.3.0/changelog"
+    ],
+    "expected the draft sidebar to include all versioned specification pages in site-map order"
+  );
+});
+
 test("site-render returns stable metadata for the spec landing page", async () => {
   const rendered = await renderRoute("/spec");
 

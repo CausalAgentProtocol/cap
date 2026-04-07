@@ -99,6 +99,78 @@
       "status": "internal-draft"
     },
     {
+      "route": "/spec/v0.3.0/protocol",
+      "section": "specification",
+      "title": "Protocol",
+      "source": "specification/drafts/v0.3.0/protocol.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-protocol",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0/capability-card",
+      "section": "specification",
+      "title": "Capability Card",
+      "source": "specification/drafts/v0.3.0/capability-card.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-capability-card",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0/causal-semantics",
+      "section": "specification",
+      "title": "Causal Semantics",
+      "source": "specification/drafts/v0.3.0/causal-semantics.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-causal-semantics",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0/verbs",
+      "section": "specification",
+      "title": "Verbs",
+      "source": "specification/drafts/v0.3.0/verbs.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-verbs",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0/message-format",
+      "section": "specification",
+      "title": "Message Format",
+      "source": "specification/drafts/v0.3.0/message-format.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-message-format",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0/conformance",
+      "section": "specification",
+      "title": "Conformance",
+      "source": "specification/drafts/v0.3.0/conformance.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-conformance",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0/extensions",
+      "section": "specification",
+      "title": "Extensions",
+      "source": "specification/drafts/v0.3.0/extensions.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-extensions",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0/changelog",
+      "section": "specification",
+      "title": "Specification Changelog",
+      "source": "specification/drafts/v0.3.0/changelog.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-changelog",
+      "status": "internal-draft"
+    },
+    {
       "route": "/spec/protocol",
       "section": "specification",
       "title": "Protocol",

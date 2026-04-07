@@ -135,6 +135,7 @@ function buildSpecificationSidebarGroups(siteMap: SiteMap, currentRoute: string)
         ? current
         : siteMap.routes.find((entry) => entry.route === "/spec")
       : getSpecVersionLandingRoute(siteMap, current.version);
+  const currentLandingRoute = currentLanding?.route;
 
   const primaryLinks = [currentLanding]
     .filter(Boolean)
@@ -144,7 +145,7 @@ function buildSpecificationSidebarGroups(siteMap: SiteMap, currentRoute: string)
           isVersionedSpecificationRoute(entry) &&
           entry.version === current.version &&
           entry.routeGroup !== "spec-index" &&
-          !isExplicitVersionRoute(entry)
+          entry.route !== currentLandingRoute
       )
     ) as SiteRoute[];
 
