@@ -42,7 +42,7 @@ test("site-navigation exposes the active spec switcher and sidebar", async () =>
         },
         {
           version: "v0.3.0-draft",
-          label: "v0.3.0 draft",
+          label: "v0.3.0",
           href: "/spec/v0.3.0-draft",
           active: false,
           status: "internal-draft"

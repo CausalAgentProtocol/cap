@@ -106,6 +106,111 @@ a {
   flex: 0 0 auto;
 }
 
+.spec-version-dropdown {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.spec-version-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.65rem;
+  padding: 0 0.95rem;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.015em;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.spec-version-trigger:hover,
+.spec-version-trigger:focus-visible,
+.spec-version-dropdown[data-open="true"] .spec-version-trigger {
+  border-color: rgba(17, 17, 17, 0.22);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.04);
+  outline: none;
+}
+
+.spec-version-trigger-label {
+  white-space: nowrap;
+}
+
+.spec-version-trigger-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+  transition: transform 160ms ease;
+}
+
+.spec-version-dropdown[data-open="true"] .spec-version-trigger-icon {
+  transform: rotate(180deg);
+}
+
+.spec-version-menu {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  z-index: 60;
+  display: grid;
+  gap: 0.35rem;
+  min-width: 13.5rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(17, 17, 17, 0.1);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.spec-version-menu[hidden] {
+  display: none;
+}
+
+.spec-version-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 14px;
+  background: #ffffff;
+  color: var(--muted);
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.spec-version-item[data-active-version="true"] {
+  border-color: rgba(17, 17, 17, 0.16);
+  background: rgba(17, 17, 17, 0.05);
+  color: var(--ink);
+}
+
+.spec-version-item:hover,
+.spec-version-item:focus-visible {
+  border-color: rgba(17, 17, 17, 0.18);
+  color: var(--ink);
+  outline: none;
+}
+
+.spec-version-item-main {
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+
 .github-link {
   display: inline-flex;
   align-items: center;
@@ -476,48 +581,10 @@ a {
   text-wrap: balance;
 }
 
-.spec-version-switcher {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem;
-}
-
-.spec-version-switcher a {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.75rem;
-  border: 1px solid rgba(17, 17, 17, 0.1);
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--muted);
-  font-size: 0.86rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  text-decoration: none;
-  transition:
-    border-color 160ms ease,
-    background-color 160ms ease,
-    color 160ms ease;
-}
-
-.spec-version-switcher a[data-active-version="true"] {
-  border-color: rgba(17, 17, 17, 0.16);
-  background: rgba(17, 17, 17, 0.05);
-  color: var(--ink);
-}
-
-.spec-version-switcher a:hover,
-.spec-version-switcher a:focus-visible {
-  border-color: rgba(17, 17, 17, 0.2);
-  color: var(--ink);
-  outline: none;
-}
-
 .spec-version-status {
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
   padding: 0.14rem 0.4rem;
   border-radius: 999px;
   background: rgba(17, 17, 17, 0.06);
@@ -870,6 +937,7 @@ a {
   .masthead-utility {
     width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   .nav {
@@ -888,6 +956,19 @@ a {
     bottom: -0.22rem;
   }
 
+  .spec-version-dropdown {
+    order: 1;
+  }
+
+  .site-search {
+    order: 2;
+    width: 100%;
+  }
+
+  .github-link {
+    order: 3;
+  }
+
   .site-search {
     width: 100%;
   }
@@ -896,6 +977,12 @@ a {
     right: auto;
     left: 0;
     width: 100%;
+  }
+
+  .spec-version-menu {
+    right: auto;
+    left: 0;
+    width: min(100%, 18rem);
   }
 
   .content {

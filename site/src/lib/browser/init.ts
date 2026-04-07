@@ -1,6 +1,7 @@
 import { bindAnchorCopyLinks } from "./anchor-copy.ts";
 import { attachCodeCopyButtons } from "./code-copy.ts";
 import { initSiteSearch } from "./site-search.ts";
+import { initSpecVersionDropdown } from "./spec-version-dropdown.ts";
 
 let lifecycleBound = false;
 
@@ -20,5 +21,6 @@ function runSiteLayoutPass() {
   initSiteSearch({
     emptyMessage: "Search by concept, verb, field name, or page title."
   });
+  initSpecVersionDropdown();
   attachCodeCopyButtons();
 }

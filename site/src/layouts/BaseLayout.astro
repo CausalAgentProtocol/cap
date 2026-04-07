@@ -110,6 +110,48 @@ const structuredData = JSON.stringify({
               </nav>
             </div>
             <div class="masthead-utility">
+              {
+                specVersionSwitcher && (
+                  <div class="spec-version-dropdown" data-spec-version-dropdown data-open="false">
+                    <button
+                      class="spec-version-trigger"
+                      type="button"
+                      data-spec-version-toggle
+                      aria-haspopup="menu"
+                      aria-expanded="false"
+                      aria-label={`Specification version: ${specVersionSwitcher.currentVersion}`}
+                    >
+                      <span class="spec-version-trigger-label">{specVersionSwitcher.currentVersion}</span>
+                      <svg
+                        class="spec-version-trigger-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="m7 10 5 5 5-5"></path>
+                      </svg>
+                    </button>
+                    <div class="spec-version-menu" role="menu" hidden data-spec-version-menu>
+                      {specVersionSwitcher.links.map((link) => (
+                        <a
+                          class="spec-version-item"
+                          href={link.href}
+                          role="menuitem"
+                          data-spec-version-link
+                          data-active-version={link.active ? "true" : undefined}
+                        >
+                          <span class="spec-version-item-main">{link.label}</span>
+                          <span class="spec-version-status">{link.status === "active" ? "Active" : "Draft"}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
               <div class="site-search" data-site-search data-open="false">
                 <label>
                   <span class="sr-only">{siteShell.searchLabel}</span>
@@ -188,18 +230,6 @@ const structuredData = JSON.stringify({
           <div class="main">
             <div class="page-header">
               {pageSectionLabel && <span class="page-header-meta">{pageSectionLabel}</span>}
-              {
-                specVersionSwitcher && (
-                  <nav class="spec-version-switcher" aria-label="Specification version">
-                    {specVersionSwitcher.links.map((link) => (
-                      <a href={link.href} data-active-version={link.active ? "true" : undefined}>
-                        <span>{link.label}</span>
-                        <span class="spec-version-status">{link.status === "active" ? "Active" : "Internal draft"}</span>
-                      </a>
-                    ))}
-                  </nav>
-                )
-              }
               <div class="page-header-top">
                 <div class="page-header-heading">
                   <h1 class="page-header-title" data-page-title>{title}</h1>

@@ -81,7 +81,7 @@ function isExplicitVersionRoute(entry: SiteRoute): boolean {
 }
 
 function formatSpecVersionLabel(version: SpecVersion): string {
-  return version.endsWith("-draft") ? version.replace("-draft", " draft") : version;
+  return version.replace(/-draft$/, "");
 }
 
 function getSpecificationVersions(siteMap: SiteMap): SpecVersionDescriptor[] {

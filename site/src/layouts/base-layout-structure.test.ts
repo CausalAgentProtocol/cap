@@ -20,3 +20,23 @@ test("BaseLayout stylesheet exists", async () => {
   assert.ok(source.includes(".masthead"), "expected stylesheet to contain layout chrome rules");
   assert.ok(source.includes(".prose"), "expected stylesheet to contain prose rules");
 });
+
+test("BaseLayout renders the spec version switcher in the masthead utility", async () => {
+  const source = await readFile(layoutPath, "utf8");
+
+  assert.match(
+    source,
+    /<div class="masthead-utility">[\s\S]*data-spec-version-dropdown/s,
+    "expected the spec version switcher to render inside the masthead utility area"
+  );
+  assert.doesNotMatch(
+    source,
+    /<nav class="spec-version-switcher"/,
+    "expected the old page-header switcher markup to be removed"
+  );
+  assert.match(
+    source,
+    /\? "Active" : "Draft"/,
+    "expected draft versions to use the shorter Draft status label"
+  );
+});
