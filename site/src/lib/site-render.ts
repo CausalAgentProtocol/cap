@@ -2,7 +2,7 @@ import fsSync from "node:fs";
 import path from "node:path";
 
 import MarkdownIt from "markdown-it";
-import { createHighlighter } from "shiki";
+import { bundledLanguages, createHighlighter } from "shiki";
 
 import { capRoot, getRawMarkdownByRoute, getSiteMap, resolveSourcePath } from "./site-map.ts";
 import { buildPageDescription, collapseWhitespace, slugify } from "./site-text.ts";
@@ -16,13 +16,18 @@ type ExternalLinksConfig = {
   };
 };
 
-const SHIKI_THEME = "github-light";
-const SHIKI_LANGS = ["python", "json", "bash", "typescript", "javascript", "yaml", "markdown", "text"] as const;
 const externalLinksPath = path.join(capRoot, "config", "external-links.json");
 const externalLinks = JSON.parse(fsSync.readFileSync(externalLinksPath, "utf8")) as ExternalLinksConfig;
+const codeCopyIconMarkup =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M6 15V6a2 2 0 0 1 2-2h9"></path></svg>';
+const shikiTheme = "github-light";
+const shikiHighlighterPromise = createHighlighter({
+  themes: [shikiTheme],
+  langs: ["plaintext"]
+});
+const loadedShikiLanguages = new Set<string>(["plaintext"]);
 
-let cachedCodeHighlighterPromise: Promise<ReturnType<typeof createHighlighter> extends Promise<infer T> ? T : never> | null =
-  null;
+type MarkdownToken = ReturnType<MarkdownIt["parse"]>[number];
 
 export async function renderRoute(route: string) {
   const siteMap = await getSiteMap();
@@ -50,7 +55,7 @@ export async function renderRoute(route: string) {
     }
   }
 
-  await highlightFenceTokens(tokens);
+  await highlightCodeBlockTokens(tokens, markdown);
 
   return {
     entry,
@@ -91,7 +96,7 @@ function createMarkdownRenderer(currentSource: string, siteMap: SiteMap) {
   const sourceToRoute = buildSourceToRoute(siteMap);
 
   const markdown = new MarkdownIt({
-    html: false,
+    html: true,
     linkify: true,
     typographer: true
   });
@@ -182,82 +187,76 @@ function createMarkdownRenderer(currentSource: string, siteMap: SiteMap) {
     return defaultHeadingClose(tokens, idx, options, env, self);
   };
 
+  markdown.renderer.rules.fence = (tokens, idx) => renderPlainCodeBlockShell(markdown, tokens[idx].content, tokens[idx].info);
+  markdown.renderer.rules.code_block = (tokens, idx) => renderPlainCodeBlockShell(markdown, tokens[idx].content);
+
   return markdown;
 }
 
-async function getCodeHighlighter() {
-  if (!cachedCodeHighlighterPromise) {
-    cachedCodeHighlighterPromise = createHighlighter({
-      themes: [SHIKI_THEME],
-      langs: [...SHIKI_LANGS]
-    });
-  }
+async function highlightCodeBlockTokens(tokens: MarkdownToken[], renderer: MarkdownIt): Promise<void> {
+  for (const token of tokens) {
+    if (token.type !== "fence" && token.type !== "code_block") {
+      continue;
+    }
 
-  return cachedCodeHighlighterPromise;
-}
-
-function normalizeCodeLanguage(raw: string): (typeof SHIKI_LANGS)[number] {
-  const language = raw.trim().toLowerCase();
-
-  switch (language) {
-    case "py":
-      return "python";
-    case "js":
-      return "javascript";
-    case "ts":
-      return "typescript";
-    case "yml":
-      return "yaml";
-    case "md":
-      return "markdown";
-    case "sh":
-    case "shell":
-      return "bash";
-    case "plaintext":
-    case "txt":
-      return "text";
-    default:
-      return SHIKI_LANGS.includes(language as (typeof SHIKI_LANGS)[number])
-        ? (language as (typeof SHIKI_LANGS)[number])
-        : "text";
+    token.type = "html_block";
+    token.tag = "";
+    token.nesting = 0;
+    token.markup = "";
+    token.block = true;
+    token.children = null;
+    token.content = await renderCodeBlockShell(renderer, token.content, token.info ?? "");
+    token.info = "";
   }
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+async function renderCodeBlockShell(renderer: MarkdownIt, content: string, info = ""): Promise<string> {
+  const renderedCodeBlock = await renderHighlightedCodeBlock(renderer, content, info);
+
+  return `<div class="code-block-shell"><button type="button" class="code-copy-button" aria-label="Copy code" title="Copy code">${codeCopyIconMarkup}</button>${renderedCodeBlock}</div>`;
 }
 
-async function highlightFenceTokens(tokens: ReturnType<MarkdownIt["parse"]>): Promise<void> {
-  const highlighter = await getCodeHighlighter();
+function renderPlainCodeBlockShell(renderer: MarkdownIt, content: string, info = ""): string {
+  const language = normalizeCodeLanguage(info);
+  const languageClass = language ? ` class="language-${renderer.utils.escapeHtml(language)}"` : "";
+  const escapedContent = renderer.utils.escapeHtml(content);
 
-  await Promise.all(
-    tokens.map(async (token) => {
-      if (token.type !== "fence") {
-        return;
-      }
+  return `<div class="code-block-shell"><button type="button" class="code-copy-button" aria-label="Copy code" title="Copy code">${codeCopyIconMarkup}</button><pre><code${languageClass}>${escapedContent}</code></pre></div>`;
+}
 
-      const language = normalizeCodeLanguage(token.info.split(/\s+/, 1)[0] ?? "");
+async function renderHighlightedCodeBlock(renderer: MarkdownIt, content: string, info = ""): Promise<string> {
+  const language = normalizeCodeLanguage(info);
+  const highlightedLanguage = await resolveShikiLanguage(language);
 
-      try {
-        token.type = "html_block";
-        token.tag = "";
-        token.nesting = 0;
-        token.content = highlighter.codeToHtml(token.content, {
-          lang: language,
-          theme: SHIKI_THEME
-        });
-      } catch {
-        token.type = "html_block";
-        token.tag = "";
-        token.nesting = 0;
-        token.content = `<pre><code class="language-${language}">${escapeHtml(token.content)}</code></pre>`;
-      }
-    })
-  );
+  if (!highlightedLanguage) {
+    const languageClass = language ? ` class="language-${renderer.utils.escapeHtml(language)}"` : "";
+    const escapedContent = renderer.utils.escapeHtml(content);
+
+    return `<pre><code${languageClass}>${escapedContent}</code></pre>`;
+  }
+
+  const highlighter = await shikiHighlighterPromise;
+  return highlighter.codeToHtml(content, { lang: highlightedLanguage, theme: shikiTheme });
+}
+
+function normalizeCodeLanguage(info = ""): string {
+  return collapseWhitespace(info).split(/\s+/, 1)[0]?.toLowerCase() ?? "";
+}
+
+async function resolveShikiLanguage(language: string): Promise<string | null> {
+  const targetLanguage = language || "plaintext";
+
+  if (!(targetLanguage in bundledLanguages)) {
+    return language ? null : "plaintext";
+  }
+
+  if (!loadedShikiLanguages.has(targetLanguage)) {
+    const highlighter = await shikiHighlighterPromise;
+    await highlighter.loadLanguage(targetLanguage);
+    loadedShikiLanguages.add(targetLanguage);
+  }
+
+  return targetLanguage;
 }
 
 function buildSourceToRoute(siteMap: SiteMap): Map<string, string> {
