@@ -32,6 +32,7 @@ test("site-navigation exposes the active spec switcher and sidebar", async () =>
     switcher,
     {
       currentVersion: "v0.2.2",
+      currentLabel: "v0.2.2",
       links: [
         {
           version: "v0.2.2",
@@ -41,9 +42,9 @@ test("site-navigation exposes the active spec switcher and sidebar", async () =>
           status: "active"
         },
         {
-          version: "v0.3.0-draft",
+          version: "v0.3.0",
           label: "v0.3.0",
-          href: "/spec/v0.3.0-draft",
+          href: "/spec/v0.3.0",
           active: false,
           status: "internal-draft"
         }
@@ -53,6 +54,16 @@ test("site-navigation exposes the active spec switcher and sidebar", async () =>
   );
   assert.equal(sidebar[0]?.title, "Specification");
   assert.equal(sidebar[0]?.links[0]?.route, "/spec");
+});
+
+test("site-navigation treats draft as status rather than part of the version key", async () => {
+  const switcher = await getSpecVersionSwitcher("/spec/v0.3.0");
+
+  assert.equal(switcher?.currentVersion, "v0.3.0");
+  assert.equal(switcher?.currentLabel, "v0.3.0");
+  assert.equal(switcher?.links[0]?.href, "/spec/v0.2.2");
+  assert.equal(switcher?.links[1]?.href, "/spec/v0.3.0");
+  assert.equal(switcher?.links[1]?.status, "internal-draft");
 });
 
 test("site-render returns stable metadata for the spec landing page", async () => {

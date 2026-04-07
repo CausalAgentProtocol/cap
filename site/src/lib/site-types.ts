@@ -37,5 +37,6 @@ export type SpecVersionLink = {
 
 export type SpecVersionSwitcher = {
   currentVersion: SpecVersion;
+  currentLabel: string;
   links: SpecVersionLink[];
 };

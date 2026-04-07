@@ -23,6 +23,7 @@ export async function getSpecVersionSwitcher(route: string): Promise<SpecVersion
 
   return {
     currentVersion: entry.version,
+    currentLabel: formatSpecVersionLabel(entry.version),
     links: getSpecificationVersions(siteMap).map((option) => {
       const alternate = findAlternateVersionRoute(siteMap, route, option.version);
 
@@ -81,7 +82,7 @@ function isExplicitVersionRoute(entry: SiteRoute): boolean {
 }
 
 function formatSpecVersionLabel(version: SpecVersion): string {
-  return version.replace(/-draft$/, "");
+  return version;
 }
 
 function getSpecificationVersions(siteMap: SiteMap): SpecVersionDescriptor[] {

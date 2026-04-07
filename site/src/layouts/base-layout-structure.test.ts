@@ -39,4 +39,9 @@ test("BaseLayout renders the spec version switcher in the masthead utility", asy
     /\? "Active" : "Draft"/,
     "expected draft versions to use the shorter Draft status label"
   );
+  assert.match(
+    source,
+    /specVersionSwitcher\.currentLabel/,
+    "expected the trigger to render the normalized display label instead of the raw version key"
+  );
 });

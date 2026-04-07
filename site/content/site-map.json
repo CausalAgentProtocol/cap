@@ -81,20 +81,20 @@
       "status": "active"
     },
     {
-      "route": "/spec/v0.3.0-draft",
+      "route": "/spec/v0.3.0",
       "section": "specification",
       "title": "Specification v0.3.0 Draft",
       "source": "specification/drafts/v0.3.0/index.md",
-      "version": "v0.3.0-draft",
+      "version": "v0.3.0",
       "routeGroup": "spec-index",
       "status": "internal-draft"
     },
     {
-      "route": "/spec/v0.3.0-draft/changes-from-v0.2.2",
+      "route": "/spec/v0.3.0/changes-from-v0.2.2",
       "section": "specification",
       "title": "Changes From v0.2.2",
       "source": "specification/drafts/v0.3.0/changes-from-v0.2.2.md",
-      "version": "v0.3.0-draft",
+      "version": "v0.3.0",
       "routeGroup": "spec-changes-from-v0.2.2",
       "status": "internal-draft"
     },
