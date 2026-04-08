@@ -66,8 +66,8 @@
       "route": "/spec",
       "section": "specification",
       "title": "Specification",
-      "source": "site/content/specification/index.md",
-      "version": "v0.2.2",
+      "source": "specification/index.md",
+      "version": "v0.3.0",
       "routeGroup": "spec-index",
       "status": "active"
     },
@@ -75,7 +75,7 @@
       "route": "/spec/v0.2.2",
       "section": "specification",
       "title": "Specification v0.2.2",
-      "source": "site/content/specification/index.md",
+      "source": "specification/releases/v0.2.2/index.md",
       "version": "v0.2.2",
       "routeGroup": "spec-index",
       "status": "active"
@@ -83,117 +83,198 @@
     {
       "route": "/spec/v0.3.0",
       "section": "specification",
-      "title": "Specification v0.3.0 Draft",
-      "source": "specification/drafts/v0.3.0/index.md",
+      "title": "Specification v0.3.0",
+      "source": "specification/index.md",
       "version": "v0.3.0",
       "routeGroup": "spec-index",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/changes-from-v0.2.2",
       "section": "specification",
       "title": "Changes From v0.2.2",
-      "source": "specification/drafts/v0.3.0/changes-from-v0.2.2.md",
+      "source": "specification/changes-from-v0.2.2.md",
       "version": "v0.3.0",
       "routeGroup": "spec-changes-from-v0.2.2",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/protocol",
       "section": "specification",
       "title": "Protocol",
-      "source": "specification/drafts/v0.3.0/protocol.md",
+      "source": "specification/protocol.md",
       "version": "v0.3.0",
       "routeGroup": "spec-protocol",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/capability-card",
       "section": "specification",
       "title": "Capability Card",
-      "source": "specification/drafts/v0.3.0/capability-card.md",
+      "source": "specification/capability-card.md",
       "version": "v0.3.0",
       "routeGroup": "spec-capability-card",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/causal-semantics",
       "section": "specification",
       "title": "Causal Semantics",
-      "source": "specification/drafts/v0.3.0/causal-semantics.md",
+      "source": "specification/causal-semantics.md",
       "version": "v0.3.0",
       "routeGroup": "spec-causal-semantics",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/canonical-names",
       "section": "specification",
       "title": "Canonical Names",
-      "source": "specification/drafts/v0.3.0/canonical-names.md",
+      "source": "specification/canonical-names.md",
       "version": "v0.3.0",
       "routeGroup": "spec-canonical-names",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/verbs",
       "section": "specification",
       "title": "Verbs",
-      "source": "specification/drafts/v0.3.0/verbs.md",
+      "source": "specification/verbs.md",
       "version": "v0.3.0",
       "routeGroup": "spec-verbs",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/message-format",
       "section": "specification",
       "title": "Message Format",
-      "source": "specification/drafts/v0.3.0/message-format.md",
+      "source": "specification/message-format.md",
       "version": "v0.3.0",
       "routeGroup": "spec-message-format",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/provenance",
       "section": "specification",
       "title": "Provenance",
-      "source": "specification/drafts/v0.3.0/provenance.md",
+      "source": "specification/provenance.md",
       "version": "v0.3.0",
       "routeGroup": "spec-provenance",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/conformance",
       "section": "specification",
       "title": "Conformance",
-      "source": "specification/drafts/v0.3.0/conformance.md",
+      "source": "specification/conformance.md",
       "version": "v0.3.0",
       "routeGroup": "spec-conformance",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/extensions",
       "section": "specification",
       "title": "Extensions",
-      "source": "specification/drafts/v0.3.0/extensions.md",
+      "source": "specification/extensions.md",
       "version": "v0.3.0",
       "routeGroup": "spec-extensions",
-      "status": "internal-draft"
+      "status": "active"
     },
     {
       "route": "/spec/v0.3.0/changelog",
       "section": "specification",
       "title": "Specification Changelog",
-      "source": "specification/drafts/v0.3.0/changelog.md",
+      "source": "specification/changelog.md",
       "version": "v0.3.0",
       "routeGroup": "spec-changelog",
-      "status": "internal-draft"
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2/protocol",
+      "section": "specification",
+      "title": "Protocol",
+      "source": "specification/releases/v0.2.2/protocol.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-protocol",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2/capability-card",
+      "section": "specification",
+      "title": "Capability Card",
+      "source": "specification/releases/v0.2.2/capability-card.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-capability-card",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2/causal-semantics",
+      "section": "specification",
+      "title": "Causal Semantics",
+      "source": "specification/releases/v0.2.2/causal-semantics.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-causal-semantics",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2/verbs",
+      "section": "specification",
+      "title": "Verbs",
+      "source": "specification/releases/v0.2.2/verbs.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-verbs",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2/message-format",
+      "section": "specification",
+      "title": "Message Format",
+      "source": "specification/releases/v0.2.2/message-format.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-message-format",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2/conformance",
+      "section": "specification",
+      "title": "Conformance",
+      "source": "specification/releases/v0.2.2/conformance.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-conformance",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2/extensions",
+      "section": "specification",
+      "title": "Extensions",
+      "source": "specification/releases/v0.2.2/extensions.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-extensions",
+      "status": "active"
+    },
+    {
+      "route": "/spec/v0.2.2/changelog",
+      "section": "specification",
+      "title": "Specification Changelog",
+      "source": "specification/releases/v0.2.2/changelog.md",
+      "version": "v0.2.2",
+      "routeGroup": "spec-changelog",
+      "status": "active"
+    },
+    {
+      "route": "/spec/changes-from-v0.2.2",
+      "section": "specification",
+      "title": "Changes From v0.2.2",
+      "source": "specification/changes-from-v0.2.2.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-changes-from-v0.2.2",
+      "status": "active"
     },
     {
       "route": "/spec/protocol",
       "section": "specification",
       "title": "Protocol",
       "source": "specification/protocol.md",
-      "version": "v0.2.2",
+      "version": "v0.3.0",
       "routeGroup": "spec-protocol",
       "status": "active"
     },
@@ -202,7 +283,7 @@
       "section": "specification",
       "title": "Capability Card",
       "source": "specification/capability-card.md",
-      "version": "v0.2.2",
+      "version": "v0.3.0",
       "routeGroup": "spec-capability-card",
       "status": "active"
     },
@@ -211,8 +292,17 @@
       "section": "specification",
       "title": "Causal Semantics",
       "source": "specification/causal-semantics.md",
-      "version": "v0.2.2",
+      "version": "v0.3.0",
       "routeGroup": "spec-causal-semantics",
+      "status": "active"
+    },
+    {
+      "route": "/spec/canonical-names",
+      "section": "specification",
+      "title": "Canonical Names",
+      "source": "specification/canonical-names.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-canonical-names",
       "status": "active"
     },
     {
@@ -220,7 +310,7 @@
       "section": "specification",
       "title": "Verbs",
       "source": "specification/verbs.md",
-      "version": "v0.2.2",
+      "version": "v0.3.0",
       "routeGroup": "spec-verbs",
       "status": "active"
     },
@@ -229,8 +319,17 @@
       "section": "specification",
       "title": "Message Format",
       "source": "specification/message-format.md",
-      "version": "v0.2.2",
+      "version": "v0.3.0",
       "routeGroup": "spec-message-format",
+      "status": "active"
+    },
+    {
+      "route": "/spec/provenance",
+      "section": "specification",
+      "title": "Provenance",
+      "source": "specification/provenance.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-provenance",
       "status": "active"
     },
     {
@@ -238,7 +337,7 @@
       "section": "specification",
       "title": "Conformance",
       "source": "specification/conformance.md",
-      "version": "v0.2.2",
+      "version": "v0.3.0",
       "routeGroup": "spec-conformance",
       "status": "active"
     },
@@ -247,7 +346,7 @@
       "section": "specification",
       "title": "Extensions",
       "source": "specification/extensions.md",
-      "version": "v0.2.2",
+      "version": "v0.3.0",
       "routeGroup": "spec-extensions",
       "status": "active"
     },
@@ -256,7 +355,7 @@
       "section": "specification",
       "title": "Specification Changelog",
       "source": "specification/changelog.md",
-      "version": "v0.2.2",
+      "version": "v0.3.0",
       "routeGroup": "spec-changelog",
       "status": "active"
     }

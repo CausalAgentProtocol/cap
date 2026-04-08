@@ -1,15 +1,16 @@
 {
-  "$schema": "https://causalagentprotocol.org/schema/capability-card/v0.2.2.json",
+  "$schema": "https://causalagentprotocol.org/schema/capability-card/v0.3.0.json",
   "name": "Example CAP Level 2 Server",
-  "description": "Minimal Level 2 capability card for the active public CAP v0.2.2 intervention surface.",
+  "description": "Minimal Level 2 capability card for the active public CAP v0.3.0 intervention surface.",
   "version": "0.1.0",
-  "cap_spec_version": "0.2.2",
+  "cap_spec_version": "0.3.0",
   "provider": {
     "name": "Example Org",
     "url": "https://example.com"
   },
   "endpoint": "https://example.com/cap",
   "conformance_level": 2,
+  "conformance_name": "Intervene",
   "supported_verbs": {
     "core": [
       "meta.capabilities",
@@ -23,7 +24,8 @@
     "convenience": [
       "traverse.parents",
       "traverse.children"
-    ]
+    ],
+    "extensions": []
   },
   "causal_engine": {
     "family": "scm",

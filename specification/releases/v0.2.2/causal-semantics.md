@@ -12,9 +12,7 @@ The normative semantic fields are:
 - `identification_status`
 - `assumptions`
 
-In `v0.3.0`, CAP also distinguishes semantic claim classes across conformance tiers so that narrative or hybrid systems can participate honestly without being mistaken for stronger causal engines.
-
-The human-readable canonical-name definitions for this version live in [Canonical Names](./canonical-names.md). The machine-readable enum catalog for the repository still lives in [`schema/shared/enums.json`](../schema/shared/enums.json).
+The machine-readable enum catalog for this repository lives in [`schema/shared/enums.json`](../schema/shared/enums.json). It is aligned to the long-form draft where possible and extended where earlier public CAP implementations have already stabilized names in code.
 
 ## Reasoning Mode
 
@@ -40,16 +38,12 @@ The current repository canonical reasoning-mode catalog is:
 - `structural_semantics`
 - `observational_prediction`
 - `validation_gate`
-- `narrative_claim`
-- `hybrid_inference`
 
 Interpretation guidance:
 
 - `identified_causal_effect` and `scm_simulation` are strong causal-interventional labels
 - `graph_propagation`, `reduced_form_estimate`, and `heuristic` are weaker or fallback causal labels
 - `conditional_forecast` and `observational_prediction` cover observational prediction surfaces
-- `narrative_claim` covers unvalidated causal-form narrative claims
-- `hybrid_inference` covers mathematically structured inference over partially unvalidated structure, parameters, or assumptions
 - `structural_semantics` covers graph-structure or topology disclosure without claiming identified intervention semantics
 - `validation_gate` covers precondition or structural-validity checks that still need explicit semantic disclosure
 
@@ -65,7 +59,7 @@ Additional binding rule:
 
 Every CAP response to an `intervene.*` or `counterfact.*` verb MUST include `identification_status`.
 
-Canonical values are:
+Canonical v0.2.2 values are:
 
 - `identified`
 - `partially_identified`
@@ -74,18 +68,13 @@ Canonical values are:
 
 This field tells the client whether a claim is formally identified, only bounded, merely estimated or simulated, or outside the interventional or counterfactual scope.
 
-For weaker tiers:
-
-- L0 narrative claims will often use `identification_status = "not_applicable"`
-- L0.5 hybrid claims will often use `identification_status = "not_formally_identified"` unless the server can justify a stronger status for the specific claim being returned
-
 ## Assumptions Disclosure
 
 Every capability card MUST include a server-level `assumptions` array.
 
 Responses MAY include a response-level `assumptions` array. When present, it MUST be interpreted as the complete effective assumption set for that response. It does not merge with the card-level array.
 
-Canonical assumption values preserved from earlier CAP work include:
+Canonical assumption values in the v0.2.2 draft include:
 
 - `causal_sufficiency`
 - `faithfulness`
@@ -104,38 +93,6 @@ Canonical assumption values preserved from earlier CAP work include:
 That base catalog remains the preferred unprefixed assumption vocabulary.
 
 When a server needs narrower implementation-specific assumptions, it MAY add custom strings. Those custom strings SHOULD be namespaced to avoid colliding with protocol-level canonical names.
-
-## Claim Classes Across Tiers
-
-### Narrative Claims
-
-L0 systems produce causal-form claims without statistical validation. CAP admits these systems only if they disclose that the claim is narrative, heuristic, asserted, extracted, or otherwise non-validated.
-
-Narrative systems MAY still be useful. CAP does not reject them. CAP requires that they not be mistaken for statistically established observational or interventional claims.
-
-### Hybrid Claims
-
-L0.5 systems combine a real mathematical inference layer with materially weaker structure, parameter, or prior provenance.
-
-Typical hybrid ingredients include:
-
-- LLM-proposed structure
-- expert-imposed edges or weights
-- heuristic priors
-- partially validated graph fragments
-- mathematically valid propagation over non-validated inputs
-
-What defines L0.5 is the hybrid epistemic profile, not one particular runtime architecture.
-
-L0.5 does not imply:
-
-- a session model
-- graph snapshot IDs
-- seeded subgraph compilation
-- any one storage pattern
-- any one provenance schema
-
-Those may appear in specific implementations, but they are not the semantics of L0.5 itself.
 
 ## Provenance Naming
 
@@ -170,7 +127,6 @@ It standardizes how a server discloses:
 - what kind of claim it is making
 - whether that claim is formally identified
 - which assumptions the claim rests on
-- whether the claim is narrative, hybrid, observational, interventional, or counterfactual in semantic strength
 
 That boundary is the protocol's semantic honesty layer.
 

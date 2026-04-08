@@ -2,7 +2,7 @@
 
 The [schema layer](./README.md) is the machine-readable CAP contract layer.
 
-This schema layer models the active public v0.2.2 contract first. Retained legacy branches remain machine-visible for compatibility review and migration, but they are not the default reader contract.
+This schema layer models the active public v0.3.0 contract first for shared enums, envelopes, and capability-card discovery. Some verb-specific schemas still retain older version branches for compatibility review and migration.
 
 This directory contains:
 
@@ -12,10 +12,11 @@ This directory contains:
 - core verb schemas
 - minimal valid examples for validation and conformance tooling
 
-Draft notes:
+Notes:
 
-- where older draft-era contracts and the active public v0.2.2 contract diverge, the schema files record both shapes explicitly instead of silently collapsing to one
-- the active public core surface includes `meta.capabilities`, `meta.methods`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`
+- where older version contracts and the active public v0.3.0 contract diverge, the schema files record both shapes explicitly instead of silently collapsing to one
+- the active public core surface includes `meta.capabilities`, `meta.methods`, `narrate`, `observe.predict`, `intervene.do`, `graph.neighbors`, `graph.markov_blanket`, and `graph.paths`
+- envelope and capability-card schemas now track the active `v0.3.0` wire and disclosure contract directly; remaining verb-schema migrations should be treated as follow-up work when a verb still points at `v0.2.2`
 - older `effect.query` artifacts are retained as legacy compatibility records rather than as the active public core surface
 - unresolved protocol gaps are marked with `$comment` in the relevant schema file
 

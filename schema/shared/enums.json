@@ -2,24 +2,26 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/shared/enums.json",
   "title": "CAP Canonical Enums",
-  "$comment": "Canonical enum catalog for the active public CAP v0.2.2 contract, cross-checked against the long-form draft and the cap_protocol.core.canonical module. Several envelope and disclosure enums are included here because sibling schemas reuse them.",
+  "$comment": "Canonical enum catalog for the active public CAP v0.3.0 contract. Several envelope and disclosure enums are included here because sibling schemas reuse them.",
   "$defs": {
     "cap_version": {
       "type": "string",
-      "const": "0.2.2",
-      "$comment": "The active public CAP v0.2.2 wire contract uses 0.2.2. Older draft-era values such as 0.2 are archival only and are not valid for the current public envelope."
+      "const": "0.3.0",
+      "$comment": "The active public CAP v0.3.0 wire contract uses 0.3.0. Older values remain historical only."
     },
     "cap_spec_version": {
       "type": "string",
-      "const": "0.2.2"
+      "const": "0.3.0"
     },
     "conformance_level": {
-      "type": "integer",
+      "type": "number",
       "enum": [
+        0,
+        0.5,
         1,
         2
       ],
-      "$comment": "The active public v0.2.2 conformance model allows Level 1 and Level 2 only. Level 3 remains reserved in v0.2.2 and must not be declared."
+      "$comment": "The active public v0.3.0 conformance model allows Level 0, 0.5, 1, and 2. Level 3 remains reserved and must not be declared."
     },
     "reasoning_mode": {
       "type": "string",
@@ -32,9 +34,11 @@
         "heuristic",
         "structural_semantics",
         "observational_prediction",
-        "validation_gate"
+        "validation_gate",
+        "narrative_claim",
+        "hybrid_inference"
       ],
-      "$comment": "The first six names come from the long-form draft Appendix C baseline. The latter three are now also part of the repository canonical catalog because earlier public adapters stabilized them in code."
+      "$comment": "CAP canonical reasoning-mode values used across capability cards and responses."
     },
     "identification_status": {
       "type": "string",
@@ -63,6 +67,38 @@
         "mechanism_invariance_under_intervention"
       ],
       "$comment": "Appendix C marks this canonical set as non-exhaustive. Servers may add custom assumption strings when needed, and should namespace those custom values to avoid colliding with protocol-level canonical names."
+    },
+    "assumption_name": {
+      "type": "string",
+      "enum": [
+        "causal_sufficiency",
+        "faithfulness",
+        "acyclicity",
+        "stationarity",
+        "linearity",
+        "no_instantaneous_effects",
+        "granger_predictive_causality_only",
+        "no_latent_confounders_addressed",
+        "homogeneity",
+        "positivity",
+        "consistency",
+        "no_interference",
+        "mechanism_invariance_under_intervention"
+      ],
+      "$comment": "Canonical assumption-name registry aligned with specification/canonical-names.md. This remains non-exhaustive; servers may add namespaced custom values when needed."
+    },
+    "provenance_category": {
+      "type": "string",
+      "enum": [
+        "structure_origin",
+        "parameter_origin",
+        "methodology_class",
+        "reproducibility_status",
+        "limitation_summary",
+        "caveat_summary",
+        "graph_ref"
+      ],
+      "$comment": "Canonical provenance-category registry aligned with specification/canonical-names.md."
     },
     "causal_engine_family": {
       "type": "string",

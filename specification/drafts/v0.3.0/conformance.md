@@ -40,7 +40,7 @@ Draft Pearl alignment:
 | `meta.methods` | MUST | MUST | MUST | MUST | reserved |
 | `narrate` | MUST | MUST | MAY | MAY | reserved |
 | `observe.predict` | MUST NOT | MAY, restricted | MUST | MUST | reserved |
-| `intervene.do` | MUST NOT | MUST NOT in core | MUST NOT | MUST | reserved |
+| `intervene.do` | MUST NOT | MAY, restricted | MUST NOT | MUST | reserved |
 | `graph.neighbors` | MAY | MAY | MUST | MUST | reserved |
 | `graph.markov_blanket` | MAY | MAY | MUST | MUST | reserved |
 | `graph.paths` | MAY | MAY | MAY | MUST | reserved |
@@ -76,6 +76,7 @@ A Level 0.5 server MUST implement:
 A Level 0.5 server MAY implement:
 
 - restricted `observe.predict`
+- restricted `intervene.do`
 - structural graph verbs
 
 only when it can disclose the weaker epistemic status honestly.
@@ -85,6 +86,13 @@ A Level 0.5 server MUST disclose, at minimum:
 - what part of the system is mathematically structured
 - what part of the system is heuristic, generated, expert-authored, or otherwise unvalidated
 - why its outputs are not equivalent to Level 1 or Level 2 claims
+
+When a Level 0.5 server exposes `intervene.do`, it MUST disclose weaker semantics such as:
+
+- `reasoning_mode = "graph_propagation"` or another equally explicit weaker mode
+- `identification_status = "not_formally_identified"`
+
+Level 0.5 `intervene.do` does not satisfy Pearl rung-2 identified intervention semantics.
 
 Supporting a stronger mathematical layer does not by itself justify Level 1.
 

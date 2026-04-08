@@ -10,8 +10,6 @@ The capability card is a truthful machine-readable disclosure surface for the se
 
 The normative source of truth for CAP requirements remains the specification pages in this directory.
 
-Server-level disclosure should be interpreted together with [Provenance](./provenance.md), which distinguishes capability disclosure from response-level provenance and provider workflow metadata.
-
 ## Purpose
 
 The capability card exists so a client can determine, before invocation:
@@ -24,21 +22,6 @@ The capability card exists so a client can determine, before invocation:
 - authentication requirements
 
 Method-level invocation metadata MAY be discovered separately through `meta.methods`.
-
-The capability card is the high-signal, stable disclosure surface.
-
-It SHOULD summarize server-level truths that remain useful across requests.
-
-It SHOULD NOT become a dump of request-scoped runtime detail that belongs in method metadata or per-response provenance.
-
-In `v0.3.0`, the capability card also carries more of the burden for telling clients whether a server is:
-
-- narrative
-- hybrid
-- observational
-- interventional
-
-and what that actually means for trust and interpretation.
 
 ## Minimum Required Disclosure
 
@@ -55,29 +38,11 @@ At minimum, this includes these field groups:
 
 - `endpoint`
 - `conformance_level`
-- `conformance_name`
 - `supported_verbs`
 - `assumptions`
 - `reasoning_modes_supported`
 - `graph`
 - `authentication`
-
-For lower-confidence tiers, the card SHOULD also disclose the provenance of:
-
-- structure
-- parameters, weights, or priors
-- reproducibility characteristics
-- key limitations or caveats
-
-## Additional Disclosure For L0 And L0.5 Cards
-
-For L0 and L0.5 systems, the card SHOULD also disclose:
-
-- a stable `conformance_level`
-- a human-readable `conformance_name`
-- a machine-readable indicator of Pearl alignment or non-alignment
-- enough provenance to understand where structure and parameterization came from
-- enough caveat disclosure to prevent narrative or hybrid outputs from being mistaken for stronger causal claims
 
 ## Endpoint Disclosure
 
@@ -97,14 +62,13 @@ Capability-card fields that expose semantic or provenance-oriented names SHOULD 
 
 In practice:
 
-- `conformance_name` values and `pearl_alignment` values SHOULD follow [Canonical Names](./canonical-names.md)
 - `reasoning_modes_supported` SHOULD use the canonical `reasoning_mode` strings from [`schema/shared/enums.json`](../schema/shared/enums.json)
-- `assumptions` SHOULD use canonical `assumption_name` values where they fit, and namespaced custom strings where they do not
+- `assumptions` SHOULD use canonical assumption names where they fit, and namespaced custom strings where they do not
 - `causal_engine.algorithm` MAY stay open-world, but servers SHOULD prefer the repository's recommended spellings for common algorithms such as `PCMCI`, `PC`, `GES`, `FCI`, `NOTEARS`, `LiNGAM`, and `VAR-Granger`
 
 ## Additional Non-Core Disclosure
 
-Servers MAY disclose richer optional fields such as:
+The repository still retains richer draft-era or compatibility-oriented fields such as:
 
 - `causal_engine`
 - `structural_mechanisms`
@@ -115,20 +79,7 @@ Servers MAY disclose richer optional fields such as:
 - `bindings`
 - `extensions`
 
-Servers MAY disclose these richer fields when they can do so honestly.
-
-When a server supports different `options.response_detail` tiers or access-level response shaping, it SHOULD disclose the practical defaults and any material differences in capability disclosure rather than forcing clients to infer them from examples alone.
-
-When a server uses multiple extension namespaces, such as separate stateless helper extensions and stateful workflow extensions, the capability card SHOULD distinguish those namespaces explicitly rather than presenting them as one undifferentiated extension blob.
-
-For L0 and L0.5 systems, the following disclosure categories are especially important:
-
-- structure origin
-- parameter or weight origin
-- methodology class
-- reproducibility status
-- limitation and caveat summary
-- Pearl alignment or non-alignment
+Servers MAY disclose these richer fields when they can do so honestly, but they are not required for CAP `v0.2.2` conformance unless another section of this specification says otherwise.
 
 ## Authentication And Access Disclosure
 
@@ -147,16 +98,10 @@ The capability card MUST distinguish between:
 
 A server MUST NOT overstate causal semantics, reasoning modes, or verb support because richer detail is hidden, summarized, or redacted.
 
-For L0 and L0.5 servers in particular, the capability card MUST NOT hide weaker epistemic status behind stronger verb names.
-
 ## Mounted Surface Rule
 
 The capability card MUST describe the server's mounted public surface truthfully.
 
 Convenience verbs and extension verbs MAY appear in discovery metadata, but they MUST be identified as non-core surfaces.
 
-Convenience verbs SHOULD be reserved for ergonomic wrappers over already-standardized CAP semantics. Verbs that depend on provider-owned handles, workflow state, or server-selected graph views SHOULD be disclosed as extensions instead.
-
-Servers MUST NOT imply that compatibility-only artifacts are part of CAP core unless the specification pages restate them normatively.
-
-Implementation-specific provenance such as snapshot IDs, workflow handles, prompt lineage, or runtime selection metadata MAY be disclosed when useful, but they are not automatically required CAP-core fields for every server in a conformance tier.
+Servers MUST NOT imply that draft-era or compatibility-only artifacts are part of the active CAP `v0.2.2` contract unless the specification pages restate them normatively.

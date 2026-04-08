@@ -113,6 +113,10 @@ The repository still retains richer draft-era or compatibility-oriented fields s
 
 Servers MAY disclose these richer fields when they can do so honestly.
 
+When a server supports different `options.response_detail` tiers or access-level response shaping, it SHOULD disclose the practical defaults and any material differences in capability disclosure rather than forcing clients to infer them from examples alone.
+
+When a server uses multiple extension namespaces, such as separate stateless helper extensions and stateful workflow extensions, the capability card SHOULD distinguish those namespaces explicitly rather than presenting them as one undifferentiated extension blob.
+
 For `v0.3.0` draft review, the following disclosure categories are especially important for L0 and L0.5 systems:
 
 - structure origin

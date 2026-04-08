@@ -10,18 +10,15 @@ CAP divides verbs into three categories:
 
 ## Core Verbs
 
-This version defines the following standard CAP verbs:
+The active CAP core surface in `v0.2.2` is:
 
 - `meta.capabilities`
 - `meta.methods`
-- `narrate`
 - `observe.predict`
 - `intervene.do`
 - `graph.neighbors`
 - `graph.markov_blanket`
 - `graph.paths`
-
-Conformance gates for those verbs are defined in [Conformance](./conformance.md). This page defines verb meaning, not tier requirements.
 
 ### `meta.capabilities`
 
@@ -75,30 +72,6 @@ Verbs with no public request parameters SHOULD return `arguments: []`.
 
 This discovery surface supplements `meta.capabilities`. It does not replace the capability card.
 
-### `narrate`
-
-This verb returns causal-form narrative claims without asserting that they are statistically validated.
-
-It exists so narrative systems can participate honestly in CAP.
-
-The request MAY include:
-
-- `params.query`
-- optional `params.source_text`
-- optional `params.scope`
-
-The success result SHOULD disclose:
-
-- the returned narrative claim or claims
-- the narrative or heuristic basis of the claim
-- any disclosed limitations or caveats that materially affect interpretation
-
-`narrate` MUST NOT be presented as an identified observational or interventional effect.
-
-The `narrate` result contract defines the canonical minimum narrative payload only.
-
-Servers MAY include richer narrative structure, supporting excerpts, or local context fields when those additions remain semantically consistent with the canonical minimum.
-
 ### `observe.predict`
 
 This verb returns an observational prediction for one target node.
@@ -116,13 +89,7 @@ The `observe.predict` success result includes:
 - `result.prediction`
 - `result.drivers`
 
-That list is the canonical minimum success payload, not an exhaustive ban on richer additive result fields.
-
 Level 1 servers MAY add observational semantic disclosure when it materially improves honesty.
-
-Level 0.5 servers MAY expose `observe.predict` only when they can also disclose that the result is weaker than a Level 1 observational claim where applicable.
-
-When a Level 0.5 server exposes `observe.predict`, it SHOULD include enough semantic disclosure for a client to recognize that the result is hybrid rather than statistically validated observational inference.
 
 ### `intervene.do`
 
@@ -144,10 +111,6 @@ The `intervene.do` success result includes one disclosed interventional claim wi
 - `result.reasoning_mode`
 - `result.identification_status`
 - `result.assumptions`
-
-That list is the canonical minimum success payload, not an exhaustive ban on richer additive result fields.
-
-At Level 0.5, `intervene.do` MAY be used only for restricted intervention-style outputs whose disclosure makes clear that the result is not Pearl rung-2 identified intervention semantics.
 
 ### `graph.neighbors`
 
@@ -199,15 +162,4 @@ Additional helper verbs, counterfactual verbs outside the current CAP core, and 
 
 Product-specific discovery surfaces, vendor workflow operations, and implementation-specific topology should not be presented as CAP core.
 
-Workflow-oriented surfaces such as:
-
-- candidate review flows
-- reusable analysis handles
-- session resumption
-- provider-specific execution orchestration
-
-remain extension-scoped unless CAP later standardizes them explicitly.
-
 Legacy `effect.query` schemas remain for compatibility review, and the active CAP `v0.2.2` core surface is split into `observe.predict` and `intervene.do`.
-
-Higher-tier servers MAY still implement `narrate` for user-facing narrative workflows, but that optional support does not change their declared conformance level.
