@@ -1,24 +1,17 @@
-const codeCopyIcon = `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
-    <path d="M6 15V6a2 2 0 0 1 2-2h9"></path>
-  </svg>
-`;
-
 export function attachCodeCopyButtons() {
-  document.querySelectorAll(".prose pre").forEach((pre) => {
-    if (!(pre instanceof HTMLElement) || pre.dataset.codeCopyBound === "true") {
+  document.querySelectorAll(".prose .code-copy-button").forEach((button) => {
+    if (!(button instanceof HTMLButtonElement) || button.dataset.codeCopyBound === "true") {
       return;
     }
 
-    pre.dataset.codeCopyBound = "true";
+    const shell = button.closest(".code-block-shell");
+    const pre = shell instanceof HTMLElement ? shell.querySelector("pre") : null;
 
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "code-copy-button";
-    button.innerHTML = codeCopyIcon;
-    button.setAttribute("aria-label", "Copy code");
-    button.setAttribute("title", "Copy code");
+    if (!(pre instanceof HTMLElement)) {
+      return;
+    }
+
+    button.dataset.codeCopyBound = "true";
 
     button.addEventListener("click", async () => {
       const code = pre.querySelector("code");
@@ -41,8 +34,6 @@ export function attachCodeCopyButtons() {
         button.setAttribute("title", "Copy code");
       }, 1200);
     });
-
-    pre.append(button);
   });
 }
 

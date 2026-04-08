@@ -4,7 +4,7 @@ export function initSpecVersionDropdown() {
   bindDropdownGlobals();
 
   document.querySelectorAll("[data-spec-version-dropdown]").forEach((root) => {
-    if (!(root instanceof HTMLElement) || root.dataset.specVersionBound === "true") {
+    if (!(root instanceof HTMLElement)) {
       return;
     }
 
@@ -15,13 +15,20 @@ export function initSpecVersionDropdown() {
       return;
     }
 
-    root.dataset.specVersionBound = "true";
+    if (toggle.dataset.specVersionToggleBound !== "true") {
+      toggle.dataset.specVersionToggleBound = "true";
 
-    toggle.addEventListener("click", () => {
-      setDropdownOpen(root, root.dataset.open !== "true");
-    });
+      toggle.addEventListener("click", () => {
+        setDropdownOpen(root, root.dataset.open !== "true");
+      });
+    }
 
     menu.querySelectorAll("[data-spec-version-link]").forEach((item) => {
+      if (!(item instanceof HTMLElement) || item.dataset.specVersionLinkBound === "true") {
+        return;
+      }
+
+      item.dataset.specVersionLinkBound = "true";
       item.addEventListener("click", () => {
         setDropdownOpen(root, false);
       });
