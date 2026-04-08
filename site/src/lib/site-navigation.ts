@@ -129,12 +129,12 @@ function buildSpecificationSidebarGroups(siteMap: SiteMap, currentRoute: string)
     return [];
   }
 
-  const currentLanding =
-    current.status === "active" && !isExplicitVersionRoute(current)
-      ? current.routeGroup === "spec-index"
-        ? current
-        : siteMap.routes.find((entry) => entry.route === "/spec")
-      : getSpecVersionLandingRoute(siteMap, current.version);
+  const showExplicitVersionSidebar = current.route === "/spec" || isExplicitVersionRoute(current);
+  const currentLanding = showExplicitVersionSidebar
+    ? getSpecVersionLandingRoute(siteMap, current.version)
+    : current.status === "active" && current.routeGroup === "spec-index"
+      ? current
+      : siteMap.routes.find((entry) => entry.route === "/spec");
   const currentLandingRoute = currentLanding?.route;
 
   const primaryLinks = [currentLanding]
@@ -145,38 +145,14 @@ function buildSpecificationSidebarGroups(siteMap: SiteMap, currentRoute: string)
           isVersionedSpecificationRoute(entry) &&
           entry.version === current.version &&
           entry.routeGroup !== "spec-index" &&
-          entry.route !== currentLandingRoute
+          entry.route !== currentLandingRoute &&
+          (showExplicitVersionSidebar ? isExplicitVersionRoute(entry) : !isExplicitVersionRoute(entry))
       )
     ) as SiteRoute[];
 
-  if (current.status === "internal-draft") {
-    return [
-      {
-        title: "Specification Draft",
-        links: primaryLinks
-      }
-    ];
-  }
-
-  if (isExplicitVersionRoute(current)) {
-    return [
-      {
-        title: "Specification",
-        links: primaryLinks
-      },
-      ...getSpecificationVersions(siteMap)
-        .filter((entry) => entry.version !== current.version)
-        .map((entry) => ({
-          title: entry.status === "internal-draft" ? "Draft" : "Specification",
-          links: getSpecVersionLandingRoute(siteMap, entry.version) ? [getSpecVersionLandingRoute(siteMap, entry.version)!] : []
-        }))
-        .filter((group) => group.links.length > 0)
-    ];
-  }
-
   return [
     {
-      title: "Specification",
+      title: current.status === "internal-draft" ? "Specification Draft" : "Specification",
       links: primaryLinks
     }
   ];
