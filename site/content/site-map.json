@@ -126,6 +126,15 @@
       "status": "internal-draft"
     },
     {
+      "route": "/spec/v0.3.0/canonical-names",
+      "section": "specification",
+      "title": "Canonical Names",
+      "source": "specification/drafts/v0.3.0/canonical-names.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-canonical-names",
+      "status": "internal-draft"
+    },
+    {
       "route": "/spec/v0.3.0/verbs",
       "section": "specification",
       "title": "Verbs",
@@ -141,6 +150,15 @@
       "source": "specification/drafts/v0.3.0/message-format.md",
       "version": "v0.3.0",
       "routeGroup": "spec-message-format",
+      "status": "internal-draft"
+    },
+    {
+      "route": "/spec/v0.3.0/provenance",
+      "section": "specification",
+      "title": "Provenance",
+      "source": "specification/drafts/v0.3.0/provenance.md",
+      "version": "v0.3.0",
+      "routeGroup": "spec-provenance",
       "status": "internal-draft"
     },
     {

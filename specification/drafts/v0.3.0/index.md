@@ -1,30 +1,23 @@
 # CAP `v0.3.0`
 
-Status: internal draft. This is not the active normative CAP version.
+This directory is the draft source of truth for CAP `v0.3.0`.
 
-CAP `v0.3.0` is a coherent draft snapshot of the next protocol version. It is
-published so reviewers can inspect the full proposed contract as one versioned
-document set rather than reconstructing it from `v0.2.2` plus scattered draft
-notes.
+Status: draft.
 
-The active public normative version remains CAP `v0.2.2`.
+Active normative version: CAP `v0.2.2` remains the active normative protocol version.
 
-## Draft Focus
+This specification defines the proposed CAP `v0.3.0` public surface for capability disclosure, invocation, conformance, and semantic honesty. It is published as a coherent versioned document set so reviewers can read the next protocol contract as one specification rather than reconstructing it from `v0.2.2` plus scattered draft notes.
 
-This draft introduces four main shifts:
+It defines the protocol contract for:
 
 - L0 and L0.5 conformance tiers
+- capability-card disclosure for weaker or hybrid systems
+- canonical vocabulary families for semantic and provenance disclosure
+- provenance interpretation across capability, response, and workflow layers
 - the `narrate` verb for causal-form narrative claims
-- richer capability-card disclosure for weaker or hybrid systems
-- a clearer distinction between CAP core semantics and extension-scoped workflow behavior
-
-## Reading Guidance
-
-Use this draft when reviewing future protocol direction, especially:
-
-- what L0 and L0.5 are allowed to claim
-- what they must disclose
-- how CAP should admit hybrid systems without weakening L1 or L2 semantics
-- where implementation-specific workflow remains outside CAP core
+- a clearer boundary between CAP core semantics and extension-scoped workflow behavior
+- message envelopes and verb contracts for the draft surface
 
 For a concise version delta, see [Changes From `v0.2.2`](./changes-from-v0.2.2.md).
+
+The key words "MUST", "MUST NOT", "SHOULD", "SHOULD NOT", and "MAY" in this specification are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) and [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) when, and only when, they appear in all capitals.

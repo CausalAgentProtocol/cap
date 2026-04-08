@@ -5,6 +5,8 @@
 - published `v0.3.0` as a coherent internal draft snapshot rather than a minimal future-direction note
 - introduced L0 Narrative and L0.5 Hybrid as draft conformance tiers
 - introduced `narrate` as a draft CAP core verb
+- added a draft canonical-name registry page for semantic and provenance terms
+- added a draft provenance page clarifying capability disclosure versus response provenance versus provider workflow metadata
 - expanded draft capability-card guidance for weaker and hybrid systems
 - clarified that workflow sessions, reusable handles, and provider orchestration remain extension-scoped unless later standardized
 

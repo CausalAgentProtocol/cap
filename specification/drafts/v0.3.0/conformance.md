@@ -12,15 +12,40 @@ CAP uses a progressive conformance model:
 
 The capability card declares `conformance_level`, but clients SHOULD treat that level as a coarse signal and still inspect detailed capability metadata.
 
+Verb meaning is defined in [Verbs](./verbs.md). This page defines which tiers MUST, MAY, or MUST NOT expose those verbs.
+
+Draft Pearl alignment:
+
+- Level 0 sits below Pearl's ladder
+- Level 0.5 is only partially aligned to rung 1 semantics
+- Level 1 aligns to observational association claims
+- Level 2 aligns to intervention claims
+- Level 3 aligns to counterfactual claims when later activated
+
 ## Tier Summary
 
-| Level | Name | Claim Class | Minimum Core Verbs | Disclosure Burden |
-| --- | --- | --- | --- | --- |
-| `0` | Narrative | Causal-form narrative claims without statistical validation | `meta.capabilities`, `meta.methods`, `narrate` | Highest epistemic caveat burden |
-| `0.5` | Hybrid | Mathematically structured inference over partially unvalidated structure, parameters, or assumptions | `meta.capabilities`, `meta.methods`, `narrate` | L0 disclosure plus hybrid-layer disclosure |
-| `1` | Observe | Observational claims grounded in statistically validated observational semantics | Level 0 core plus `observe.predict`, `graph.neighbors`, `graph.markov_blanket` | Observational semantics and assumptions |
-| `2` | Intervene | Interventional claims | Level 1 core plus `intervene.do`, `graph.paths` | Formal reasoning mode, identification status, assumptions |
-| `3` | Counterfact | Counterfactual claims | reserved in this draft | highest disclosure burden |
+| Level | Name | Pearl Alignment | Claim Class | Minimum Core Verbs | Disclosure Burden |
+| --- | --- | --- | --- | --- | --- |
+| `0` | Narrative | below Pearl hierarchy | Causal-form narrative claims without statistical validation | `meta.capabilities`, `meta.methods`, `narrate` | Highest epistemic caveat burden |
+| `0.5` | Hybrid | partial rung-1 alignment only | Mathematically structured inference over partially unvalidated structure, parameters, or assumptions | `meta.capabilities`, `meta.methods`, `narrate` | L0 disclosure plus hybrid-layer disclosure |
+| `1` | Observe | rung 1 | Observational claims grounded in statistically validated observational semantics | `meta.capabilities`, `meta.methods`, `observe.predict`, `graph.neighbors`, `graph.markov_blanket` | Observational semantics and assumptions |
+| `2` | Intervene | rung 2 | Interventional claims | Level 1 core plus `intervene.do`, `graph.paths` | Formal reasoning mode, identification status, assumptions |
+| `3` | Counterfact | rung 3 | Counterfactual claims | reserved in this draft | highest disclosure burden |
+
+## Tier-To-Verb Matrix
+
+| Verb | L0 | L0.5 | L1 | L2 | L3 |
+| --- | --- | --- | --- | --- | --- |
+| `meta.capabilities` | MUST | MUST | MUST | MUST | reserved |
+| `meta.methods` | MUST | MUST | MUST | MUST | reserved |
+| `narrate` | MUST | MUST | MAY | MAY | reserved |
+| `observe.predict` | MUST NOT | MAY, restricted | MUST | MUST | reserved |
+| `intervene.do` | MUST NOT | MUST NOT in core | MUST NOT | MUST | reserved |
+| `graph.neighbors` | MAY | MAY | MUST | MUST | reserved |
+| `graph.markov_blanket` | MAY | MAY | MUST | MUST | reserved |
+| `graph.paths` | MAY | MAY | MAY | MUST | reserved |
+
+This matrix is the authoritative gate for tier-level verb expectations in this draft.
 
 ## Level 0: Narrative
 
@@ -62,6 +87,8 @@ A Level 0.5 server MUST disclose, at minimum:
 - why its outputs are not equivalent to Level 1 or Level 2 claims
 
 Supporting a stronger mathematical layer does not by itself justify Level 1.
+
+Higher tiers MAY still implement `narrate`, but `narrate` is not required above Level 0.5 unless another section of this specification says so explicitly.
 
 ## Level 1: Observe
 

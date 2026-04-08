@@ -11,6 +11,7 @@ CAP standardizes:
 - capability disclosure
 - verb semantics
 - common request and response envelopes
+- provenance interpretation
 - conformance boundaries
 - semantic honesty and provenance expectations
 

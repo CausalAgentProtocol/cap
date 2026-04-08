@@ -14,7 +14,7 @@ The normative semantic fields are:
 
 In `v0.3.0`, CAP also distinguishes semantic claim classes across conformance tiers so that narrative or hybrid systems can participate honestly without being mistaken for stronger causal engines.
 
-The machine-readable enum catalog for this repository lives in [`schema/shared/enums.json`](../schema/shared/enums.json). It is aligned to the long-form draft where possible and extended where earlier public CAP implementations have already stabilized names in code.
+The human-readable canonical-name definitions for this draft live in [Canonical Names](./canonical-names.md). The machine-readable enum catalog for the repository still lives in [`schema/shared/enums.json`](../schema/shared/enums.json).
 
 ## Reasoning Mode
 

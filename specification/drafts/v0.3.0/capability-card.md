@@ -10,6 +10,8 @@ The capability card is a truthful machine-readable disclosure surface for the se
 
 The normative source of truth for CAP requirements remains the specification pages in this directory.
 
+Server-level disclosure should be interpreted together with [Provenance](./provenance.md), which distinguishes capability disclosure from response-level provenance and provider workflow metadata.
+
 ## Purpose
 
 The capability card exists so a client can determine, before invocation:
@@ -47,6 +49,7 @@ At minimum, this includes these field groups:
 
 - `endpoint`
 - `conformance_level`
+- `conformance_name`
 - `supported_verbs`
 - `assumptions`
 - `reasoning_modes_supported`
@@ -59,6 +62,18 @@ For lower-confidence tiers, the card SHOULD also disclose the provenance of:
 - parameters, weights, or priors
 - reproducibility characteristics
 - key limitations or caveats
+
+## Draft Direction For L0 And L0.5 Cards
+
+For `v0.3.0` draft review, the intended card direction for L0 and L0.5 includes:
+
+- a stable `conformance_level`
+- a human-readable `conformance_name`
+- a machine-readable indicator of Pearl alignment or non-alignment
+- enough provenance to understand where structure and parameterization came from
+- enough caveat disclosure to prevent narrative or hybrid outputs from being mistaken for stronger causal claims
+
+The exact field names for all of those disclosure details remain draft-era and may still tighten before release, but the categories themselves are part of the intended contract direction.
 
 ## Endpoint Disclosure
 
@@ -78,8 +93,9 @@ Capability-card fields that expose semantic or provenance-oriented names SHOULD 
 
 In practice:
 
+- `conformance_name` values and `pearl_alignment` values SHOULD follow [Canonical Names](./canonical-names.md)
 - `reasoning_modes_supported` SHOULD use the canonical `reasoning_mode` strings from [`schema/shared/enums.json`](../schema/shared/enums.json)
-- `assumptions` SHOULD use canonical assumption names where they fit, and namespaced custom strings where they do not
+- `assumptions` SHOULD use canonical `assumption_name` values where they fit, and namespaced custom strings where they do not
 - `causal_engine.algorithm` MAY stay open-world, but servers SHOULD prefer the repository's recommended spellings for common algorithms such as `PCMCI`, `PC`, `GES`, `FCI`, `NOTEARS`, `LiNGAM`, and `VAR-Granger`
 
 ## Additional Non-Core Disclosure
@@ -104,6 +120,7 @@ For `v0.3.0` draft review, the following disclosure categories are especially im
 - methodology class
 - reproducibility status
 - limitation and caveat summary
+- Pearl alignment or non-alignment
 
 The exact field names may continue to evolve in draft review, but the disclosure burden itself is part of the intended `v0.3.0` direction.
 

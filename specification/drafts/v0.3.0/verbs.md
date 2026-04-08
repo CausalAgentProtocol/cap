@@ -10,7 +10,7 @@ CAP divides verbs into three categories:
 
 ## Core Verbs
 
-The `v0.3.0` CAP core vocabulary is:
+This version defines the following standard CAP verbs:
 
 - `meta.capabilities`
 - `meta.methods`
@@ -20,6 +20,8 @@ The `v0.3.0` CAP core vocabulary is:
 - `graph.neighbors`
 - `graph.markov_blanket`
 - `graph.paths`
+
+Conformance gates for those verbs are defined in [Conformance](./conformance.md). This page defines verb meaning, not tier requirements.
 
 ### `meta.capabilities`
 
@@ -114,6 +116,8 @@ Level 1 servers MAY add observational semantic disclosure when it materially imp
 
 Level 0.5 servers MAY expose `observe.predict` only when they can also disclose that the result is weaker than a Level 1 observational claim where applicable.
 
+When a Level 0.5 server exposes `observe.predict`, it SHOULD include enough semantic disclosure for a client to recognize that the result is hybrid rather than statistically validated observational inference.
+
 ### `intervene.do`
 
 This verb returns one interventional claim for one treatment and one selected outcome.
@@ -195,3 +199,5 @@ Workflow-oriented surfaces such as:
 remain extension-scoped unless CAP later standardizes them explicitly.
 
 Legacy `effect.query` schemas remain for compatibility review, and the active CAP `v0.2.2` core surface is split into `observe.predict` and `intervene.do`.
+
+Higher-tier servers MAY still implement `narrate` for user-facing narrative workflows, but that optional support does not change their declared conformance level.

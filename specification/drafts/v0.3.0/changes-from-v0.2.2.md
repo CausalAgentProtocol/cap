@@ -13,6 +13,8 @@ Compared with CAP `v0.2.2`, this draft:
 
 - introduces L0 Narrative and L0.5 Hybrid conformance tiers
 - adds `narrate` as a first-class CAP verb
+- adds a canonical-name registry for semantic, conformance, and provenance terms
+- adds a dedicated provenance page separating capability disclosure, response provenance, and provider workflow metadata
 - expands capability disclosure for weaker or hybrid causal systems
 - clarifies that CAP core stays semantic and self-contained by default
 - clarifies that provider workflow handles and reusable analysis state belong in extensions unless later standardized

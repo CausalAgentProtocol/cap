@@ -76,6 +76,14 @@ test("version switcher resolves matching specification pages across versions", a
   assert.equal(markdown.sourcePath, "specification/drafts/v0.3.0/protocol.md");
 });
 
+test("draft-only pages fall back to the draft landing route for older versions", async () => {
+  const switcher = await getSpecVersionSwitcher("/spec/v0.3.0/canonical-names");
+
+  assert.equal(switcher?.currentVersion, "v0.3.0");
+  assert.equal(switcher?.links[0]?.href, "/spec/v0.2.2");
+  assert.equal(switcher?.links[1]?.href, "/spec/v0.3.0/canonical-names");
+});
+
 test("draft specification sidebar includes all versioned pages for the current version", async () => {
   const sidebar = await getSidebarGroups("/spec/v0.3.0");
 
@@ -88,8 +96,10 @@ test("draft specification sidebar includes all versioned pages for the current v
       "/spec/v0.3.0/protocol",
       "/spec/v0.3.0/capability-card",
       "/spec/v0.3.0/causal-semantics",
+      "/spec/v0.3.0/canonical-names",
       "/spec/v0.3.0/verbs",
       "/spec/v0.3.0/message-format",
+      "/spec/v0.3.0/provenance",
       "/spec/v0.3.0/conformance",
       "/spec/v0.3.0/extensions",
       "/spec/v0.3.0/changelog"

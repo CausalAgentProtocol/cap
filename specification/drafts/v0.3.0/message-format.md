@@ -50,6 +50,10 @@ It MAY also include:
 - `provenance`
 - `pagination`
 
+When a response carries provenance, its interpretation is defined in [Provenance](./provenance.md).
+
+This page defines envelope shape only. It does not fully define the semantic categories of provenance.
+
 ## Capability Access Paths
 
 There are two protocol-valid ways to access capability information:
