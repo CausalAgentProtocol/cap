@@ -120,6 +120,13 @@ CAP method-discovery information is exposed through `meta.methods` in the CAP en
 
 `meta.methods` describes the public request `params` and success `result` fields for the verbs currently mounted on that endpoint. It does not replace the capability card.
 
+In practice, the discovery split is:
+
+- capability card: server summary and mounted surface summary
+- `meta.methods`: per-verb invocation detail
+
+That separation keeps the capability card compact and makes method metadata the single detailed schema-discovery path.
+
 When a client already has a verb inventory from `meta.capabilities`, it SHOULD prefer targeted `meta.methods` requests over whole-surface method dumps.
 
 ## Current HTTP Binding

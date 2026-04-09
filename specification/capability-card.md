@@ -29,7 +29,7 @@ The capability card is the high-signal, stable disclosure surface.
 
 It SHOULD summarize server-level truths that remain useful across requests.
 
-It SHOULD NOT become a dump of request-scoped runtime detail that belongs in method metadata or per-response provenance.
+Its job is to summarize the mounted surface coherently, not to repeat request-scoped runtime detail that already lives more naturally in method metadata or per-response provenance.
 
 In `v0.3.0`, the capability card also carries more of the burden for telling clients whether a server is:
 
@@ -39,6 +39,22 @@ In `v0.3.0`, the capability card also carries more of the burden for telling cli
 - interventional
 
 and what that actually means for trust and interpretation.
+
+## Discovery Layering
+
+CAP discovery is easiest to reason about when each layer has a distinct role:
+
+- capability card: server summary
+- extension namespace block: extension grouping
+- `meta.methods`: per-verb invocation detail
+
+In a coherent implementation:
+
+- `supported_verbs` is the top-level summary of core and convenience surface
+- `extensions` groups extension verbs by namespace
+- `meta.methods` carries argument and result-field detail for the mounted verbs
+
+This keeps the capability card compact while still letting a client discover the full mounted surface.
 
 ## Minimum Required Disclosure
 
@@ -121,6 +137,14 @@ When a server supports different `options.response_detail` tiers or access-level
 
 When a server uses multiple extension namespaces, such as separate stateless helper extensions and stateful workflow extensions, the capability card SHOULD distinguish those namespaces explicitly rather than presenting them as one undifferentiated extension blob.
 
+Extension namespace entries work best as summary disclosure:
+
+- namespace-scoped verb inventory
+- optional namespace documentation link
+- short notes that help a client understand what kind of extension surface is mounted
+
+Field-level request and result descriptions belong in `meta.methods`.
+
 For L0 and L0.5 systems, the following disclosure categories are especially important:
 
 - structure origin
@@ -156,6 +180,8 @@ The capability card MUST describe the server's mounted public surface truthfully
 Convenience verbs and extension verbs MAY appear in discovery metadata, but they MUST be identified as non-core surfaces.
 
 Convenience verbs SHOULD be reserved for ergonomic wrappers over already-standardized CAP semantics. Verbs that depend on provider-owned handles, workflow state, or server-selected graph views SHOULD be disclosed as extensions instead.
+
+When `extensions` is present, it is the natural home for extension namespace grouping and extension verb inventory.
 
 Servers MUST NOT imply that compatibility-only artifacts are part of CAP core unless the specification pages restate them normatively.
 

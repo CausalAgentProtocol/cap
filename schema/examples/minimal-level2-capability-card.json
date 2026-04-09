@@ -24,8 +24,7 @@
     "convenience": [
       "traverse.parents",
       "traverse.children"
-    ],
-    "extensions": []
+    ]
   },
   "causal_engine": {
     "family": "scm",

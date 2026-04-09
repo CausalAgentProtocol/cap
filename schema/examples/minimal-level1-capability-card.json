@@ -21,8 +21,7 @@
     ],
     "convenience": [
       "traverse.parents"
-    ],
-    "extensions": []
+    ]
   },
   "causal_engine": {
     "family": "granger",

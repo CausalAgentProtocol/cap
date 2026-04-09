@@ -71,6 +71,7 @@
       ]
     },
     "supported_verbs": {
+      "$comment": "Top-level mounted-surface summary. Core and convenience categories are the primary top-level inventory. Extension namespaces can also disclose their own grouped verb inventory under the extensions object.",
       "type": "object",
       "properties": {
         "core": {
@@ -218,6 +219,7 @@
       "unevaluatedProperties": false
     },
     "extensions": {
+      "$comment": "Namespace-scoped extension summary. Use this object to group extension verbs coherently. Field-level invocation metadata belongs in meta.methods rather than being duplicated here.",
       "type": "object",
       "additionalProperties": {
         "type": "object",
@@ -237,9 +239,11 @@
             "uniqueItems": true
           },
           "additional_params": {
+            "$comment": "Backward-compatible field. Prefer meta.methods for detailed request-field discovery.",
             "type": "object"
           },
           "additional_result_fields": {
+            "$comment": "Backward-compatible field. Prefer meta.methods for detailed result-field discovery.",
             "type": "object"
           },
           "notes": {
