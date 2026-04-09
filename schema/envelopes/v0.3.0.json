@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/envelopes/v0.3.0.json",
+  "title": "CAP Envelope v0.3.0",
+  "$comment": "Generic CAP request and response envelopes for the active v0.3.0 wire contract.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/request_envelope"
+    },
+    {
+      "$ref": "#/$defs/success_response_envelope"
+    },
+    {
+      "$ref": "#/$defs/error_response_envelope"
+    },
+    {
+      "$ref": "#/$defs/partial_response_envelope"
+    }
+  ],
+  "$defs": {
+    "graph_ref": {
+      "type": "object",
+      "properties": {
+        "graph_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "graph_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "request_context": {
+      "type": "object",
+      "properties": {
+        "graph_ref": {
+          "$ref": "#/$defs/graph_ref"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "request_options": {
+      "type": "object",
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "response_detail": {
+          "$ref": "../shared/enums.json#/$defs/response_detail"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "error_object": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggestion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "unevaluatedProperties": false
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "has_more": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "total",
+        "offset",
+        "limit",
+        "has_more"
+      ],
+      "unevaluatedProperties": false
+    },
+    "request_envelope": {
+      "type": "object",
+      "properties": {
+        "cap_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_version"
+        },
+        "request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "context": {
+          "$ref": "#/$defs/request_context"
+        },
+        "options": {
+          "$ref": "#/$defs/request_options"
+        },
+        "params": {}
+      },
+      "required": [
+        "cap_version",
+        "verb"
+      ],
+      "unevaluatedProperties": false
+    },
+    "success_response_envelope": {
+      "type": "object",
+      "properties": {
+        "cap_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_version"
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "success"
+        },
+        "result": {},
+        "provenance": {
+          "type": "object"
+        },
+        "pagination": {
+          "$ref": "#/$defs/pagination"
+        }
+      },
+      "required": [
+        "cap_version",
+        "request_id",
+        "verb",
+        "status",
+        "result"
+      ],
+      "unevaluatedProperties": false
+    },
+    "error_response_envelope": {
+      "type": "object",
+      "properties": {
+        "cap_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_version"
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "error"
+        },
+        "error": {
+          "$ref": "#/$defs/error_object"
+        },
+        "provenance": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "cap_version",
+        "request_id",
+        "verb",
+        "status",
+        "error"
+      ],
+      "unevaluatedProperties": false
+    },
+    "partial_response_envelope": {
+      "type": "object",
+      "properties": {
+        "cap_version": {
+          "$ref": "../shared/enums.json#/$defs/cap_version"
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "partial"
+        },
+        "result": {},
+        "pagination": {
+          "$ref": "#/$defs/pagination"
+        }
+      },
+      "required": [
+        "cap_version",
+        "request_id",
+        "verb",
+        "status",
+        "result",
+        "pagination"
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

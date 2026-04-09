@@ -5,20 +5,23 @@
 CAP divides verbs into three categories:
 
 - `core`: minimum interoperable surface used for conformance
-- `convenience`: useful but non-conformance-defining verbs
+- `convenience`: non-conformance-defining thin wrappers over already-standardized CAP semantics
 - `extensions`: implementation-specific behavior outside CAP core
 
 ## Core Verbs
 
-The CAP core surface in `v0.2.x` is:
+This version defines the following standard CAP verbs:
 
 - `meta.capabilities`
 - `meta.methods`
+- `narrate`
 - `observe.predict`
 - `intervene.do`
 - `graph.neighbors`
 - `graph.markov_blanket`
 - `graph.paths`
+
+Conformance gates for those verbs are defined in [Conformance](./conformance.md). This page defines verb meaning, not tier requirements.
 
 ### `meta.capabilities`
 
@@ -72,6 +75,30 @@ Verbs with no public request parameters SHOULD return `arguments: []`.
 
 This discovery surface supplements `meta.capabilities`. It does not replace the capability card.
 
+### `narrate`
+
+This verb returns causal-form narrative claims without asserting that they are statistically validated.
+
+It exists so narrative systems can participate honestly in CAP.
+
+The request MAY include:
+
+- `params.query`
+- optional `params.source_text`
+- optional `params.scope`
+
+The success result SHOULD disclose:
+
+- the returned narrative claim or claims
+- the narrative or heuristic basis of the claim
+- any disclosed limitations or caveats that materially affect interpretation
+
+`narrate` MUST NOT be presented as an identified observational or interventional effect.
+
+The `narrate` result contract defines the canonical minimum narrative payload only.
+
+Servers MAY include richer narrative structure, supporting excerpts, or local context fields when those additions remain semantically consistent with the canonical minimum.
+
 ### `observe.predict`
 
 This verb returns an observational prediction for one target node.
@@ -89,7 +116,13 @@ The `observe.predict` success result includes:
 - `result.prediction`
 - `result.drivers`
 
+That list is the canonical minimum success payload, not an exhaustive ban on richer additive result fields.
+
 Level 1 servers MAY add observational semantic disclosure when it materially improves honesty.
+
+Level 0.5 servers MAY expose `observe.predict` only when they can also disclose that the result is weaker than a Level 1 observational claim where applicable.
+
+When a Level 0.5 server exposes `observe.predict`, it SHOULD include enough semantic disclosure for a client to recognize that the result is hybrid rather than statistically validated observational inference.
 
 ### `intervene.do`
 
@@ -102,7 +135,7 @@ The CAP core request shape is intervention intent only:
 - `params.outcome_node`
 - optional `context.graph_ref`
 
-If a server exposes rollout horizon, mechanism override, or richer intervention summaries, those controls belong in richer draft contracts or extension verbs unless they are standardized as CAP core.
+If a server exposes rollout horizon, mechanism override, or richer intervention summaries, those controls belong in richer provider contracts or extension verbs unless they are standardized as CAP core.
 
 The `intervene.do` success result includes one disclosed interventional claim with:
 
@@ -111,6 +144,10 @@ The `intervene.do` success result includes one disclosed interventional claim wi
 - `result.reasoning_mode`
 - `result.identification_status`
 - `result.assumptions`
+
+That list is the canonical minimum success payload, not an exhaustive ban on richer additive result fields.
+
+At Level 0.5, `intervene.do` MAY be used only for restricted intervention-style outputs whose disclosure makes clear that the result is not Pearl rung-2 identified intervention semantics.
 
 ### `graph.neighbors`
 
@@ -154,10 +191,31 @@ Common convenience verbs include:
 
 These verbs are useful thin wrappers over the graph-inspection surface, but they are not conformance-defining core verbs.
 
+Convenience verbs improve ergonomics for common workflows. Supporting them does not change a server's declared conformance level.
+
+Convenience verbs SHOULD stay close to syntactic sugar over an existing CAP-standard surface.
+
+They SHOULD NOT introduce provider-owned handles, workflow lifecycle, server-selected graph views, or other runtime state that a portable CAP client could not infer from the underlying core semantics alone.
+
 ## Deferred And Extension Surface
 
 Additional helper verbs, counterfactual verbs outside the current CAP core, and implementation-specific workflow verbs belong in convenience or extension surfaces unless and until CAP standardizes them explicitly.
 
 Product-specific discovery surfaces, vendor workflow operations, and implementation-specific topology should not be presented as CAP core.
 
-Legacy `effect.query` schemas remain for compatibility review, and the core surface is split into `observe.predict` and `intervene.do`.
+Provider-owned graph materialization, runtime graph handles, session-bound graph traversal, and other handle-oriented graph view operations belong in extensions rather than convenience surfaces, even when they are operationally useful.
+
+Workflow-oriented surfaces such as:
+
+- candidate review flows
+- reusable analysis handles
+- session resumption
+- provider-specific execution orchestration
+- provider-owned graph materialization
+- provider-owned graph handle traversal
+
+remain extension-scoped unless CAP later standardizes them explicitly.
+
+Legacy `effect.query` schemas remain for compatibility review, and the CAP core surface is split into `observe.predict` and `intervene.do`.
+
+Higher-tier servers MAY still implement `narrate` for user-facing narrative workflows, but that optional support does not change their declared conformance level.

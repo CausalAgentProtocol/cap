@@ -330,7 +330,7 @@ const menuId = `page-actions-menu-${markdownUrl.replace(/[^a-z0-9]+/gi, "-").rep
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.45rem;
+    min-height: 2.2rem;
     transition:
       color 180ms ease,
       transform 180ms ease;
@@ -339,13 +339,13 @@ const menuId = `page-actions-menu-${markdownUrl.replace(/[^a-z0-9]+/gi, "-").rep
   .page-actions-primary {
     flex: 1 1 auto;
     gap: 0.48rem;
-    padding: 0 0.82rem 0 0.78rem;
+    padding: 0 0.74rem 0 0.72rem;
     text-align: left;
     cursor: pointer;
   }
 
   .page-actions-toggle {
-    flex: 0 0 2.35rem;
+    flex: 0 0 2.15rem;
     border-left: 1px solid rgba(17, 17, 17, 0.08);
     cursor: pointer;
   }
@@ -423,7 +423,7 @@ const menuId = `page-actions-menu-${markdownUrl.replace(/[^a-z0-9]+/gi, "-").rep
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.7rem;
-    padding: 0.5rem 0.55rem;
+    padding: 0.42rem 0.52rem;
     border-radius: 0.9rem;
     text-decoration: none;
     text-align: left;
@@ -476,15 +476,6 @@ const menuId = `page-actions-menu-${markdownUrl.replace(/[^a-z0-9]+/gi, "-").rep
     color: rgba(17, 17, 17, 0.68);
   }
 
-  .page-actions[data-state="copied"] .page-actions-primary {
-    background: rgba(17, 17, 17, 0.04);
-  }
-
-  .page-actions[data-state="copied"] .page-actions-primary-label,
-  .page-actions[data-state="copied"] .page-actions-primary-icon {
-    color: rgba(17, 17, 17, 0.78);
-  }
-
   @media (max-width: 720px) {
     .page-actions {
       float: none;
@@ -504,16 +495,16 @@ const menuId = `page-actions-menu-${markdownUrl.replace(/[^a-z0-9]+/gi, "-").rep
 
     .page-actions-primary,
     .page-actions-toggle {
-      min-height: 2.45rem;
+      min-height: 2.2rem;
     }
 
     .page-actions-primary {
-      padding-left: 0.82rem;
-      padding-right: 0.82rem;
+      padding-left: 0.74rem;
+      padding-right: 0.74rem;
     }
 
     .page-actions-toggle {
-      flex-basis: 2.35rem;
+      flex-basis: 2.15rem;
     }
 
     .page-actions-menu {

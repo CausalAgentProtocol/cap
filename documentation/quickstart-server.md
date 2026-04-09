@@ -60,7 +60,7 @@ Finally, send one CAP request:
 curl -s -X POST http://127.0.0.1:8000/cap \
   -H 'Content-Type: application/json' \
   -d '{
-    "cap_version": "0.2.2",
+    "cap_version": "0.3.0",
     "request_id": "req-capabilities-1",
     "verb": "meta.capabilities"
   }' | jq
@@ -103,6 +103,10 @@ Do not treat the capability card as documentation you will fill in later.
 
 Build the capability card from the same registry you actually dispatch. That keeps `supported_verbs`, convenience verbs, and extension namespaces aligned with the public surface.
 
+Use the capability card for the compact server summary. Put field-level request and result detail in `meta.methods`.
+
+If your first public surface does not expose extensions, do not include extension machinery in the first capability-card implementation.
+
 The generic pattern looks like this:
 
 ```python
@@ -122,7 +126,6 @@ from cap.core import (
     REASONING_MODE_STRUCTURAL_SEMANTICS,
     build_capability_access_tier,
     build_capability_disclosure_policy,
-    build_extension_namespace,
 )
 from cap.server import CAPVerbRegistry
 
@@ -136,20 +139,13 @@ def build_capability_card(
         core=registry.verbs_for_surface("core"),
         convenience=registry.verbs_for_surface("convenience"),
     )
-    extension_namespaces = {
-        namespace: build_extension_namespace(
-            schema_url=f"https://example.com/cap/extensions/{namespace}/v1.json",
-            verbs=verbs,
-        )
-        for namespace, verbs in registry.extension_verbs_by_namespace.items()
-    }
 
     return CapabilityCard(
         schema_url=CAPABILITY_CARD_SCHEMA_URL,
         name="Example CAP Server",
         description="CAP server over an existing causal runtime.",
         version="0.1.0",
-        cap_spec_version="0.2.2",
+        cap_spec_version="0.3.0",
         provider=CapabilityProvider(
             name="Example Provider",
             url="https://example.com",
@@ -212,9 +208,10 @@ def build_capability_card(
             default_response_detail="summary",
             notes=["Describe any redaction or disclosure limits here."],
         ),
-        extensions=extension_namespaces,
     )
 ```
+
+If you later mount extensions, derive the namespace summary from the same registry rather than hand-maintaining a separate extension inventory.
 
 That matters because:
 

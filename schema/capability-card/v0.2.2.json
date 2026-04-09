@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causalagentprotocol.org/schema/capability-card/v0.2.2.json",
   "title": "CAP Capability Card v0.2.2",
-  "$comment": "Capability card schema extracted from the long-form v0.2.2 draft and a legacy narrower public compatibility shape. The draft branch is the protocol target; the legacy branch is retained explicitly so historical compatibility gaps remain machine-visible rather than hidden.",
+  "$comment": "This schema models the active public v0.2.2 contract first. Retained legacy branches remain machine-visible for compatibility review and migration, but they are not the default reader contract.",
   "anyOf": [
     {
       "$ref": "#/$defs/draft_protocol_card"
@@ -504,6 +504,7 @@
     },
     "draft_protocol_card": {
       "type": "object",
+      "$comment": "Primary branch for the active public v0.2.2 capability-card contract.",
       "properties": {
         "$schema": {
           "$ref": "#/$defs/schema_url"
@@ -761,7 +762,7 @@
     },
     "legacy_public_card": {
       "type": "object",
-      "$comment": "Legacy public compatibility branch for a narrower capability-card model with adapter-specific disclosure and authentication shapes, while still accepting the repository canonical reasoning-mode catalog.",
+      "$comment": "Secondary legacy compatibility branch for an older narrower capability-card model with adapter-specific disclosure and authentication shapes. It remains machine-visible for compatibility review and migration, but it is not the default reader contract.",
       "properties": {
         "$schema": {
           "$ref": "#/$defs/schema_url"

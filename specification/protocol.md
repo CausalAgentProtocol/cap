@@ -4,11 +4,14 @@
 
 CAP defines the semantic protocol layer for discovering, invoking, and interpreting causal reasoning capabilities.
 
+CAP `v0.3.0` expands CAP beyond `v0.2.2` by defining how lower-confidence narrative and hybrid systems may participate honestly without being mistaken for statistically validated causal engines.
+
 CAP standardizes:
 
 - capability disclosure
 - verb semantics
 - common request and response envelopes
+- provenance interpretation
 - conformance boundaries
 - semantic honesty and provenance expectations
 
@@ -35,14 +38,15 @@ CAP does not standardize:
 
 ## State Model
 
-CAP `v0.2.x` is stateless.
+CAP core is self-contained by default.
 
 Rules:
 
 - each request MUST be self-contained
 - CAP does not require server-side session state
-- freshness metadata MAY appear in provenance
-- freshness metadata MUST NOT be treated as a session mechanism
+- a server MAY expose reusable workflow state through extensions
+- extension workflow state MUST NOT be treated as CAP-core conformance by itself
+- freshness or provenance metadata MUST NOT be treated as an implicit session mechanism
 
 ## Binding Model
 
@@ -53,6 +57,21 @@ Bindings may change discovery or invocation mechanics, but they MUST NOT change 
 HTTP is the primary current public binding.
 
 Other integration surfaces such as MCP or A2A MAY carry or expose CAP behavior, but they do not redefine CAP semantics.
+
+Convenience verbs and extension verbs MAY be exposed alongside the core surface.
+
+Convenience verbs remain non-conformance-defining helpers.
+
+Extension verbs remain outside CAP conformance unless this specification explicitly promotes them into CAP core.
+
+A provider MAY expose:
+
+- candidate review flows
+- pinned analysis handles
+- reusable workflow state
+- resumable analysis sessions
+
+through extension surfaces. Those facilities may be valuable, but they do not redefine CAP core semantics.
 
 If the same capability is exposed through multiple bindings, the server MUST preserve the same:
 

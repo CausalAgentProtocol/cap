@@ -35,6 +35,9 @@ Examples that remain outside CAP core in the current boundary include:
 - vendor-specific regime operations
 - vendor-specific reflexivity operations
 - implementation-specific product topology
+- reusable workflow handles
+- provider-specific session or resumption lifecycle
+- candidate review or graph-pinning workflow
 
 ## Upgrade Path
 

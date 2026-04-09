@@ -1,5 +1,9 @@
 import externalLinks from "../../../config/external-links.json" with { type: "json" };
 
+export type SpecVersion = "v0.2.2" | "v0.3.0";
+
+export type SiteRouteStatus = "active" | "internal-draft";
+
 export type SiteShellNavItem = {
   href: string;
   label: string;

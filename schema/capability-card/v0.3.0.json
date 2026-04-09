@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causalagentprotocol.org/schema/capability-card/v0.3.0.json",
+  "title": "CAP Capability Card v0.3.0",
+  "$comment": "Machine-readable capability disclosure for the active CAP v0.3.0 contract.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://causalagentprotocol.org/schema/capability-card/v0.3.0.json"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cap_spec_version": {
+      "$ref": "../shared/enums.json#/$defs/cap_spec_version"
+    },
+    "provider": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "unevaluatedProperties": false
+    },
+    "endpoint": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conformance_level": {
+      "$ref": "../shared/enums.json#/$defs/conformance_level"
+    },
+    "conformance_name": {
+      "type": "string",
+      "enum": [
+        "Narrative",
+        "Hybrid",
+        "Observe",
+        "Intervene"
+      ]
+    },
+    "pearl_alignment": {
+      "type": "string",
+      "enum": [
+        "below_pearl",
+        "partial_rung_1",
+        "rung_1",
+        "rung_2"
+      ]
+    },
+    "supported_verbs": {
+      "$comment": "Top-level mounted-surface summary. Core and convenience categories are the primary top-level inventory. Extension namespaces can also disclose their own grouped verb inventory under the extensions object.",
+      "type": "object",
+      "properties": {
+        "core": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "convenience": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "core"
+      ],
+      "unevaluatedProperties": false
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "reasoning_modes_supported": {
+      "type": "array",
+      "items": {
+        "$ref": "../shared/enums.json#/$defs/reasoning_mode"
+      },
+      "uniqueItems": true
+    },
+    "graph": {
+      "type": "object",
+      "properties": {
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "graph_representation": {
+          "type": "string"
+        },
+        "update_frequency": {
+          "type": "string"
+        },
+        "coverage_description": {
+          "type": "string"
+        },
+        "availability": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "node_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "edge_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "node_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "edge_types_supported": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "temporal_resolution": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "unevaluatedProperties": true
+    },
+    "authentication": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "unevaluatedProperties": false
+    },
+    "disclosure_policy": {
+      "type": "object",
+      "properties": {
+        "hidden_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "default_response_detail": {
+          "$ref": "../shared/enums.json#/$defs/response_detail"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "extensions": {
+      "$comment": "Namespace-scoped extension summary. Use this object to group extension verbs coherently. Field-level invocation metadata belongs in meta.methods rather than being duplicated here.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "schema_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "verbs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "additional_params": {
+            "$comment": "Backward-compatible field. Prefer meta.methods for detailed request-field discovery.",
+            "type": "object"
+          },
+          "additional_result_fields": {
+            "$comment": "Backward-compatible field. Prefer meta.methods for detailed result-field discovery.",
+            "type": "object"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "verbs"
+        ],
+        "unevaluatedProperties": false
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "name",
+    "description",
+    "cap_spec_version",
+    "endpoint",
+    "conformance_level",
+    "conformance_name",
+    "supported_verbs",
+    "assumptions",
+    "reasoning_modes_supported",
+    "graph",
+    "authentication"
+  ],
+  "unevaluatedProperties": true
+}
