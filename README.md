@@ -47,8 +47,8 @@ Collaborating institutions and organizations include CMU, UCSD, UVA, and Abel AI
 
 ## Status
 
-- current spec version: `0.2.2-draft`
-- Level 3 counterfactual remains reserved in `v0.2.x`
+- current spec version: `0.3.0`
+- Level 3 counterfactual remains reserved in `v0.3.x`
 - where draft prose and current adapter behavior differ, the repo records the gap explicitly rather than hiding it
 
 ## Examples And Notes
